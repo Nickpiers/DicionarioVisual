@@ -1,0 +1,9 @@
+ORIENTAÇÕES
+
+=========================
+
+Esse site não está concluído em termos de conteúdo.
+
+Há um exemplo completo para a palavra banco.
+
+O site demanda ser rodado em um servidor web, ainda que local, pois envolve a abertura de arquivos.

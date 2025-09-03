@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dicionário Visual de Palavras Polissêmicas</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <button id="home-button" class="home-button" title="Página Inicial">
+                    <i class="fas fa-home"></i>
+                </button>
+                <div class="logo-text">
+                    <h1>Dicionário Visual</h1>
+                    <p>Palavras Polissêmicas - Comunicação Acessível</p>
+                </div>
+            </div>
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="search-input" placeholder="Pesquisar palavra...">
+            </div>
+        </header>
+
+        <div class="main-content">
+            <div class="word-list" id="word-list">
+                <!-- Lista de palavras será preenchida via JavaScript -->
+            </div>
+
+            <div class="word-detail" id="word-detail">
+                <div class="empty-state">
+                    <i class="fas fa-hand-pointer"></i>
+                    <h2>Selecione uma palavra</h2>
+                    <p>Clique em uma palavra na lista ao lado para ver seus significados</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Dicionário Visual de Palavras Polissêmicas &copy; 2025 - Projeto de Acessibilidade e Inclusão Digital</p>
+    </footer>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
