@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [SNAPSHOT]
 
+## [0.0.2] - 13 Set. 2025
+
+### Added
+
+- Adicionando footer, além de nome do site com ícone de dicionário
+
 ## [0.0.1] - 13 Set. 2025
 
 ### Added
