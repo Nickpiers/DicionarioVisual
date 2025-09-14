@@ -1,8 +1,9 @@
-import "../style/Home.css";
 import { Header } from "./Header";
+import { WordPresentation } from "./WordPresentation";
+import { WordsList } from "./WordsList";
 
 export const Home = () => {
-  const renderizaFooter = () => (
+  const renderFooter = () => (
     <div
       className="fixed bottom-0 w-full text-center p-2 bg-[#2c3e50] text-white text-lg"
       id="footer"
@@ -17,7 +18,9 @@ export const Home = () => {
   return (
     <>
       <Header />
-      {renderizaFooter()}
+      <WordsList />
+      <WordPresentation />
+      {renderFooter()}
     </>
   );
 };

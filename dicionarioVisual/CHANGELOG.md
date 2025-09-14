@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [SNAPSHOT]
 
+## [0.0.3] - 14 Set. 2025
+
+### Added
+
+- Adicionando arquivo com lista de palavras
+- Adicionando componente pra renderizar a lista de palavras na tela
+
 ## [0.0.2] - 13 Set. 2025
 
 ### Added
