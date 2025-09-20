@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [SNAPSHOT]
 
+## [0.0.4] - 20 Set. 2025
+
+### Added
+
+- Adicionando componente de WelcomeScreen
+
 ## [0.0.3] - 14 Set. 2025
 
 ### Added

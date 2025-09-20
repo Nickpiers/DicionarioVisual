@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { words } from "../controllers/words";
-import "../style/WordsList.css";
 
 export const WordsList = () => {
   const [selected, setSelected] = useState(null);
