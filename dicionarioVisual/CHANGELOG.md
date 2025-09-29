@@ -7,40 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [SNAPSHOT]
 
-## [0.0.6] - 29 Set. 2025
+## [1.0.0] - 29 Set. 2025
 
 ### Added
 
-- Adicionando vídeo
-- Adicionando filtro de pesquisa
-
-## [0.0.5] - 29 Set. 2025
-
-### Added
-
-- Adicionando telas de significados
-
-## [0.0.4] - 20 Set. 2025
-
-### Added
-
-- Adicionando componente de WelcomeScreen
-
-## [0.0.3] - 14 Set. 2025
-
-### Added
-
-- Adicionando arquivo com lista de palavras
-- Adicionando componente pra renderizar a lista de palavras na tela
-
-## [0.0.2] - 13 Set. 2025
-
-### Added
-
-- Adicionando footer, além de nome do site com ícone de dicionário
-
-## [0.0.1] - 13 Set. 2025
-
-### Added
-
-- Refatorando o cabecalho, adicionado os componentes de Home e Header
+- Versão inicial de refatoração do projeto legado
