@@ -2,7 +2,7 @@ import { FaHome, FaSearch } from "react-icons/fa";
 
 import "../style/Header.css";
 
-export const Header = ({ onIconClick }) => {
+export const Header = ({ onIconClick, setSearchedWord }) => {
   return (
     <header>
       <div className="logo">
@@ -28,6 +28,7 @@ export const Header = ({ onIconClick }) => {
           type="text"
           placeholder="Pesquisar palavra..."
           className="w-full pl-12 pr-4 py-3 text-white text-lg rounded-full bg-white/15 placeholder-white/70 focus:outline-none focus:bg-white/25 focus:ring-3 focus:ring-blue-400/50 transition"
+          onChange={(event) => setSearchedWord(event.target.value)}
         />
       </div>
     </header>

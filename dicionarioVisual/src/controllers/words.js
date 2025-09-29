@@ -1,5 +1,26 @@
 export const words = [
   {
+    word: "Banco",
+    video: "banco.mp4",
+    meanings: [
+      {
+        definition: "Lugar onde se guarda e movimenta dinheiro",
+        example: "O banco liberou um empréstimo para os agricultores.",
+        icon: "university",
+      },
+      {
+        definition: "Assento comprido para várias pessoas",
+        example: "Os idosos descansavam no banco da praça.",
+        icon: "couch",
+      },
+      {
+        definition: "Sistema para guardar e organizar dados no computador",
+        example: "O banco de dados da empresa guarda informações dos clientes.",
+        icon: "database",
+      },
+    ],
+  },
+  {
     word: "Barra",
     meanings: [
       {
@@ -17,26 +38,6 @@ export const words = [
           "Linha ou área em programas que mostra opções ou informações",
         example: "Clique na impressora na barra de ferramentas do navegador.",
         icon: "bars",
-      },
-    ],
-  },
-  {
-    word: "Banco",
-    meanings: [
-      {
-        definition: "Lugar onde se guarda e movimenta dinheiro",
-        example: "O banco liberou um empréstimo para os agricultores.",
-        icon: "university",
-      },
-      {
-        definition: "Assento comprido para várias pessoas",
-        example: "Os idosos descansavam no banco da praça.",
-        icon: "couch",
-      },
-      {
-        definition: "Sistema para guardar e organizar dados no computador",
-        example: "O banco de dados da empresa guarda informações dos clientes.",
-        icon: "database",
       },
     ],
   },
