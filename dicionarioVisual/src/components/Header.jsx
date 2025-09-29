@@ -2,11 +2,16 @@ import { FaHome, FaSearch } from "react-icons/fa";
 
 import "../style/Header.css";
 
-export const Header = () => {
+export const Header = ({ onIconClick }) => {
   return (
     <header>
       <div className="logo">
-        <button id="home-button" title="Página Inicial" className="home-button">
+        <button
+          id="home-button"
+          title="Página Inicial"
+          className="home-button"
+          onClick={onIconClick}
+        >
           <FaHome />
         </button>
         <div className="logo-text">

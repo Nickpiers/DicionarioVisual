@@ -1,8 +1,11 @@
+import { useState } from "react";
 import { Header } from "./Header";
 import { WordPresentation } from "./WordPresentation";
 import { WordsList } from "./WordsList";
 
 export const Home = () => {
+  const [selectedWord, setSelectedWord] = useState(null);
+
   const renderFooter = () => (
     <footer className="bg-[#2c3e50] text-white text-center p-2">
       Dicionário Visual de Palavras Polissêmicas © 2025 - Projeto de
@@ -12,7 +15,7 @@ export const Home = () => {
 
   return (
     <div className="flex flex-col h-screen">
-      <Header />
+      <Header onIconClick={() => setSelectedWord(null)} />
       <main className="flex flex-row overflow-hidden">
         <div
           className="
@@ -20,10 +23,10 @@ export const Home = () => {
             overflow-y-auto flex-shrink-0
           "
         >
-          <WordsList />
+          <WordsList setSelectedWord={setSelectedWord} />
         </div>
-        <div className="flex-1 flex items-center justify-center overflow-y-auto p-4">
-          <WordPresentation />
+        <div className="flex-1 overflow-y-auto p-4">
+          <WordPresentation selectedWord={selectedWord} />
         </div>
       </main>
       {renderFooter()}
