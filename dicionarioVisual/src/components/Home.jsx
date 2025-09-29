@@ -4,6 +4,7 @@ import { WordPresentation } from "./WordPresentation";
 import { WordsList } from "./WordsList";
 
 export const Home = () => {
+  const [searchedWord, setSearchedWord] = useState(null);
   const [selectedWord, setSelectedWord] = useState(null);
 
   const renderFooter = () => (
@@ -15,15 +16,22 @@ export const Home = () => {
 
   return (
     <div className="flex flex-col h-screen">
-      <Header onIconClick={() => setSelectedWord(null)} />
-      <main className="flex flex-row overflow-hidden">
+      <Header
+        onIconClick={() => setSelectedWord(null)}
+        setSearchedWord={setSearchedWord}
+      />
+      <main className="flex flex-row overflow-hidden flex-1">
         <div
           className="
             w-[300px] bg-[#f8f9fa] border-r border-gray-300
             overflow-y-auto flex-shrink-0
           "
         >
-          <WordsList setSelectedWord={setSelectedWord} />
+          <WordsList
+            setSelectedWord={setSelectedWord}
+            isHome={!selectedWord}
+            searchedWord={searchedWord}
+          />
         </div>
         <div className="flex-1 overflow-y-auto p-4">
           <WordPresentation selectedWord={selectedWord} />
