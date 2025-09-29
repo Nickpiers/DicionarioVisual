@@ -7,3 +7,14 @@ Esse site não está concluído em termos de conteúdo.
 Há um exemplo completo para a palavra banco.
 
 O site demanda ser rodado em um servidor web, ainda que local, pois envolve a abertura de arquivos.
+
+=========================
+
+Para rodar localmente de forma fácil, rode no terminal na pasta do local do projeto (Obs.: Esses comandos somente funcionam caso tenha o node instalado na máquina. Caso o contrário, deve ser procurado outra forma para rodar o projeto):
+
+1. npm install -g http-server
+2. http-server .
+3. Deve aparecer no terminal algo como 
+Available on:
+  http://192.168.0.30:8080
+  http://127.0.0.1:8080
