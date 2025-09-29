@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [SNAPSHOT]
 
+## [0.0.6] - 29 Set. 2025
+
+### Added
+
+- Adicionando vídeo
+- Adicionando filtro de pesquisa
+
 ## [0.0.5] - 29 Set. 2025
 
 ### Added
