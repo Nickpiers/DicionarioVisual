@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Home } from "./components/Home";
+import { AdminPortalLogin } from "./AdminPortal/components/AdminPortalLogin";
 import { AdminPortalHome } from "./AdminPortal/components/AdminPortalHome";
 
 export const DicionarioVisual = () => {
@@ -7,7 +8,8 @@ export const DicionarioVisual = () => {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/admin-portal" element={<AdminPortalHome />} />
+        <Route path="/admin-portal/login" element={<AdminPortalLogin />} />
+        <Route path="/admin-portal/home" element={<AdminPortalHome />} />
       </Routes>
     </BrowserRouter>
   );

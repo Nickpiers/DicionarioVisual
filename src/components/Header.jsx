@@ -9,9 +9,9 @@ export const Header = ({
   onIconClick,
   setSearchedWord,
   isPortal = false,
+  headerTitle,
   redirectAction,
 }) => {
-  const headerTitle = isPortal ? TITLE_ADMIN_PORTAL : TITLE_DICTIONARY;
   const redirectTitle = isPortal ? TITLE_DICTIONARY : TITLE_ADMIN_PORTAL;
 
   const renderRedirectButton = () => (
