@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [SNAPSHOT]
 
+## [0.0.9] - 09 Nov. 2025
+
+### Added
+
+- Adicionando telas de login e cadastro de palavra
+
 ## [0.0.8] - 09 Nov. 2025
 
 ### Added

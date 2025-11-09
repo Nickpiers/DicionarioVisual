@@ -1,4 +1,5 @@
 export const paths = {
   dictionaryHome: "/",
-  adminPortal: "/admin-portal",
+  adminPortalLogin: "/admin-portal/login",
+  adminPortalHome: "/admin-portal/home",
 };
