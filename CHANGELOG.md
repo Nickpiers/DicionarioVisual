@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [SNAPSHOT]
 
+## [0.0.8] - 09 Nov. 2025
+
+### Added
+
+- Adicionando rota pra redirecionar ao portal admin
+
 ## [0.0.7] - 09 Nov. 2025
 
 ### Changed

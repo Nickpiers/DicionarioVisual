@@ -20,6 +20,23 @@ header {
   border: none;
 }
 
+.redirect-button {
+  padding: 0.75rem;
+  border-radius: 9999px;
+  font-size: 2.75rem;
+  color: #60a5fa;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  background-color: transparent;
+  border: none;
+}
+
+.redirect-button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+  color: #93c5fd;
+}
+
 .home-button:hover {
   background-color: rgba(255, 255, 255, 0.2);
   transform: scale(1.1);
@@ -44,4 +61,10 @@ header {
 .logo-text p {
   font-size: 1rem;
   opacity: 0.8;
+}
+
+.right-section {
+  display: flex;
+  align-items: center;
+  gap: 20px;
 }
