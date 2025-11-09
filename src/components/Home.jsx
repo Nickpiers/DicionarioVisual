@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Header } from "./Header";
-import { WordPresentation } from "./WordPresentation";
-import { WordsList } from "./WordsList";
+import { WordsList } from "../Dictionary/components/WordsList";
+import { WordPresentation } from "../Dictionary/components/WordPresentation";
 
 export const Home = () => {
   const [searchedWord, setSearchedWord] = useState(null);
