@@ -13,6 +13,7 @@ export const AdminPortalHome = () => {
   const [video, setVideo] = useState(null);
   const [meanings, setMeanings] = useState([
     { significado: "", descricao: "", exemplo: "" },
+    { significado: "", descricao: "", exemplo: "" },
   ]);
 
   const handleAddMeaning = () => {

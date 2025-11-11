@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [SNAPSHOT]
 
+## [0.0.10] - 11 Nov. 2025
+
+### Added
+
+- Modificando pra manter o padrão como dois significados obrigatórios
+
 ## [0.0.9] - 09 Nov. 2025
 
 ### Added
