@@ -12,7 +12,7 @@ export const AddMeaningCard = ({ meanings, setMeanings }) => {
     setMeanings(newMeanings);
   };
 
-  const isFirstMeaning = (index) => index === 0;
+  const isFirstOrSecondMeaning = (index) => index < 2;
 
   return (
     <div className="flex-1 overflow-auto">
@@ -26,7 +26,7 @@ export const AddMeaningCard = ({ meanings, setMeanings }) => {
             key={index}
             className="relative border border-gray-300 rounded-xl p-5 bg-gray-50 shadow-sm"
           >
-            {!isFirstMeaning(index) && (
+            {!isFirstOrSecondMeaning(index) && (
               <button
                 onClick={() => handleRemoveMeaning(index)}
                 className="absolute top-2 right-2 text-red-500 hover:text-red-700 cursor-pointer"
