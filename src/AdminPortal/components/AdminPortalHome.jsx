@@ -2,9 +2,10 @@ import { useNavigate } from "react-router-dom";
 import { paths } from "../../controllers/paths";
 import { Header } from "../../components/Header";
 import { TITLE_PAGE_ADMIN_PORTAL_HOME } from "../../controllers/constants";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaPlus, FaUpload } from "react-icons/fa";
 import { AddMeaningCard } from "./AddMeaningCard";
+import { scheduleTokenCheck } from "../controllers.js/loginController";
 
 export const AdminPortalHome = () => {
   const navigate = useNavigate();
@@ -20,9 +21,7 @@ export const AdminPortalHome = () => {
     setMeanings([...meanings, { significado: "", descricao: "", exemplo: "" }]);
   };
 
-  const handleUpload = () => {
-    alert("Palavra cadastrada com sucesso!");
-  };
+  const handleUpload = async () => {};
 
   const renderWordInput = () => (
     <div className="col-span-2">
@@ -84,6 +83,10 @@ export const AdminPortalHome = () => {
       Acessibilidade e Inclusão Digital
     </footer>
   );
+
+  useEffect(() => {
+    scheduleTokenCheck();
+  }, []);
 
   return (
     <div className="flex flex-col h-screen">
