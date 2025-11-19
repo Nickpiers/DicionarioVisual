@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [SNAPSHOT]
 
+## [0.0.11] - 19 Nov. 2025
+
+### Added
+
+- Adicionando chamadas rest de login
+
 ## [0.0.10] - 11 Nov. 2025
 
 ### Added
