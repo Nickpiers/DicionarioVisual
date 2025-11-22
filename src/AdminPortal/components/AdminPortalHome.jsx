@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { paths } from "../../controllers/paths";
 import { Header } from "../../components/Header";
-import { TITLE_PAGE_ADMIN_PORTAL_HOME } from "../../controllers/constants";
+import { TITLE_PAGE_ADMIN_PORTAL } from "../../controllers/constants";
 import { useEffect, useState } from "react";
 import { FaPlus, FaUpload } from "react-icons/fa";
 import { AddMeaningCard } from "./AddMeaningCard";
@@ -84,6 +84,11 @@ export const AdminPortalHome = () => {
     </footer>
   );
 
+  const logout = (path) => {
+    localStorage.removeItem("token");
+    navigate(path);
+  };
+
   useEffect(() => {
     scheduleTokenCheck();
   }, []);
@@ -91,10 +96,11 @@ export const AdminPortalHome = () => {
   return (
     <div className="flex flex-col h-screen">
       <Header
-        onIconClick={() => {}}
+        onIconClick={() => logout(paths.adminPortalLogin)}
         isPortal
-        redirectAction={() => navigate(paths.dictionaryHome)}
-        headerTitle={TITLE_PAGE_ADMIN_PORTAL_HOME}
+        redirectAction={() => logout(paths.dictionaryHome)}
+        headerTitle={TITLE_PAGE_ADMIN_PORTAL}
+        headerLogo="logout"
       />
       <main className="flex flex-col flex-1 p-8 overflow-auto">
         <h1 className="text-3xl font-bold text-[#2c3e50] mb-8 text-center">

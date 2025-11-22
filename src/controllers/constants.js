@@ -1,5 +1,4 @@
 export const TITLE_DICTIONARY = "Dicionário Visual";
 export const TITLE_ADMIN_PORTAL = "Portal Administrativo";
 
-export const TITLE_PAGE_ADMIN_PORTAL_HOME = "Portal Administrativo - Home";
-export const TITLE_PAGE_ADMIN_PORTAL_LOGIN = "Portal Administrativo - Login";
+export const TITLE_PAGE_ADMIN_PORTAL = "Portal Administrativo";
