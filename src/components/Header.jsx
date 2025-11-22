@@ -4,6 +4,7 @@ import { FaHome, FaSearch, FaBuilding, FaBook } from "react-icons/fa";
 import { TITLE_DICTIONARY, TITLE_ADMIN_PORTAL } from '../controllers/constants'
 
 import "../style/Header.css";
+import { iconsList } from "../Dictionary/controllers/iconsList";
 
 export const Header = ({
   onIconClick,
@@ -11,6 +12,7 @@ export const Header = ({
   isPortal = false,
   headerTitle,
   redirectAction,
+  headerLogo = "home",
 }) => {
   const redirectTitle = isPortal ? TITLE_DICTIONARY : TITLE_ADMIN_PORTAL;
 
@@ -30,16 +32,24 @@ export const Header = ({
   return (
     <header>
       <div className="logo">
-        <button
-          id="home-button"
-          title="Página Inicial"
-          className="home-button"
-          onClick={onIconClick}
-        >
-          <FaHome />
-        </button>
+        {headerLogo && (
+          <button
+            id="home-button"
+            title="Página Inicial"
+            className="home-button"
+            onClick={onIconClick}
+          >
+            {iconsList[headerLogo]}
+          </button>
+        )}
         <div className="logo-text">
-          <h1 className="text-3xl font-bold mb-3">{headerTitle}</h1>
+          <h1
+            id="home-title"
+            className="home-title text-3xl font-bold mb-3"
+            onClick={onIconClick}
+          >
+            {headerTitle}
+          </h1>
           <p className="text-sm">
             Palavras Polissêmicas - Comunicação Acessível
           </p>

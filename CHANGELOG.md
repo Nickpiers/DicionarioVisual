@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [SNAPSHOT]
 
+## [0.0.12] - 22 Nov. 2025
+
+### Added
+
+- Tratativas de fluxo
+
 ## [0.0.11] - 19 Nov. 2025
 
 ### Added

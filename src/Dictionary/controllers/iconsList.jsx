@@ -1,9 +1,12 @@
 // prettier-ignore
-import { FaAppleAlt, FaExclamationTriangle, FaGlassWhiskey, FaGrinTongue, FaGripLines, FaRunning, FaSadTear, FaSearch, FaUniversity } from "react-icons/fa";
+import { FaAppleAlt, FaExclamationTriangle, FaGlassWhiskey, FaGrinTongue, FaGripLines, FaRunning, FaSadTear, FaSearch, FaUniversity, FaHome } from "react-icons/fa";
 // prettier-ignore
 import { FaAnchor, FaBacon, FaBars, FaBicycle, FaBolt, FaBowlRice, FaCarBattery, FaCat, FaChessKing, FaCity, FaCoins, FaComment, FaCommentDots, FaCouch, FaDatabase, FaDoorOpen, FaFeather, FaFire, FaGavel, FaGun, FaImage, FaIndustry, FaKey, FaLanguage, FaLeaf, FaLightbulb, FaMountain, FaNotesMedical, FaRulerCombined, FaSailboat, FaShirt, FaSitemap, FaStar, FaTable, FaUser, FaUsers, FaUsersGear, FaUserShield, FaUserTie, FaWater } from "react-icons/fa6";
+import { TbLogout2 } from "react-icons/tb";
 
 export const iconsList = {
+  home: <FaHome />,
+  logout: <TbLogout2 />,
   warning: <FaExclamationTriangle />,
   gripLines: <FaGripLines />,
   bars: <FaBars />,

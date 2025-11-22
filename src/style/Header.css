@@ -20,6 +20,10 @@ header {
   border: none;
 }
 
+.home-title:hover {
+  cursor: pointer;
+}
+
 .redirect-button {
   padding: 0.75rem;
   border-radius: 9999px;

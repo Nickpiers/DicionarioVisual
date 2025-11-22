@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Header } from "../../components/Header";
 import { paths } from "../../controllers/paths";
 import { FaUser } from "react-icons/fa";
-import { TITLE_PAGE_ADMIN_PORTAL_LOGIN } from "../../controllers/constants";
+import { TITLE_PAGE_ADMIN_PORTAL } from "../../controllers/constants";
 import { useState } from "react";
 import { loginUser } from "../controllers.js/loginController";
 
@@ -73,7 +73,8 @@ export const AdminPortalLogin = () => {
         onIconClick={() => {}}
         isPortal
         redirectAction={() => navigate(paths.dictionaryHome)}
-        headerTitle={TITLE_PAGE_ADMIN_PORTAL_LOGIN}
+        headerTitle={TITLE_PAGE_ADMIN_PORTAL}
+        headerLogo=""
       />
       {renderLogin()}
       {renderFooter()}
