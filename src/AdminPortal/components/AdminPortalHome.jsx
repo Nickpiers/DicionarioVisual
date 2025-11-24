@@ -6,22 +6,33 @@ import { useEffect, useState } from "react";
 import { FaPlus, FaUpload } from "react-icons/fa";
 import { AddMeaningCard } from "./AddMeaningCard";
 import { scheduleTokenCheck } from "../controllers.js/loginController";
+import { uploadWord } from "../controllers.js/wordRestController";
 
 export const AdminPortalHome = () => {
   const navigate = useNavigate();
 
   const [word, setWord] = useState("");
-  const [video, setVideo] = useState(null);
+  const [videoUrl, setVideoUrl] = useState(null);
   const [meanings, setMeanings] = useState([
-    { significado: "", descricao: "", exemplo: "" },
-    { significado: "", descricao: "", exemplo: "" },
+    { description: "", example: "" },
+    { description: "", example: "" },
   ]);
 
   const handleAddMeaning = () => {
-    setMeanings([...meanings, { significado: "", descricao: "", exemplo: "" }]);
+    setMeanings([...meanings, { description: "", example: "" }]);
   };
 
-  const handleUpload = async () => {};
+  const handleUpload = async () => {
+    try {
+      await uploadWord({
+        term: word,
+        videoUrl,
+        meanings,
+      });
+    } catch (error) {
+      console.warn("error", error);
+    }
+  };
 
   const renderWordInput = () => (
     <div className="col-span-2">
@@ -41,21 +52,15 @@ export const AdminPortalHome = () => {
   const renderVideoUpload = () => (
     <div className="col-span-1">
       <label className="block text-lg font-medium mb-2 text-[#2c3e50]">
-        Upload de Vídeo
+        Link do Vídeo
       </label>
-      <label className="cursor-pointer flex items-center justify-center border-2 border-dashed border-gray-400 rounded-md p-6 hover:bg-gray-50 transition">
-        <FaUpload className="text-2xl text-[#2c3e50] mr-2" />
-        <span className="text-[#2c3e50] font-medium">Anexar vídeo</span>
-        <input
-          type="file"
-          accept="video/*"
-          onChange={(e) => setVideo(e.target.files[0])}
-          className="hidden"
-        />
-      </label>
-      {video && (
-        <p className="text-sm text-gray-600 mt-2 truncate">{video.name}</p>
-      )}
+      <input
+        type="text"
+        placeholder="Digite o link do vídeo..."
+        value={videoUrl}
+        onChange={(e) => setVideoUrl(e.target.value)}
+        className="w-full border border-gray-300 rounded-md p-3 text-lg focus:outline-none focus:ring-2 focus:ring-[#2c3e50]"
+      />
     </div>
   );
 
