@@ -40,21 +40,11 @@ export const AddMeaningCard = ({ meanings, setMeanings }) => {
               Significado {index + 1}
             </h3>
 
-            <input
-              type="text"
-              placeholder="Significado..."
-              value={meaning.significado}
-              onChange={(e) =>
-                handleChangeMeaning(index, "significado", e.target.value)
-              }
-              className="w-full border border-gray-300 rounded-md p-2 mb-3 text-base focus:outline-none focus:ring-2 focus:ring-[#2c3e50]"
-            />
-
             <textarea
               placeholder="Descrição..."
-              value={meaning.descricao}
+              value={meaning.description}
               onChange={(e) =>
-                handleChangeMeaning(index, "descricao", e.target.value)
+                handleChangeMeaning(index, "description", e.target.value)
               }
               className="w-full border border-gray-300 rounded-md p-2 mb-3 text-base focus:outline-none focus:ring-2 focus:ring-[#2c3e50]"
               rows={2}
@@ -63,9 +53,9 @@ export const AddMeaningCard = ({ meanings, setMeanings }) => {
             <input
               type="text"
               placeholder="Exemplo..."
-              value={meaning.exemplo}
+              value={meaning.example}
               onChange={(e) =>
-                handleChangeMeaning(index, "exemplo", e.target.value)
+                handleChangeMeaning(index, "example", e.target.value)
               }
               className="w-full border border-gray-300 rounded-md p-2 text-base focus:outline-none focus:ring-2 focus:ring-[#2c3e50]"
             />

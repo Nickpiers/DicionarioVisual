@@ -1,8 +1,8 @@
 import { requestEndpoint } from "./requestController";
 
-export const uploadWord = async () => {
+export const uploadWord = async ({ term, videoUrl, meanings }) => {
   const request = {
-    restParams: { uri: "", params: {} },
+    restParams: { uri: "/words", params: { term, videoUrl, meanings } },
     method: "POST",
   };
   try {
@@ -14,7 +14,7 @@ export const uploadWord = async () => {
 
 export const retrieveWords = async () => {
   const request = {
-    restParams: { uri: "" },
+    restParams: { uri: "/words" },
   };
   try {
     const words = await requestEndpoint(request);

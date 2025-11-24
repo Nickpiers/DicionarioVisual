@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [SNAPSHOT]
 
+## [0.0.13] - 24 Nov. 2025
+
+### Added
+
+- Integração inicial do upload de palavras
+
 ## [0.0.12] - 22 Nov. 2025
 
 ### Added
