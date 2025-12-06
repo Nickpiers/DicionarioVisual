@@ -1,9 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
-import { words } from "../controllers/words";
+import { retrieveWords } from "../../AdminPortal/controllers.js/wordRestController";
+import { formattedWordInformation } from "../controllers/wordsController";
 
 export const WordsList = ({ setSelectedWord, isHome, searchedWord }) => {
   const [selected, setSelected] = useState(null);
+  const [words, setWords] = useState([]);
 
   const selectWord = (index, item) => {
     setSelected(index);
@@ -21,6 +23,16 @@ export const WordsList = ({ setSelectedWord, isHome, searchedWord }) => {
       ? "bg-blue-100 border-blue-500"
       : "hover:bg-gray-100 border-transparent";
   };
+
+  useEffect(() => {
+    const loadWords = async () => {
+      const loadedWords = await retrieveWords();
+      const wordsFormatted = formattedWordInformation(loadedWords);
+      setWords(wordsFormatted);
+    };
+
+    loadWords();
+  }, []);
 
   useEffect(() => {
     if (isHome) setSelected(null);

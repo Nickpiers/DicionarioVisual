@@ -30,10 +30,10 @@ export default api;
 export const requestEndpoint = async ({
   restParams,
   method = "GET",
-  isLogin = false,
+  isNoToken = false,
 }) => {
   const token = localStorage.getItem("token");
-  if (!token && !isLogin) return;
+  if (!token && !isNoToken) return;
 
   const { uri, params } = restParams;
   try {

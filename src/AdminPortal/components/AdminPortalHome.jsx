@@ -6,7 +6,8 @@ import { useEffect, useState } from "react";
 import { FaPlus, FaUpload } from "react-icons/fa";
 import { AddMeaningCard } from "./AddMeaningCard";
 import { scheduleTokenCheck } from "../controllers.js/loginController";
-import { uploadWord } from "../controllers.js/wordRestController";
+// prettier-ignore
+import { capitalizeFirstLetter, uploadWord } from "../controllers.js/wordRestController";
 
 export const AdminPortalHome = () => {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ export const AdminPortalHome = () => {
   const handleUpload = async () => {
     try {
       await uploadWord({
-        term: word,
+        term: capitalizeFirstLetter(word),
         videoUrl,
         meanings,
       });

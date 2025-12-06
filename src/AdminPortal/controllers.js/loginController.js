@@ -5,7 +5,7 @@ export const loginUser = async (email, password) => {
   const request = {
     restParams: { uri: "auth/login", params: { email, password } },
     method: "POST",
-    isLogin: true,
+    isNoToken: true,
   };
   try {
     const { token } = await requestEndpoint(request);

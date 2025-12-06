@@ -1,4 +1,5 @@
 import { FaTrash } from "react-icons/fa";
+import { capitalizeFirstLetter } from "../controllers.js/wordRestController";
 
 export const AddMeaningCard = ({ meanings, setMeanings }) => {
   const handleRemoveMeaning = (index) => {
@@ -44,7 +45,11 @@ export const AddMeaningCard = ({ meanings, setMeanings }) => {
               placeholder="Descrição..."
               value={meaning.description}
               onChange={(e) =>
-                handleChangeMeaning(index, "description", e.target.value)
+                handleChangeMeaning(
+                  index,
+                  "description",
+                  capitalizeFirstLetter(e.target.value)
+                )
               }
               className="w-full border border-gray-300 rounded-md p-2 mb-3 text-base focus:outline-none focus:ring-2 focus:ring-[#2c3e50]"
               rows={2}
@@ -55,7 +60,11 @@ export const AddMeaningCard = ({ meanings, setMeanings }) => {
               placeholder="Exemplo..."
               value={meaning.example}
               onChange={(e) =>
-                handleChangeMeaning(index, "example", e.target.value)
+                handleChangeMeaning(
+                  index,
+                  "example",
+                  capitalizeFirstLetter(e.target.value)
+                )
               }
               className="w-full border border-gray-300 rounded-md p-2 text-base focus:outline-none focus:ring-2 focus:ring-[#2c3e50]"
             />

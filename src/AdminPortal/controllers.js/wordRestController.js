@@ -1,5 +1,9 @@
 import { requestEndpoint } from "./requestController";
 
+export const capitalizeFirstLetter = (val) => {
+  return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+};
+
 export const uploadWord = async ({ term, videoUrl, meanings }) => {
   const request = {
     restParams: { uri: "/words", params: { term, videoUrl, meanings } },
@@ -15,10 +19,11 @@ export const uploadWord = async ({ term, videoUrl, meanings }) => {
 export const retrieveWords = async () => {
   const request = {
     restParams: { uri: "/words" },
+    isNoToken: true,
   };
   try {
-    const words = await requestEndpoint(request);
-    console.warn(words, "words");
+    const response = await requestEndpoint(request);
+    return response;
   } catch (error) {
     throw new Error("Erro ao recuperar palavras: ", error);
   }
