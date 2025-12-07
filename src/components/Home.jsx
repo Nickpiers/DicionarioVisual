@@ -5,21 +5,15 @@ import { WordPresentation } from "../Dictionary/components/WordPresentation";
 import { useNavigate } from "react-router-dom";
 import { paths } from "../controllers/paths";
 import { TITLE_DICTIONARY } from "../controllers/constants";
+import "../style/Home.css";
 
 export const Home = () => {
   const navigate = useNavigate();
   const [searchedWord, setSearchedWord] = useState(null);
   const [selectedWord, setSelectedWord] = useState(null);
 
-  const renderFooter = () => (
-    <footer className="bg-[#2c3e50] text-white text-center p-2">
-      Dicionário Visual de Palavras Polissêmicas © 2025 - Projeto de
-      Acessibilidade e Inclusão Digital
-    </footer>
-  );
-
   return (
-    <div className="flex flex-col h-screen">
+    <div className="home-container">
       <Header
         onIconClick={() => setSelectedWord(null)}
         setSelectedWord={setSelectedWord}
@@ -27,27 +21,28 @@ export const Home = () => {
         redirectAction={() => navigate(paths.adminPortalLogin)}
         headerTitle={TITLE_DICTIONARY}
       />
-      <main className="flex flex-row overflow-hidden flex-1">
-        <div
-          className="
-            w-[300px] bg-[#f8f9fa] border-r border-gray-300
-            overflow-y-auto flex-shrink-0
-          "
-        >
+
+      <main className="main-content">
+        <div className="sidebar">
           <WordsList
             setSelectedWord={setSelectedWord}
             isHome={!selectedWord}
             searchedWord={searchedWord}
           />
         </div>
-        <div className="flex-1 overflow-y-auto p-4">
+
+        <div className="presentation-area">
           <WordPresentation
             selectedWord={selectedWord}
             searchedWord={searchedWord}
           />
         </div>
       </main>
-      {renderFooter()}
+
+      <footer className="footer">
+        Dicionário Visual de Palavras Polissêmicas © 2025 - Projeto de
+        Acessibilidade e Inclusão Digital
+      </footer>
     </div>
   );
 };
