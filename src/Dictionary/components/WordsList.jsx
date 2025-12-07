@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { retrieveWords } from "../../AdminPortal/controllers.js/wordRestController";
 import { formattedWordInformation } from "../controllers/wordsController";
+import "../style/WordsList.css";
 
 export const WordsList = ({ setSelectedWord, isHome, searchedWord }) => {
   const [selected, setSelected] = useState(null);
@@ -20,12 +21,6 @@ export const WordsList = ({ setSelectedWord, isHome, searchedWord }) => {
       )
     : words;
 
-  const selectedStyle = (index) => {
-    return selected === index
-      ? "bg-blue-100 border-blue-500"
-      : "hover:bg-gray-100 border-transparent";
-  };
-
   useEffect(() => {
     const loadWords = async () => {
       try {
@@ -37,7 +32,6 @@ export const WordsList = ({ setSelectedWord, isHome, searchedWord }) => {
         console.log("Erro ao recuperar palavras", error);
       }
     };
-
     loadWords();
   }, []);
 
@@ -60,26 +54,21 @@ export const WordsList = ({ setSelectedWord, isHome, searchedWord }) => {
 
   if (loading)
     return (
-      <div className="flex justify-center items-center h-40">
-        <div className="w-12 h-12 border-4 border-blue-400 border-dashed rounded-full animate-spin"></div>
+      <div className="loader-container">
+        <div className="loader-spinner"></div>
       </div>
     );
 
   return (
-    <div className="word-list flex flex-col items-center justify-center">
+    <div className="word-list">
       {wordNotFound ? (
-        <div className="text-gray-500 text-xl font-semibold py-10">
-          Palavra não encontrada
-        </div>
+        <div className="word-not-found">Palavra não encontrada</div>
       ) : (
         filteredWords.map((item, index) => (
           <button
             key={index}
             onClick={() => selectWord(index, item)}
-            className={`
-            px-6 py-4 cursor-pointer text-lg font-medium border-l-5 w-full text-left
-            ${selectedStyle(index)}
-          `}
+            className={`word-item ${selected === index ? "selected" : ""}`}
           >
             {item.word}
           </button>
