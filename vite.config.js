@@ -8,17 +8,17 @@ export default defineConfig({
   server: {
     proxy: {
       "/auth": {
-        target: "http://localhost:3000",
+        target: "https://dicionariovisualapi.onrender.com",
         changeOrigin: true,
         secure: false,
       },
       "/users": {
-        target: "http://localhost:3000",
+        target: "https://dicionariovisualapi.onrender.com",
         changeOrigin: true,
         secure: false,
       },
       "/words": {
-        target: "http://localhost:3000",
+        target: "https://dicionariovisualapi.onrender.com",
         changeOrigin: true,
         secure: false,
       },

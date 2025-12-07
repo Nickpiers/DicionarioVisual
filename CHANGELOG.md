@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [SNAPSHOT]
 
+## [0.0.17] - 06 Dez. 2025
+
+### Added
+
+- Alterando o apontamento do backend.
+
 ## [0.0.16] - 06 Dez. 2025
 
 ### Added
