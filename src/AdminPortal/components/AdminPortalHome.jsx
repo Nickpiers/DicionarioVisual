@@ -87,7 +87,6 @@ export const AdminPortalHome = () => {
         handleUpload={handleUpload}
         navigate={navigate}
       />
-      <UploadWordsButton />
     </div>
   );
 };
