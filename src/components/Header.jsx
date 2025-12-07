@@ -1,13 +1,13 @@
-import { FaHome, FaSearch, FaBuilding, FaBook } from "react-icons/fa";
+import { FaSearch, FaBuilding, FaBook } from "react-icons/fa";
 
-// prettier-ignore
-import { TITLE_DICTIONARY, TITLE_ADMIN_PORTAL } from '../controllers/constants'
+import { TITLE_DICTIONARY, TITLE_ADMIN_PORTAL } from "../controllers/constants";
 
 import "../style/Header.css";
 import { iconsList } from "../Dictionary/controllers/iconsList";
 
 export const Header = ({
   onIconClick,
+  setSelectedWord,
   setSearchedWord,
   isPortal = false,
   headerTitle,
@@ -28,6 +28,12 @@ export const Header = ({
       </button>
     </div>
   );
+
+  const onChangeSearch = (event) => {
+    const valueSearch = event.target.value;
+    setSearchedWord(valueSearch);
+    if (!valueSearch) setSelectedWord(null);
+  };
 
   return (
     <header>
@@ -59,12 +65,16 @@ export const Header = ({
       <div className="right-section">
         {!isPortal && (
           <div className="relative max-w-[400px]">
-            <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/80" />
+            <FaSearch
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/80"
+              aria-hidden="true"
+            />
             <input
               type="text"
+              aria-label="Pesquisar palavra"
               placeholder="Pesquisar palavra..."
               className="w-full pl-12 pr-4 py-3 text-white text-lg rounded-full bg-white/15 placeholder-white/70 focus:outline-none focus:bg-white/25 focus:ring-3 focus:ring-blue-400/50 transition"
-              onChange={(event) => setSearchedWord(event.target.value)}
+              onChange={(event) => onChangeSearch(event)}
             />
           </div>
         )}

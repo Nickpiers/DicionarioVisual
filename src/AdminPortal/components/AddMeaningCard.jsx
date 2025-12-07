@@ -57,6 +57,7 @@ export const AddMeaningCard = ({ meanings, setMeanings }) => {
 
             <input
               type="text"
+              aria-label="Exemplo da frase"
               placeholder="Exemplo..."
               value={meaning.example}
               onChange={(e) =>

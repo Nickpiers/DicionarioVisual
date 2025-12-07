@@ -5,7 +5,7 @@ export const WelcomeScreen = () => {
   const renderSobreEsteSite = () => (
     <div className="bg-blue-50 p-6 rounded-xl shadow-sm">
       <div className="flex items-center gap-3 mb-3">
-        <FaInfoCircle className="text-blue-600 text-3xl" />
+        <FaInfoCircle className="text-blue-600 text-3xl" aria-hidden="true" />
         <h2 className="font-semibold text-lg">Sobre este site</h2>
       </div>
       <p className="mb-2">
@@ -14,11 +14,11 @@ export const WelcomeScreen = () => {
       </p>
       <ul className="list-disc pl-6 text-gray-700">
         <li className="flex items-center gap-2">
-          <FaUsers className="text-gray-600 text-2xl" />
+          <FaUsers className="text-gray-600 text-2xl" aria-hidden="true" />
           Comunidade surda
         </li>
         <li className="flex items-center gap-2">
-          <FaLanguage className="text-gray-600 text-2xl" />
+          <FaLanguage className="text-gray-600 text-2xl" aria-hidden="true" />
           Aprendizes de português como segunda língua
         </li>
       </ul>
@@ -28,7 +28,7 @@ export const WelcomeScreen = () => {
   const renderPalavrasPolissemicas = () => (
     <div className="bg-blue-50 p-6 rounded-xl shadow-sm">
       <div className="flex items-center gap-3 mb-3">
-        <FaBookOpen className="text-blue-600 text-3xl" />
+        <FaBookOpen className="text-blue-600 text-3xl" aria-hidden="true" />
         <h2 className="font-semibold text-lg">Palavras Polissêmicas</h2>
       </div>
       <p className="text-gray-700">
@@ -41,7 +41,7 @@ export const WelcomeScreen = () => {
   const renderVideo = () => (
     <div className="bg-blue-50 p-6 rounded-xl shadow-sm">
       <div className="flex items-center gap-3 mb-3">
-        <FaVideo className="text-blue-600 text-3xl" />
+        <FaVideo className="text-blue-600 text-3xl" aria-hidden="true" />
         <h2 className="font-semibold text-lg">Vídeos em LIBRAS</h2>
       </div>
       <p className="text-gray-700">
@@ -54,7 +54,10 @@ export const WelcomeScreen = () => {
   const renderComoUsar = () => (
     <div className="bg-yellow-50 p-6 rounded-xl shadow-sm border border-yellow-200">
       <div className="flex items-center gap-3 mb-3">
-        <FaQuestionCircle className="text-yellow-600 text-3xl" />
+        <FaQuestionCircle
+          className="text-yellow-600 text-3xl"
+          aria-hidden="true"
+        />
         <h2 className="font-semibold text-lg">Como usar este dicionário:</h2>
       </div>
       <ol className="list-decimal pl-6 text-gray-700">

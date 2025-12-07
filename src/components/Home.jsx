@@ -22,6 +22,7 @@ export const Home = () => {
     <div className="flex flex-col h-screen">
       <Header
         onIconClick={() => setSelectedWord(null)}
+        setSelectedWord={setSelectedWord}
         setSearchedWord={setSearchedWord}
         redirectAction={() => navigate(paths.adminPortalLogin)}
         headerTitle={TITLE_DICTIONARY}
@@ -40,7 +41,10 @@ export const Home = () => {
           />
         </div>
         <div className="flex-1 overflow-y-auto p-4">
-          <WordPresentation selectedWord={selectedWord} />
+          <WordPresentation
+            selectedWord={selectedWord}
+            searchedWord={searchedWord}
+          />
         </div>
       </main>
       {renderFooter()}

@@ -73,16 +73,16 @@ export const WordsList = ({ setSelectedWord, isHome, searchedWord }) => {
         </div>
       ) : (
         filteredWords.map((item, index) => (
-          <div
+          <button
             key={index}
             onClick={() => selectWord(index, item)}
             className={`
-            px-6 py-4 cursor-pointer text-lg font-medium border-l-5 w-full
+            px-6 py-4 cursor-pointer text-lg font-medium border-l-5 w-full text-left
             ${selectedStyle(index)}
           `}
           >
             {item.word}
-          </div>
+          </button>
         ))
       )}
     </div>

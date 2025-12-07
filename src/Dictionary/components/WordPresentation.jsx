@@ -2,10 +2,18 @@ import { MeaningCards } from "./MeaningCards";
 import { WelcomeScreen } from "./WelcomeScreen";
 import ReactPlayer from "react-player";
 
-export const WordPresentation = ({ selectedWord }) => {
-  if (!selectedWord) {
+export const WordPresentation = ({ selectedWord, searchedWord }) => {
+  if (!selectedWord || (!searchedWord && !selectedWord)) {
     return (
       <div className="flex flex-1 items-center justify-center">
+        <div className="w-full max-w-3xl mx-auto mb-6 rounded-lg shadow-md">
+          <ReactPlayer
+            src="https://www.youtube.com/watch?v=ZFwaDz87uP0"
+            controls
+            width="100%"
+            height="480px"
+          />
+        </div>
         <WelcomeScreen />
       </div>
     );
@@ -13,7 +21,10 @@ export const WordPresentation = ({ selectedWord }) => {
 
   const { meanings, word: title, video } = selectedWord;
   return (
-    <div className="flex flex-col p-8">
+    <div
+      className="flex flex-col p-8"
+      aria-label={`palavra-${title}-selecionada`}
+    >
       <h2 className="text-4xl font-bold">{title}</h2>
       <hr className="my-4 border-t border-gray-300" />
       {video && (

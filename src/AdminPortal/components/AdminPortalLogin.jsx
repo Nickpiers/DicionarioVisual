@@ -41,7 +41,10 @@ export const AdminPortalLogin = () => {
   const renderLogin = () => (
     <main className="flex flex-col items-center justify-center flex-1 bg-gray-100 mb-25">
       <div className="bg-white p-8 rounded-xl shadow-md w-100 text-center mb-5">
-        <FaUser className="text-7xl text-[#2c3e50] mx-auto mb-4" />
+        <FaUser
+          className="text-7xl text-[#2c3e50] mx-auto mb-4"
+          aria-hidden="true"
+        />
         <h1 className="text-xl font-semibold mb-6 text-[#2c3e50]">Login</h1>
         {loading ? (
           loader
@@ -54,6 +57,7 @@ export const AdminPortalLogin = () => {
           >
             <input
               type="text"
+              aria-label="Campo de usuário"
               placeholder="Usuário"
               className="w-full border rounded-md p-2 mb-3"
               value={email}
@@ -61,6 +65,7 @@ export const AdminPortalLogin = () => {
             />
             <input
               type="password"
+              aria-label="Campo de senha"
               placeholder="Senha"
               className="w-full border rounded-md p-2 mb-4"
               value={password}
