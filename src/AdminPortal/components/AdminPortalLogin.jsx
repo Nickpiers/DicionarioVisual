@@ -11,8 +11,10 @@ export const AdminPortalLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
+    setLoading(true);
     try {
       await loginUser(email, password);
       navigate(paths.adminPortalHome);
@@ -20,6 +22,7 @@ export const AdminPortalLogin = () => {
       console.error(err);
       setError("Erro ao autenticar. Verifique suas credenciais.");
     }
+    setLoading(false);
   };
 
   const renderFooter = () => (
@@ -29,40 +32,50 @@ export const AdminPortalLogin = () => {
     </footer>
   );
 
+  const loader = (
+    <div className="flex justify-center items-center h-40">
+      <div className="w-12 h-12 border-4 border-blue-400 border-dashed rounded-full animate-spin"></div>
+    </div>
+  );
+
   const renderLogin = () => (
     <main className="flex flex-col items-center justify-center flex-1 bg-gray-100 mb-25">
       <div className="bg-white p-8 rounded-xl shadow-md w-100 text-center mb-5">
         <FaUser className="text-7xl text-[#2c3e50] mx-auto mb-4" />
         <h1 className="text-xl font-semibold mb-6 text-[#2c3e50]">Login</h1>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleLogin();
-          }}
-        >
-          <input
-            type="text"
-            placeholder="Usuário"
-            className="w-full border rounded-md p-2 mb-3"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <input
-            type="password"
-            placeholder="Senha"
-            className="w-full border rounded-md p-2 mb-4"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          {error && <p className="text-red-600 mb-3">{error}</p>}
-          <button
-            className="w-full bg-[#2c3e50] text-white py-2 rounded-md hover:bg-[#1a252f] cursor-pointer"
-            type="submit"
-            onClick={handleLogin}
+        {loading ? (
+          loader
+        ) : (
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleLogin();
+            }}
           >
-            Entrar
-          </button>
-        </form>
+            <input
+              type="text"
+              placeholder="Usuário"
+              className="w-full border rounded-md p-2 mb-3"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <input
+              type="password"
+              placeholder="Senha"
+              className="w-full border rounded-md p-2 mb-4"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            {error && <p className="text-red-600 mb-3">{error}</p>}
+            <button
+              className="w-full bg-[#2c3e50] text-white py-2 rounded-md hover:bg-[#1a252f] cursor-pointer"
+              type="submit"
+              onClick={handleLogin}
+            >
+              Entrar
+            </button>
+          </form>
+        )}
       </div>
     </main>
   );

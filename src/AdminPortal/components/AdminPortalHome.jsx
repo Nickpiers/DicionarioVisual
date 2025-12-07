@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { paths } from "../../controllers/paths";
 import { Header } from "../../components/Header";
 // prettier-ignore
-import { EXIT_MODAL, TITLE_PAGE_ADMIN_PORTAL, UPLOAD_ERROR_MODAL, UPLOAD_SUCCESS_MODAL } from "../../controllers/constants";
+import { EXIT_MODAL, LOADER_MODAL, TITLE_PAGE_ADMIN_PORTAL, UPLOAD_ERROR_MODAL, UPLOAD_SUCCESS_MODAL } from "../../controllers/constants";
 import { useEffect, useState } from "react";
 import { scheduleTokenCheck } from "../controllers.js/loginController";
 // prettier-ignore
@@ -31,6 +31,8 @@ export const AdminPortalHome = () => {
   };
 
   const handleUpload = async () => {
+    setOpenModal({ type: LOADER_MODAL });
+    await new Promise((resolve) => setTimeout(resolve, 0));
     try {
       await uploadWord({
         term: capitalizeFirstLetter(word),
