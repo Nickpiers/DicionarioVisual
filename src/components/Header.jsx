@@ -1,9 +1,7 @@
 import { FaSearch, FaBuilding, FaBook } from "react-icons/fa";
-
 import { TITLE_DICTIONARY, TITLE_ADMIN_PORTAL } from "../controllers/constants";
-
-import "../style/Header.css";
 import { iconsList } from "../Dictionary/controllers/iconsList";
+import "../style/Header.css";
 
 export const Header = ({
   onIconClick,
@@ -49,32 +47,22 @@ export const Header = ({
           </button>
         )}
         <div className="logo-text">
-          <h1
-            id="home-title"
-            className="home-title text-3xl font-bold mb-3"
-            onClick={onIconClick}
-          >
+          <h1 id="home-title" className="home-title" onClick={onIconClick}>
             {headerTitle}
           </h1>
-          <p className="text-sm">
-            Palavras Polissêmicas - Comunicação Acessível
-          </p>
+          <p>Palavras Polissêmicas - Comunicação Acessível</p>
         </div>
       </div>
 
       <div className="right-section">
         {!isPortal && (
-          <div className="relative max-w-[400px]">
-            <FaSearch
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/80"
-              aria-hidden="true"
-            />
+          <div className="search-container">
+            <FaSearch aria-hidden="true" />
             <input
               type="text"
               aria-label="Pesquisar palavra"
               placeholder="Pesquisar palavra..."
-              className="w-full pl-12 pr-4 py-3 text-white text-lg rounded-full bg-white/15 placeholder-white/70 focus:outline-none focus:bg-white/25 focus:ring-3 focus:ring-blue-400/50 transition"
-              onChange={(event) => onChangeSearch(event)}
+              onChange={onChangeSearch}
             />
           </div>
         )}
