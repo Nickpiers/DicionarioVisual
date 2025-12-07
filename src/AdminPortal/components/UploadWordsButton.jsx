@@ -22,7 +22,7 @@ export const UploadWordsButton = () => {
 
         await uploadWord({
           term: w.word,
-          videoUrl: "",
+          videoUrl: "url",
           meanings,
         });
 
