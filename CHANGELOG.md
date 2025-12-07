@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [SNAPSHOT]
 
+## [0.0.15] - 06 Dez. 2025
+
+### Added
+
+- Adicionando componente de Modal sem implementação.
+
 ## [0.0.14] - 06 Dez. 2025
 
 ### Added
