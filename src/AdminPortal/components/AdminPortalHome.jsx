@@ -9,7 +9,6 @@ import { scheduleTokenCheck } from "../controllers.js/loginController";
 import { capitalizeFirstLetter, uploadWord } from "../controllers.js/wordRestController";
 import { ModalHandler } from "./ModalHandler";
 import { PortalHomeContent } from "./PortalHomeContent";
-import { UploadWordsButton } from "./UploadWordsButton";
 
 export const AdminPortalHome = () => {
   const navigate = useNavigate();
