@@ -52,5 +52,6 @@ export const requestEndpoint = async ({
     return response.data;
   } catch (err) {
     console.warn(`Erro ${uri}:`, err);
+    throw err;
   }
 };

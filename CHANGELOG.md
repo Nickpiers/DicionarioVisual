@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [SNAPSHOT]
 
+## [0.0.16] - 06 Dez. 2025
+
+### Added
+
+- Implementação modal.
+- Função de limpar campos.
+
 ## [0.0.15] - 06 Dez. 2025
 
 ### Added

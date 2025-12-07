@@ -1,17 +1,19 @@
 import { IoMdClose } from "react-icons/io";
 
 import "../style/Modal.css";
+import { MODAL_CONTENTS } from "../controllers/constants";
 
-export const Modal = ({ isModalOpen, onClose, onConfirm }) => {
+export const Modal = ({ isModalOpen, onClose, onConfirm, type }) => {
   if (!isModalOpen) return null;
 
-  const infosModal = {
-    title: "Quer mesmo sair?",
-    content:
-      "Você terá que fazer o login novamente se quiser acessar o portal novamente!",
-    buttonTextFirst: "Sair",
-    buttonTextSecond: "Ficar",
-  };
+  const infosModal = MODAL_CONTENTS[type];
+  const {
+    title,
+    content,
+    buttonTextFirst,
+    buttonTextSecond,
+    buttonColorSecondProps,
+  } = infosModal;
 
   return (
     <section className="modal">
@@ -19,17 +21,22 @@ export const Modal = ({ isModalOpen, onClose, onConfirm }) => {
         <div className="modal-close">
           <IoMdClose onClick={onClose} className="icon-close" />
         </div>
-        <h2 className="modal-title">{infosModal.title}</h2>
-        <p className="modal-text">{infosModal.content}</p>
+        <h2 className="modal-title">{title}</h2>
+        <p className="modal-text">{content}</p>
 
         <div className="modal-actions">
-          <button className="btn-secondary" onClick={onClose}>
-            {infosModal.buttonTextSecond}
+          <button className="btn-primary" onClick={onClose}>
+            {buttonTextFirst}
           </button>
 
-          <button className="btn-danger" onClick={onConfirm}>
-            {infosModal.buttonTextFirst}
-          </button>
+          {buttonTextSecond && (
+            <button
+              className={`btn-danger ${buttonColorSecondProps}`}
+              onClick={onConfirm}
+            >
+              {buttonTextSecond}
+            </button>
+          )}
         </div>
       </article>
     </section>
