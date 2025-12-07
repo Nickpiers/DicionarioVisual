@@ -5,6 +5,7 @@ import { FaUser } from "react-icons/fa";
 import { TITLE_PAGE_ADMIN_PORTAL } from "../../controllers/constants";
 import { useState } from "react";
 import { loginUser } from "../controllers.js/loginController";
+import "../style/AdminPortalLogin.css";
 
 export const AdminPortalLogin = () => {
   const navigate = useNavigate();
@@ -26,26 +27,23 @@ export const AdminPortalLogin = () => {
   };
 
   const renderFooter = () => (
-    <footer className="bg-[#2c3e50] text-white text-center p-2">
+    <footer className="admin-footer">
       Dicionário Visual de Palavras Polissêmicas © 2025 - Projeto de
       Acessibilidade e Inclusão Digital
     </footer>
   );
 
   const loader = (
-    <div className="flex justify-center items-center h-40">
-      <div className="w-12 h-12 border-4 border-blue-400 border-dashed rounded-full animate-spin"></div>
+    <div className="loader-container">
+      <div className="loader-spinner"></div>
     </div>
   );
 
   const renderLogin = () => (
-    <main className="flex flex-col items-center justify-center flex-1 bg-gray-100 mb-25">
-      <div className="bg-white p-8 rounded-xl shadow-md w-100 text-center mb-5">
-        <FaUser
-          className="text-7xl text-[#2c3e50] mx-auto mb-4"
-          aria-hidden="true"
-        />
-        <h1 className="text-xl font-semibold mb-6 text-[#2c3e50]">Login</h1>
+    <main className="admin-login-main">
+      <div className="admin-login-box">
+        <FaUser className="admin-login-icon" aria-hidden="true" />
+        <h1 className="admin-login-title">Login</h1>
         {loading ? (
           loader
         ) : (
@@ -59,7 +57,7 @@ export const AdminPortalLogin = () => {
               type="text"
               aria-label="Campo de usuário"
               placeholder="Usuário"
-              className="w-full border rounded-md p-2 mb-3"
+              className="admin-login-input"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -67,13 +65,13 @@ export const AdminPortalLogin = () => {
               type="password"
               aria-label="Campo de senha"
               placeholder="Senha"
-              className="w-full border rounded-md p-2 mb-4"
+              className="admin-login-input"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            {error && <p className="text-red-600 mb-3">{error}</p>}
+            {error && <p className="admin-login-error">{error}</p>}
             <button
-              className="w-full bg-[#2c3e50] text-white py-2 rounded-md hover:bg-[#1a252f] cursor-pointer"
+              className="admin-login-button"
               type="submit"
               onClick={handleLogin}
             >
@@ -86,7 +84,7 @@ export const AdminPortalLogin = () => {
   );
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="admin-portal-container">
       <Header
         onIconClick={() => {}}
         isPortal
