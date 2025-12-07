@@ -1,5 +1,6 @@
 import { FaTrash } from "react-icons/fa";
 import { capitalizeFirstLetter } from "../controllers.js/wordRestController";
+import "../style/AddMeaningCard.css";
 
 export const AddMeaningCard = ({ meanings, setMeanings }) => {
   const handleRemoveMeaning = (index) => {
@@ -16,30 +17,23 @@ export const AddMeaningCard = ({ meanings, setMeanings }) => {
   const isFirstOrSecondMeaning = (index) => index < 2;
 
   return (
-    <div className="flex-1 overflow-auto">
-      <h2 className="text-2xl font-semibold mb-6 text-[#2c3e50]">
-        Significados
-      </h2>
+    <div className="add-meaning-card-container">
+      <h2 className="add-meaning-card-title">Significados</h2>
 
-      <div className="grid grid-cols-2 gap-6">
+      <div className="meanings-grid">
         {meanings.map((meaning, index) => (
-          <div
-            key={index}
-            className="relative border border-gray-300 rounded-xl p-5 bg-gray-50 shadow-sm"
-          >
+          <div key={index} className="meaning-card">
             {!isFirstOrSecondMeaning(index) && (
               <button
                 onClick={() => handleRemoveMeaning(index)}
-                className="absolute top-2 right-2 text-red-500 hover:text-red-700 cursor-pointer"
+                className="remove-meaning-button"
                 title="Remover significado"
               >
                 <FaTrash />
               </button>
             )}
 
-            <h3 className="text-lg font-semibold mb-3 text-[#2c3e50]">
-              Significado {index + 1}
-            </h3>
+            <h3 className="meaning-card-title">Significado {index + 1}</h3>
 
             <textarea
               placeholder="Descrição..."
@@ -51,7 +45,7 @@ export const AddMeaningCard = ({ meanings, setMeanings }) => {
                   capitalizeFirstLetter(e.target.value)
                 )
               }
-              className="w-full border border-gray-300 rounded-md p-2 mb-3 text-base focus:outline-none focus:ring-2 focus:ring-[#2c3e50]"
+              className="meaning-textarea"
               rows={2}
             />
 
@@ -67,7 +61,7 @@ export const AddMeaningCard = ({ meanings, setMeanings }) => {
                   capitalizeFirstLetter(e.target.value)
                 )
               }
-              className="w-full border border-gray-300 rounded-md p-2 text-base focus:outline-none focus:ring-2 focus:ring-[#2c3e50]"
+              className="meaning-input"
             />
           </div>
         ))}

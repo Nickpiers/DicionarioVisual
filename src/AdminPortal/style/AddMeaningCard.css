@@ -1,0 +1,69 @@
+.add-meaning-card-container {
+  flex: 1;
+  overflow: auto;
+}
+
+.add-meaning-card-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: #2c3e50;
+}
+
+.meanings-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+.meaning-card {
+  position: relative;
+  border: 1px solid #d1d5db;
+  border-radius: 1rem;
+  padding: 1.25rem;
+  background-color: #f9fafb;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.remove-meaning-button {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  color: #ef4444;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+.remove-meaning-button:hover {
+  color: #b91c1c;
+}
+
+.meaning-card-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: #2c3e50;
+}
+
+.meaning-textarea,
+.meaning-input {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  padding: 0.5rem;
+  font-size: 1rem;
+  outline: none;
+}
+
+.meaning-textarea {
+  margin-bottom: 0.75rem;
+  resize: none;
+}
+
+.meaning-textarea:focus,
+.meaning-input:focus {
+  ring: 2px;
+  border-color: #2c3e50;
+  box-shadow: 0 0 0 2px rgba(44, 62, 80, 0.2);
+}
