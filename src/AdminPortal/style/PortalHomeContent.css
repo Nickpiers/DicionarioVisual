@@ -1,0 +1,123 @@
+.portal-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 2rem;
+  overflow: auto;
+}
+
+.portal-header {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+.portal-header h1 {
+  font-size: 1.875rem; /* text-3xl */
+  font-weight: 700;
+  color: #2c3e50;
+  text-align: center;
+}
+
+.portal-clear-btn {
+  position: absolute;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #dc2626; /* red-600 */
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 1.125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.portal-clear-btn:hover {
+  background-color: #b91c1c; /* red-700 */
+}
+
+.portal-card {
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 1.5rem; /* rounded-2xl */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  flex: 1;
+}
+
+.portal-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.portal-label {
+  display: block;
+  font-size: 1.125rem; /* text-lg */
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: #2c3e50;
+}
+
+.portal-input {
+  width: 100%;
+  border: 1px solid #d1d5db; /* gray-300 */
+  border-radius: 0.375rem;
+  padding: 0.75rem;
+  font-size: 1.125rem;
+  outline: none;
+}
+
+.portal-input:focus {
+  ring: 2px; /* focus:ring-2 */
+  border-color: #2c3e50;
+  box-shadow: 0 0 0 2px rgba(44, 62, 80, 0.3);
+}
+
+.portal-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2.5rem;
+}
+
+.portal-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.375rem;
+  font-size: 1.125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.portal-btn svg {
+  margin-right: 0.5rem;
+}
+
+.portal-btn-add {
+  background-color: #2c3e50;
+  color: white;
+}
+
+.portal-btn-add:hover {
+  background-color: #1a252f;
+}
+
+.portal-btn-upload {
+  background-color: #16a34a; /* green-600 */
+  color: white;
+}
+
+.portal-btn-upload:hover {
+  background-color: #15803d; /* green-700 */
+}
