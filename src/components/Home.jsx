@@ -1,9 +1,13 @@
 import { useState } from "react";
 import { Header } from "./Header";
-import { WordPresentation } from "./WordPresentation";
-import { WordsList } from "./WordsList";
+import { WordsList } from "../Dictionary/components/WordsList";
+import { WordPresentation } from "../Dictionary/components/WordPresentation";
+import { useNavigate } from "react-router-dom";
+import { paths } from "../controllers/paths";
+import { TITLE_DICTIONARY } from "../controllers/constants";
 
 export const Home = () => {
+  const navigate = useNavigate();
   const [searchedWord, setSearchedWord] = useState(null);
   const [selectedWord, setSelectedWord] = useState(null);
 
@@ -19,6 +23,8 @@ export const Home = () => {
       <Header
         onIconClick={() => setSelectedWord(null)}
         setSearchedWord={setSearchedWord}
+        redirectAction={() => navigate(paths.adminPortalLogin)}
+        headerTitle={TITLE_DICTIONARY}
       />
       <main className="flex flex-row overflow-hidden flex-1">
         <div
