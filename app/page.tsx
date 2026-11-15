@@ -40,7 +40,7 @@ export default function InicioPage() {
           </p>
           <CampoBusca id="search-main" className="max-w-[680px]" />
           <span className="mt-3 block text-[.88rem] text-[#cfdef1]">
-            Experimente: banco, manga ou casa
+            Experimente: banco, manga ou luz
           </span>
         </div>
 

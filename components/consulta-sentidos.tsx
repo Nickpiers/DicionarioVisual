@@ -4,13 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { registrarRecente } from "@/lib/armazenamento";
-import {
-  IMAGEM_SINALIZANTE,
-  imagensDeApoio,
-  type Palavra,
-} from "@/lib/palavras";
+import { imagensDeApoio, type Palavra } from "@/lib/palavras";
 import { Icone } from "./icone";
-import { classeBotao, classePlayer, classeRotuloMidia, Eyebrow } from "./ui";
+import { classeBotao, classeRotuloMidia, Eyebrow } from "./ui";
+import { VideoSinal } from "./video-sinal";
 
 const classeSeta =
   "flex min-h-[76px] items-center justify-center gap-2 border-0 bg-orange-soft px-[18px] py-[10px] font-extrabold text-navy enabled:hover:bg-orange enabled:hover:text-white disabled:cursor-not-allowed disabled:bg-[#f1f3f6] disabled:text-[#788696] phone:min-h-[68px] phone:p-2";
@@ -80,35 +77,7 @@ export function ConsultaSentidos({ palavra }: { palavra: Palavra }) {
             <span className={classeRotuloMidia}>
               <Icone nome="video" /> Sinal em Libras
             </span>
-            <div
-              className={`${classePlayer} min-h-[320px] phone:min-h-[280px]`}
-            >
-              <Image
-                src={IMAGEM_SINALIZANTE}
-                alt="Intérprete demonstrando o sinal em Libras"
-                fill
-                unoptimized
-                loading="eager"
-                sizes="(max-width: 900px) 100vw, 440px"
-                className="object-cover object-[center_30%]"
-              />
-              <button
-                type="button"
-                className="absolute top-1/2 left-1/2 z-[2] grid size-16 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-2 border-white bg-[rgba(3,43,93,.72)] text-white"
-                aria-label="Reproduzir vídeo"
-              >
-                <Icone nome="play" tamanho={28} />
-              </button>
-              <div className="absolute inset-x-3 bottom-3 z-[3] flex h-[38px] items-center gap-[10px] rounded-[8px] bg-[rgba(2,29,62,.88)] px-3 text-[.75rem] text-white">
-                <Icone nome="play" />
-                <span className="h-1 flex-1 rounded-[99px] bg-white/35">
-                  <i className="block h-full w-[35%] rounded-[inherit] bg-white" />
-                </span>
-                <span>0:08</span>
-                <Icone nome="volume" />
-                <Icone nome="expand" />
-              </div>
-            </div>
+            <VideoSinal video={sentido.video} titulo={sentido.titulo} />
             <p className="mt-2 mb-0 flex gap-[7px] text-[.8rem] text-muted">
               <Icone nome="info" />O vídeo apresenta primeiro a representação do
               sinal e em seguida o sinal em uma frase.

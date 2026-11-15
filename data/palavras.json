@@ -1,131 +1,604 @@
 {
   "palavras": [
     {
-      "slug": "banco",
-      "titulo": "BANCO",
+      "slug": "acesso",
+      "titulo": "ACESSO",
       "categoria": "Cotidiano",
-      "descricao": "Pode ser um lugar para guardar dinheiro, um assento ou um banco de dados.",
+      "descricao": "Pode ser uma reação repentina, a entrada em lugares ou sistemas, ou o direito de usar algo.",
       "sentidos": [
         {
-          "curto": "Financeiro",
-          "titulo": "Banco — instituição financeira",
-          "definicao": "Um banco é um lugar que guarda dinheiro, faz pagamentos e oferece outros serviços financeiros.",
-          "exemplo": "Eu fui ao banco pagar uma conta.",
-          "categoria": "Dinheiro e finanças",
-          "imagem": "escritorio",
-          "video": null
-        },
-        {
-          "curto": "Assento",
-          "titulo": "Banco — lugar para sentar",
-          "definicao": "Um banco é um assento comprido, usado por uma ou mais pessoas.",
-          "exemplo": "Ela sentou no banco da praça.",
-          "categoria": "Objetos e cotidiano",
+          "curto": "Reação repentina",
+          "titulo": "Acesso — reação repentina",
+          "definicao": "Ataque rápido de emoção ou reação",
+          "exemplo": "Teve um acesso de tosse durante a apresentação.",
+          "categoria": "Saúde e corpo",
           "imagem": "sinalizante",
           "video": null
         },
         {
-          "curto": "Dados",
-          "titulo": "Banco de dados",
-          "definicao": "Um banco de dados guarda informações organizadas para serem encontradas com facilidade.",
-          "exemplo": "O sistema consultou o banco de dados.",
-          "categoria": "Tecnologia",
-          "imagem": "sinalizante",
-          "video": null
-        }
-      ]
-    },
-    {
-      "slug": "banco-de-dados",
-      "titulo": "BANCO DE DADOS",
-      "categoria": "Tecnologia",
-      "descricao": "Conjunto de informações organizadas que podem ser consultadas.",
-      "sentidos": [
-        {
-          "curto": "Tecnologia",
-          "titulo": "Banco de dados",
-          "definicao": "Um banco de dados guarda informações organizadas para serem encontradas com facilidade.",
-          "exemplo": "O sistema consultou o banco de dados.",
-          "categoria": "Tecnologia",
-          "imagem": "sinalizante",
-          "video": null
-        }
-      ]
-    },
-    {
-      "slug": "banco-de-sangue",
-      "titulo": "BANCO DE SANGUE",
-      "categoria": "Saúde",
-      "descricao": "Local que recebe e guarda sangue para ajudar outras pessoas.",
-      "sentidos": [
-        {
-          "curto": "Saúde",
-          "titulo": "Banco de sangue",
-          "definicao": "Um banco de sangue é um lugar que recebe, guarda e distribui sangue doado.",
-          "exemplo": "Ele doou sangue no banco de sangue do hospital.",
-          "categoria": "Saúde",
-          "imagem": "sinalizante",
-          "video": null
-        }
-      ]
-    },
-    {
-      "slug": "casa",
-      "titulo": "CASA",
-      "categoria": "Cotidiano",
-      "descricao": "Lugar onde uma pessoa mora ou organização legislativa.",
-      "sentidos": [
-        {
-          "curto": "Moradia",
-          "titulo": "Casa — lugar para morar",
-          "definicao": "Uma casa é um lugar onde uma pessoa ou família mora.",
-          "exemplo": "Minha casa fica perto da escola.",
+          "curto": "Entrada",
+          "titulo": "Acesso — entrada",
+          "definicao": "Entrada em lugares ou sistemas",
+          "exemplo": "O acesso ao laboratório é por reconhecimento facial.",
           "categoria": "Cotidiano",
           "imagem": "sinalizante",
           "video": null
         },
         {
-          "curto": "Legislativa",
-          "titulo": "Casa — organização legislativa",
-          "definicao": "Uma casa legislativa é o lugar onde as pessoas eleitas discutem e votam as leis.",
-          "exemplo": "A Casa aprovou a nova lei.",
-          "categoria": "Pessoas e sociedade",
+          "curto": "Direito",
+          "titulo": "Acesso — direito",
+          "definicao": "Direito de usar serviços ou informações",
+          "exemplo": "Pessoas com deficiência têm acesso prioritário.",
+          "categoria": "Trabalho e sociedade",
           "imagem": "sinalizante",
           "video": null
         }
       ]
     },
     {
-      "slug": "folha",
-      "titulo": "FOLHA",
-      "categoria": "Natureza",
-      "descricao": "Parte de uma planta, papel ou registro de pagamento.",
+      "slug": "ato",
+      "titulo": "ATO",
+      "categoria": "Cotidiano",
+      "descricao": "Pode ser parte de uma peça de teatro, uma cerimônia ou uma ação feita por alguém.",
       "sentidos": [
         {
-          "curto": "Planta",
-          "titulo": "Folha — parte da planta",
-          "definicao": "A folha é a parte verde da planta que nasce nos galhos.",
-          "exemplo": "A folha da árvore caiu no chão.",
-          "categoria": "Natureza",
+          "curto": "Teatro",
+          "titulo": "Ato — teatro",
+          "definicao": "Partes de uma obra teatral",
+          "exemplo": "Esta obra tem só um ato.",
+          "categoria": "Cultura e lazer",
           "imagem": "sinalizante",
           "video": null
         },
         {
-          "curto": "Papel",
-          "titulo": "Folha — pedaço de papel",
-          "definicao": "Uma folha é um pedaço de papel usado para escrever, desenhar ou imprimir.",
-          "exemplo": "Escrevi meu nome na folha.",
-          "categoria": "Objetos e cotidiano",
+          "curto": "Cerimônia",
+          "titulo": "Ato — cerimônia",
+          "definicao": "Formalidades de uma cerimônia",
+          "exemplo": "O ato solene teve lugar no salão de eventos da escola.",
+          "categoria": "Trabalho e sociedade",
           "imagem": "sinalizante",
           "video": null
         },
         {
-          "curto": "Pagamento",
-          "titulo": "Folha de pagamento",
-          "definicao": "A folha de pagamento é a lista dos salários que uma empresa paga.",
-          "exemplo": "A empresa fechou a folha de pagamento do mês.",
+          "curto": "Ação",
+          "titulo": "Ato — ação",
+          "definicao": "Ação, algo feito por alguém",
+          "exemplo": "Cometeram um ato de vandalismo em uma repartição pública.",
+          "categoria": "Cotidiano",
+          "imagem": "sinalizante",
+          "video": null
+        }
+      ]
+    },
+    {
+      "slug": "banco",
+      "titulo": "BANCO",
+      "categoria": "Dinheiro e finanças",
+      "descricao": "Pode ser um lugar para guardar dinheiro, um sistema de dados ou um assento.",
+      "sentidos": [
+        {
+          "curto": "Financeiro",
+          "titulo": "Banco — financeiro",
+          "definicao": "Lugar onde se guarda e movimenta dinheiro",
+          "exemplo": "O banco liberou um empréstimo para os agricultores.",
           "categoria": "Dinheiro e finanças",
           "imagem": "escritorio",
+          "video": "https://youtu.be/XpYEXGTm_AU"
+        },
+        {
+          "curto": "Dados",
+          "titulo": "Banco — dados",
+          "definicao": "Sistema para guardar e organizar dados no computador",
+          "exemplo": "O banco de dados da empresa guarda informações dos clientes.",
+          "categoria": "Tecnologia",
+          "imagem": "sinalizante",
+          "video": "https://youtu.be/XpYEXGTm_AU"
+        },
+        {
+          "curto": "Assento",
+          "titulo": "Banco — assento",
+          "definicao": "Assento comprido para várias pessoas",
+          "exemplo": "Os idosos descansavam no banco da praça.",
+          "categoria": "Cotidiano",
+          "imagem": "sinalizante",
+          "video": "https://youtu.be/XpYEXGTm_AU"
+        }
+      ]
+    },
+    {
+      "slug": "barra",
+      "titulo": "BARRA",
+      "categoria": "Cotidiano",
+      "descricao": "Pode ser uma situação difícil, uma peça comprida de metal ou uma área de opções em programas.",
+      "sentidos": [
+        {
+          "curto": "Situação difícil",
+          "titulo": "Barra — situação difícil",
+          "definicao": "Situação difícil ou complicada",
+          "exemplo": "Está difícil arrumar emprego, a barra está pesada.",
+          "categoria": "Cotidiano",
+          "imagem": "sinalizante",
+          "video": null
+        },
+        {
+          "curto": "Peça de metal",
+          "titulo": "Barra — peça de metal",
+          "definicao": "Objeto comprido e duro, geralmente de metal",
+          "exemplo": "O joalheiro derreteu uma barra de prata para fazer alianças.",
+          "categoria": "Cotidiano",
+          "imagem": "sinalizante",
+          "video": null
+        },
+        {
+          "curto": "Programas",
+          "titulo": "Barra — programas",
+          "definicao": "Linha ou área em programas que mostra opções ou informações",
+          "exemplo": "Clique na impressora na barra de ferramentas do navegador.",
+          "categoria": "Tecnologia",
+          "imagem": "sinalizante",
+          "video": null
+        }
+      ]
+    },
+    {
+      "slug": "base",
+      "titulo": "BASE",
+      "categoria": "Ciências",
+      "descricao": "Pode ser um apoio, uma substância química ou a base de um sistema numérico.",
+      "sentidos": [
+        {
+          "curto": "Apoio",
+          "titulo": "Base — apoio",
+          "definicao": "Fundamento ou apoio",
+          "exemplo": "A base da coluna precisa ser reforçada.",
+          "categoria": "Cotidiano",
+          "imagem": "sinalizante",
+          "video": "https://www.youtube.com/watch?v=9bEpDYV9uWE"
+        },
+        {
+          "curto": "Química",
+          "titulo": "Base — química",
+          "definicao": "Propriedade de um elemento químico",
+          "exemplo": "A substância é uma base forte.",
+          "categoria": "Ciências",
+          "imagem": "sinalizante",
+          "video": "https://www.youtube.com/watch?v=9bEpDYV9uWE"
+        },
+        {
+          "curto": "Matemática",
+          "titulo": "Base — matemática",
+          "definicao": "Base de um sistema numérico",
+          "exemplo": "O número está na base decimal.",
+          "categoria": "Ciências",
+          "imagem": "sinalizante",
+          "video": "https://www.youtube.com/watch?v=9bEpDYV9uWE"
+        }
+      ]
+    },
+    {
+      "slug": "cabeca",
+      "titulo": "CABEÇA",
+      "categoria": "Saúde e corpo",
+      "descricao": "Pode ser a pessoa que lidera um grupo ou a parte do corpo onde fica o cérebro.",
+      "sentidos": [
+        {
+          "curto": "Líder",
+          "titulo": "Cabeça — líder",
+          "definicao": "Pessoa que lidera um grupo",
+          "exemplo": "Como cabeça do setor, ela aprovava as contratações.",
+          "categoria": "Pessoas e relações",
+          "imagem": "sinalizante",
+          "video": null
+        },
+        {
+          "curto": "Corpo",
+          "titulo": "Cabeça — corpo",
+          "definicao": "Parte do corpo onde fica o cérebro",
+          "exemplo": "A cabeça humana tem bilhões de neurônios.",
+          "categoria": "Saúde e corpo",
+          "imagem": "sinalizante",
+          "video": null
+        }
+      ]
+    },
+    {
+      "slug": "cabo",
+      "titulo": "CABO",
+      "categoria": "Cotidiano",
+      "descricao": "Pode ser uma ponta de terra no mar, um cargo militar ou uma corda grossa de barcos.",
+      "sentidos": [
+        {
+          "curto": "Geografia",
+          "titulo": "Cabo — geografia",
+          "definicao": "Ponta de terra que entra no mar",
+          "exemplo": "O Cabo da Boa Esperança era temido pelos navegadores.",
+          "categoria": "Natureza e lugares",
+          "imagem": "sinalizante",
+          "video": null
+        },
+        {
+          "curto": "Cargo militar",
+          "titulo": "Cabo — cargo militar",
+          "definicao": "Cargo nas forças armadas, abaixo de sargento",
+          "exemplo": "Ela foi promovida a cabo depois de dois anos.",
+          "categoria": "Trabalho e sociedade",
+          "imagem": "sinalizante",
+          "video": null
+        },
+        {
+          "curto": "Corda",
+          "titulo": "Cabo — corda",
+          "definicao": "Corda grossa usada em barcos",
+          "exemplo": "Os marinheiros amarraram o cabo no mastro.",
+          "categoria": "Cotidiano",
+          "imagem": "sinalizante",
+          "video": null
+        }
+      ]
+    },
+    {
+      "slug": "capital",
+      "titulo": "CAPITAL",
+      "categoria": "Dinheiro e finanças",
+      "descricao": "Pode ser a cidade principal de um lugar ou o dinheiro usado para investir.",
+      "sentidos": [
+        {
+          "curto": "Cidade",
+          "titulo": "Capital — cidade",
+          "definicao": "Cidade principal de um estado ou país",
+          "exemplo": "Lisboa é a capital de Portugal.",
+          "categoria": "Natureza e lugares",
+          "imagem": "sinalizante",
+          "video": null
+        },
+        {
+          "curto": "Investimento",
+          "titulo": "Capital — investimento",
+          "definicao": "Dinheiro ou bens usados para investir",
+          "exemplo": "Eles colocaram capital para abrir a empresa.",
+          "categoria": "Dinheiro e finanças",
+          "imagem": "escritorio",
+          "video": null
+        }
+      ]
+    },
+    {
+      "slug": "chave",
+      "titulo": "CHAVE",
+      "categoria": "Cotidiano",
+      "descricao": "Pode ser algo importante para resolver um problema, um objeto que abre fechaduras ou um grupo de um campeonato.",
+      "sentidos": [
+        {
+          "curto": "Solução",
+          "titulo": "Chave — solução",
+          "definicao": "Coisa importante para resolver um problema",
+          "exemplo": "A pista foi a chave para resolver o crime.",
+          "categoria": "Cotidiano",
+          "imagem": "sinalizante",
+          "video": null
+        },
+        {
+          "curto": "Fechadura",
+          "titulo": "Chave — fechadura",
+          "definicao": "Objeto para abrir ou fechar fechaduras",
+          "exemplo": "Perdi a chave do carro no parque.",
+          "categoria": "Cotidiano",
+          "imagem": "sinalizante",
+          "video": null
+        },
+        {
+          "curto": "Campeonato",
+          "titulo": "Chave — campeonato",
+          "definicao": "Tabela de jogos em campeonatos",
+          "exemplo": "O Brasil lidera a chave B do torneio.",
+          "categoria": "Cultura e lazer",
+          "imagem": "sinalizante",
+          "video": null
+        }
+      ]
+    },
+    {
+      "slug": "conselho",
+      "titulo": "CONSELHO",
+      "categoria": "Trabalho e sociedade",
+      "descricao": "Pode ser um grupo que orienta ou decide, ou uma sugestão para ajudar alguém.",
+      "sentidos": [
+        {
+          "curto": "Especialistas",
+          "titulo": "Conselho — especialistas",
+          "definicao": "Grupo de especialistas que orienta líderes",
+          "exemplo": "O conselho científico da OMS alertou sobre a nova variante.",
+          "categoria": "Trabalho e sociedade",
+          "imagem": "sinalizante",
+          "video": null
+        },
+        {
+          "curto": "Instituição",
+          "titulo": "Conselho — instituição",
+          "definicao": "Grupo que toma decisões em instituições",
+          "exemplo": "O Conselho Tutelar protegeu a criança.",
+          "categoria": "Trabalho e sociedade",
+          "imagem": "sinalizante",
+          "video": null
+        },
+        {
+          "curto": "Sugestão",
+          "titulo": "Conselho — sugestão",
+          "definicao": "Sugestão para ajudar alguém a decidir",
+          "exemplo": "Seguiu o conselho da avó e passou mel na ferida.",
+          "categoria": "Pessoas e relações",
+          "imagem": "sinalizante",
+          "video": null
+        }
+      ]
+    },
+    {
+      "slug": "copo",
+      "titulo": "COPO",
+      "categoria": "Cotidiano",
+      "descricao": "Pode ser um recipiente para beber ou uma medida usada em receitas.",
+      "sentidos": [
+        {
+          "curto": "Recipiente",
+          "titulo": "Copo — recipiente",
+          "definicao": "Recipiente para beber líquidos",
+          "exemplo": "Encheu o copo de água antes de beber.",
+          "categoria": "Cotidiano",
+          "imagem": "sinalizante",
+          "video": null
+        },
+        {
+          "curto": "Medida",
+          "titulo": "Copo — medida",
+          "definicao": "Medida de 240ml usada em receitas",
+          "exemplo": "Coloque dois copos de farinha na massa.",
+          "categoria": "Cotidiano",
+          "imagem": "sinalizante",
+          "video": null
+        }
+      ]
+    },
+    {
+      "slug": "cura",
+      "titulo": "CURA",
+      "categoria": "Saúde e corpo",
+      "descricao": "Pode ser a volta da saúde ou um modo de conservar alimentos.",
+      "sentidos": [
+        {
+          "curto": "Saúde",
+          "titulo": "Cura — saúde",
+          "definicao": "Restabelecimento da saúde",
+          "exemplo": "O remédio trouxe a cura.",
+          "categoria": "Saúde e corpo",
+          "imagem": "sinalizante",
+          "video": "https://www.youtube.com/watch?v=mOlkAAp2cyI"
+        },
+        {
+          "curto": "Alimentos",
+          "titulo": "Cura — alimentos",
+          "definicao": "Processo de conservação de alimentos",
+          "exemplo": "A cura da carne leva vários dias.",
+          "categoria": "Cotidiano",
+          "imagem": "sinalizante",
+          "video": "https://www.youtube.com/watch?v=mOlkAAp2cyI"
+        }
+      ]
+    },
+    {
+      "slug": "dama",
+      "titulo": "DAMA",
+      "categoria": "Cultura e lazer",
+      "descricao": "Pode ser uma carta do baralho, uma mulher adulta ou um jogo de tabuleiro.",
+      "sentidos": [
+        {
+          "curto": "Baralho",
+          "titulo": "Dama — baralho",
+          "definicao": "Carta do baralho",
+          "exemplo": "Ele tirou a dama de copas do baralho.",
+          "categoria": "Cultura e lazer",
+          "imagem": "sinalizante",
+          "video": null
+        },
+        {
+          "curto": "Mulher",
+          "titulo": "Dama — mulher",
+          "definicao": "Mulher adulta",
+          "exemplo": "A dama virá pra festa hoje.",
+          "categoria": "Pessoas e relações",
+          "imagem": "sinalizante",
+          "video": null
+        },
+        {
+          "curto": "Jogo",
+          "titulo": "Dama — jogo",
+          "definicao": "Jogo de tabuleiro",
+          "exemplo": "Meu avô gosta de jogar xadrez, e minha avó prefere jogar dama.",
+          "categoria": "Cultura e lazer",
+          "imagem": "sinalizante",
+          "video": null
+        }
+      ]
+    },
+    {
+      "slug": "elemento",
+      "titulo": "ELEMENTO",
+      "categoria": "Ciências",
+      "descricao": "Pode ser uma parte de um sistema, um elemento químico ou um item de um conjunto.",
+      "sentidos": [
+        {
+          "curto": "Parte de sistema",
+          "titulo": "Elemento — parte de sistema",
+          "definicao": "Parte que compõe um sistema",
+          "exemplo": "Esse sensor é um elemento importante do robô.",
+          "categoria": "Tecnologia",
+          "imagem": "sinalizante",
+          "video": "https://www.youtube.com/watch?v=Uuw-PjwJmxE"
+        },
+        {
+          "curto": "Química",
+          "titulo": "Elemento — química",
+          "definicao": "Parte constituinte básica da matéria",
+          "exemplo": "O ferro é um elemento químico.",
+          "categoria": "Ciências",
+          "imagem": "sinalizante",
+          "video": "https://www.youtube.com/watch?v=Uuw-PjwJmxE"
+        },
+        {
+          "curto": "Matemática",
+          "titulo": "Elemento — matemática",
+          "definicao": "Item pertencente a um conjunto",
+          "exemplo": "O número 5 é um elemento do conjunto.",
+          "categoria": "Ciências",
+          "imagem": "sinalizante",
+          "video": "https://www.youtube.com/watch?v=Uuw-PjwJmxE"
+        }
+      ]
+    },
+    {
+      "slug": "encontrar",
+      "titulo": "ENCONTRAR",
+      "categoria": "Cotidiano",
+      "descricao": "Pode ser achar algo, marcar de ver alguém ou descobrir uma solução.",
+      "sentidos": [
+        {
+          "curto": "Achar",
+          "titulo": "Encontrar — achar",
+          "definicao": "Achar algo ou alguém",
+          "exemplo": "Achamos as chaves atrás do sofá.",
+          "categoria": "Cotidiano",
+          "imagem": "sinalizante",
+          "video": null
+        },
+        {
+          "curto": "Marcar encontro",
+          "titulo": "Encontrar — marcar encontro",
+          "definicao": "Marcar de ver alguém",
+          "exemplo": "Vamos nos encontrar no café depois do trabalho.",
+          "categoria": "Pessoas e relações",
+          "imagem": "sinalizante",
+          "video": null
+        },
+        {
+          "curto": "Descobrir",
+          "titulo": "Encontrar — descobrir",
+          "definicao": "Descobrir uma solução ou ideia",
+          "exemplo": "A equipe encontrou uma nova forma de reciclar plásticos.",
+          "categoria": "Cotidiano",
+          "imagem": "sinalizante",
+          "video": null
+        }
+      ]
+    },
+    {
+      "slug": "gato",
+      "titulo": "GATO",
+      "categoria": "Cotidiano",
+      "descricao": "Pode ser uma pessoa bonita, um animal de estimação ou uma ligação elétrica ilegal.",
+      "sentidos": [
+        {
+          "curto": "Gíria",
+          "titulo": "Gato — gíria",
+          "definicao": "Pessoa bonita (gíria)",
+          "exemplo": "Dizem que o novo ator é um gato.",
+          "categoria": "Pessoas e relações",
+          "imagem": "sinalizante",
+          "video": null
+        },
+        {
+          "curto": "Animal",
+          "titulo": "Gato — animal",
+          "definicao": "Animal doméstico, popular como pet",
+          "exemplo": "Gatos são independentes e caçam bem.",
+          "categoria": "Natureza e lugares",
+          "imagem": "sinalizante",
+          "video": null
+        },
+        {
+          "curto": "Ligação ilegal",
+          "titulo": "Gato — ligação ilegal",
+          "definicao": "Ligação elétrica feita de forma ilegal",
+          "exemplo": "A fiscalização encontrou um gato na rede elétrica.",
+          "categoria": "Cotidiano",
+          "imagem": "sinalizante",
+          "video": null
+        }
+      ]
+    },
+    {
+      "slug": "luz",
+      "titulo": "LUZ",
+      "categoria": "Cotidiano",
+      "descricao": "Pode ser energia elétrica, a claridade que podemos ver ou um símbolo de inspiração.",
+      "sentidos": [
+        {
+          "curto": "Energia elétrica",
+          "titulo": "Luz — energia elétrica",
+          "definicao": "Energia elétrica ou iluminação artificial",
+          "exemplo": "A luz acabou durante o temporal.",
+          "categoria": "Cotidiano",
+          "imagem": "sinalizante",
+          "video": null
+        },
+        {
+          "curto": "Claridade",
+          "titulo": "Luz — claridade",
+          "definicao": "Radiação que podemos ver, clareia o ambiente",
+          "exemplo": "A luz do farol guiava os navios.",
+          "categoria": "Ciências",
+          "imagem": "sinalizante",
+          "video": null
+        },
+        {
+          "curto": "Inspiração",
+          "titulo": "Luz — inspiração",
+          "definicao": "Símbolo de conhecimento ou inspiração",
+          "exemplo": "O conselho foi uma luz nos momentos difíceis.",
+          "categoria": "Pessoas e relações",
+          "imagem": "sinalizante",
+          "video": null
+        }
+      ]
+    },
+    {
+      "slug": "lingua",
+      "titulo": "LÍNGUA",
+      "categoria": "Cultura e lazer",
+      "descricao": "Pode ser um órgão da boca, um idioma, uma faixa de terra ou um jeito de falar.",
+      "sentidos": [
+        {
+          "curto": "Corpo",
+          "titulo": "Língua — corpo",
+          "definicao": "Órgão muscular na boca usado para falar e sentir sabores",
+          "exemplo": "A língua ajuda a perceber o gosto dos alimentos.",
+          "categoria": "Saúde e corpo",
+          "imagem": "sinalizante",
+          "video": null
+        },
+        {
+          "curto": "Idioma",
+          "titulo": "Língua — idioma",
+          "definicao": "Forma de comunicação falada de um povo",
+          "exemplo": "A língua iorubá é estudada em vários países.",
+          "categoria": "Cultura e lazer",
+          "imagem": "sinalizante",
+          "video": null
+        },
+        {
+          "curto": "Geografia",
+          "titulo": "Língua — geografia",
+          "definicao": "Faixa de terra que entra no mar ou rio",
+          "exemplo": "A língua de areia em Maragogi forma piscinas naturais.",
+          "categoria": "Natureza e lugares",
+          "imagem": "sinalizante",
+          "video": null
+        },
+        {
+          "curto": "Jeito de falar",
+          "titulo": "Língua — jeito de falar",
+          "definicao": "Modo de se expressar, jeito de falar",
+          "exemplo": "Ele tem uma língua afiada e faz muitos comentários.",
+          "categoria": "Pessoas e relações",
+          "imagem": "sinalizante",
           "video": null
         }
       ]
@@ -133,94 +606,68 @@
     {
       "slug": "manga",
       "titulo": "MANGA",
-      "categoria": "Alimentos",
-      "descricao": "Uma fruta ou a parte de uma roupa que cobre o braço.",
+      "categoria": "Cotidiano",
+      "descricao": "Pode ser uma fruta, a parte da roupa que cobre o braço ou um tubo para líquidos.",
       "sentidos": [
         {
           "curto": "Fruta",
           "titulo": "Manga — fruta",
-          "definicao": "Manga é uma fruta doce que cresce em árvores.",
-          "exemplo": "Comprei uma manga madura na feira.",
-          "categoria": "Alimentos",
+          "definicao": "Fruta doce e suculenta",
+          "exemplo": "A manga estava ótima para suco.",
+          "categoria": "Cotidiano",
           "imagem": "sinalizante",
-          "video": null
+          "video": "https://www.youtube.com/watch?v=ozslHIpMaxs"
         },
         {
           "curto": "Roupa",
-          "titulo": "Manga — parte da roupa",
-          "definicao": "A manga é a parte da roupa que cobre o braço.",
-          "exemplo": "A manga da camisa ficou curta.",
-          "categoria": "Objetos e cotidiano",
+          "titulo": "Manga — roupa",
+          "definicao": "Parte da roupa que cobre o braço",
+          "exemplo": "A manga da camiseta rasgou.",
+          "categoria": "Cotidiano",
           "imagem": "sinalizante",
-          "video": null
+          "video": "https://www.youtube.com/watch?v=ozslHIpMaxs"
+        },
+        {
+          "curto": "Tubo",
+          "titulo": "Manga — tubo",
+          "definicao": "Tubo flexível para passar líquidos",
+          "exemplo": "Bombeiros usaram mangueiras para apagar o fogo.",
+          "categoria": "Cotidiano",
+          "imagem": "sinalizante",
+          "video": "https://www.youtube.com/watch?v=ozslHIpMaxs"
         }
       ]
     },
     {
       "slug": "pena",
       "titulo": "PENA",
-      "categoria": "Cotidiano",
-      "descricao": "Pluma de ave, sentimento de compaixão ou punição.",
+      "categoria": "Pessoas e relações",
+      "descricao": "Pode ser um sentimento de dó, um castigo dado por lei ou o que cobre o corpo das aves.",
       "sentidos": [
         {
-          "curto": "Pluma",
-          "titulo": "Pena — pluma de ave",
-          "definicao": "A pena cobre o corpo das aves e ajuda a voar.",
-          "exemplo": "O pássaro perdeu uma pena azul.",
-          "categoria": "Natureza",
-          "imagem": "sinalizante",
-          "video": null
-        },
-        {
-          "curto": "Compaixão",
+          "curto": "Sentimento",
           "titulo": "Pena — sentimento",
-          "definicao": "Sentir pena é ficar triste pelo sofrimento de outra pessoa.",
-          "exemplo": "Senti pena do cachorro na chuva.",
-          "categoria": "Pessoas e sentimentos",
+          "definicao": "Sentimento de dó ou tristeza por alguém",
+          "exemplo": "Senti pena dos animais abandonados.",
+          "categoria": "Pessoas e relações",
           "imagem": "sinalizante",
           "video": null
         },
         {
-          "curto": "Punição",
-          "titulo": "Pena — punição",
-          "definicao": "A pena é o castigo dado pela justiça a quem cometeu um crime.",
-          "exemplo": "O juiz decidiu a pena.",
-          "categoria": "Pessoas e sociedade",
-          "imagem": "sinalizante",
-          "video": null
-        }
-      ]
-    },
-    {
-      "slug": "vela",
-      "titulo": "VELA",
-      "categoria": "Objetos",
-      "descricao": "Objeto de iluminação, peça de barco ou ato de vigiar.",
-      "sentidos": [
-        {
-          "curto": "Iluminação",
-          "titulo": "Vela — objeto de iluminação",
-          "definicao": "A vela é um objeto de cera com um pavio que se acende para iluminar.",
-          "exemplo": "Acendemos uma vela quando a luz acabou.",
-          "categoria": "Objetos e cotidiano",
+          "curto": "Castigo",
+          "titulo": "Pena — castigo",
+          "definicao": "Castigo dado por lei",
+          "exemplo": "A pena por roubo pode ser de 10 anos.",
+          "categoria": "Trabalho e sociedade",
           "imagem": "sinalizante",
           "video": null
         },
         {
-          "curto": "Barco",
-          "titulo": "Vela — peça de barco",
-          "definicao": "A vela é o pano grande que recebe o vento e faz o barco andar.",
-          "exemplo": "O vento encheu a vela do barco.",
-          "categoria": "Objetos e cotidiano",
-          "imagem": "sinalizante",
-          "video": null
-        },
-        {
-          "curto": "Vigiar",
-          "titulo": "Vela — ato de vigiar",
-          "definicao": "Velar é ficar acordado para cuidar ou vigiar alguém.",
-          "exemplo": "A mãe vela o sono do filho.",
-          "categoria": "Pessoas e cotidiano",
+          "curto": "Aves",
+          "titulo": "Pena — aves",
+          "definicao": "Parte que cobre o corpo das aves",
+          "exemplo": "Colecionadores pagam caro por penas raras.",
+          "categoria": "Natureza e lugares",
           "imagem": "sinalizante",
           "video": null
         }
@@ -229,33 +676,164 @@
     {
       "slug": "planta",
       "titulo": "PLANTA",
-      "categoria": "Natureza",
-      "descricao": "Ser vivo vegetal, desenho de construção ou sola do pé.",
+      "categoria": "Natureza e lugares",
+      "descricao": "Pode ser um ser vivo vegetal, o desenho de uma construção ou uma fábrica.",
       "sentidos": [
         {
           "curto": "Vegetal",
-          "titulo": "Planta — ser vivo vegetal",
-          "definicao": "A planta é um ser vivo que nasce da terra e precisa de água e sol.",
-          "exemplo": "Reguei a planta da varanda.",
-          "categoria": "Natureza",
+          "titulo": "Planta — vegetal",
+          "definicao": "Ser vivo do reino vegetal, com raízes e folhas",
+          "exemplo": "A planta suculenta vive bem com pouca água.",
+          "categoria": "Natureza e lugares",
           "imagem": "sinalizante",
-          "video": null
+          "video": "https://www.youtube.com/watch?v=WC-ITQN4iOA"
         },
         {
           "curto": "Desenho",
-          "titulo": "Planta — desenho de construção",
-          "definicao": "A planta é o desenho que mostra como uma casa ou prédio será construído.",
-          "exemplo": "O arquiteto mostrou a planta da casa.",
-          "categoria": "Objetos e cotidiano",
+          "titulo": "Planta — desenho",
+          "definicao": "Desenho que mostra como será uma construção",
+          "exemplo": "A planta baixa mostra onde ficam os banheiros e a cozinha.",
+          "categoria": "Trabalho e sociedade",
+          "imagem": "sinalizante",
+          "video": "https://www.youtube.com/watch?v=WC-ITQN4iOA"
+        },
+        {
+          "curto": "Fábrica",
+          "titulo": "Planta — fábrica",
+          "definicao": "Fábrica ou lugar onde se produz algo em grande quantidade",
+          "exemplo": "A planta automotiva de São Paulo exporta carros.",
+          "categoria": "Trabalho e sociedade",
+          "imagem": "sinalizante",
+          "video": "https://www.youtube.com/watch?v=WC-ITQN4iOA"
+        }
+      ]
+    },
+    {
+      "slug": "quadro",
+      "titulo": "QUADRO",
+      "categoria": "Cultura e lazer",
+      "descricao": "Pode ser a estrutura de um veículo, uma pintura emoldurada ou uma tabela de informações.",
+      "sentidos": [
+        {
+          "curto": "Estrutura",
+          "titulo": "Quadro — estrutura",
+          "definicao": "Estrutura que sustenta partes de veículos",
+          "exemplo": "O quadro da bicicleta de carbono é mais leve.",
+          "categoria": "Cotidiano",
           "imagem": "sinalizante",
           "video": null
         },
         {
-          "curto": "Pé",
-          "titulo": "Planta do pé",
-          "definicao": "A planta do pé é a parte de baixo do pé, que toca o chão.",
-          "exemplo": "Senti a areia quente na planta do pé.",
-          "categoria": "Saúde",
+          "curto": "Pintura",
+          "titulo": "Quadro — pintura",
+          "definicao": "Pintura emoldurada para decoração",
+          "exemplo": "O quadro de Portinari foi vendido por muito dinheiro.",
+          "categoria": "Cultura e lazer",
+          "imagem": "sinalizante",
+          "video": null
+        },
+        {
+          "curto": "Tabela",
+          "titulo": "Quadro — tabela",
+          "definicao": "Tabela com dados ou informações",
+          "exemplo": "O quadro mostrou o aumento da violência.",
+          "categoria": "Trabalho e sociedade",
+          "imagem": "sinalizante",
+          "video": null
+        }
+      ]
+    },
+    {
+      "slug": "resistencia",
+      "titulo": "RESISTÊNCIA",
+      "categoria": "Ciências",
+      "descricao": "Pode ser a força do corpo para aguentar esforço, uma grandeza elétrica ou a firmeza de um material.",
+      "sentidos": [
+        {
+          "curto": "Esforço físico",
+          "titulo": "Resistência — esforço físico",
+          "definicao": "Esforço humano",
+          "exemplo": "Ele tem muita resistência para correr.",
+          "categoria": "Saúde e corpo",
+          "imagem": "sinalizante",
+          "video": "https://www.youtube.com/watch?v=lcSMSO_M77E"
+        },
+        {
+          "curto": "Elétrica",
+          "titulo": "Resistência — elétrica",
+          "definicao": "Elétrica",
+          "exemplo": "A resistência elétrica do fio aumentou.",
+          "categoria": "Ciências",
+          "imagem": "sinalizante",
+          "video": "https://www.youtube.com/watch?v=lcSMSO_M77E"
+        },
+        {
+          "curto": "Material",
+          "titulo": "Resistência — material",
+          "definicao": "Fisica/Engenharia",
+          "exemplo": "A resistência do material é alta.",
+          "categoria": "Ciências",
+          "imagem": "sinalizante",
+          "video": "https://www.youtube.com/watch?v=lcSMSO_M77E"
+        }
+      ]
+    },
+    {
+      "slug": "tiro",
+      "titulo": "TIRO",
+      "categoria": "Cotidiano",
+      "descricao": "Pode ser uma ida rápida a algum lugar ou um disparo de arma de fogo.",
+      "sentidos": [
+        {
+          "curto": "Ida rápida",
+          "titulo": "Tiro — ida rápida",
+          "definicao": "Ida rápida para resolver algo (gíria)",
+          "exemplo": "Ele foi num tiro ao mercado comprar pão.",
+          "categoria": "Cotidiano",
+          "imagem": "sinalizante",
+          "video": null
+        },
+        {
+          "curto": "Disparo",
+          "titulo": "Tiro — disparo",
+          "definicao": "Disparo de arma de fogo",
+          "exemplo": "O tiro foi ouvido de longe.",
+          "categoria": "Cotidiano",
+          "imagem": "sinalizante",
+          "video": null
+        }
+      ]
+    },
+    {
+      "slug": "vela",
+      "titulo": "VELA",
+      "categoria": "Cotidiano",
+      "descricao": "Pode ser uma peça do motor, um cilindro de cera para iluminar ou o tecido que move barcos.",
+      "sentidos": [
+        {
+          "curto": "Motor",
+          "titulo": "Vela — motor",
+          "definicao": "Peça do motor que ajuda na ignição",
+          "exemplo": "O mecânico trocou as velas do carro.",
+          "categoria": "Tecnologia",
+          "imagem": "sinalizante",
+          "video": null
+        },
+        {
+          "curto": "Cera",
+          "titulo": "Vela — cera",
+          "definicao": "Cilindro de cera com pavio para iluminar",
+          "exemplo": "Soprou as velas do bolo de aniversário.",
+          "categoria": "Cotidiano",
+          "imagem": "sinalizante",
+          "video": null
+        },
+        {
+          "curto": "Barco",
+          "titulo": "Vela — barco",
+          "definicao": "Tecido que pega vento para mover barcos",
+          "exemplo": "Barcos a vela não usam combustível.",
+          "categoria": "Cotidiano",
           "imagem": "sinalizante",
           "video": null
         }

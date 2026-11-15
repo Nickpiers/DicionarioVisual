@@ -65,7 +65,7 @@ export function definirAltoContraste(ativo: boolean) {
 
 /* Buscas recentes ----------------------------------------------------- */
 
-export const RECENTES_PADRAO = ["banco", "manga", "casa"];
+export const RECENTES_PADRAO = ["banco", "manga", "luz"];
 const recentes = criarStore<string[]>("dicionario:recentes", RECENTES_PADRAO);
 
 export function useRecentes() {

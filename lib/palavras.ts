@@ -25,9 +25,6 @@ export const palavras = dados.palavras as Palavra[];
 /** Categorias exibidas na página inicial. */
 export const categoriasDaHome = ["Dinheiro", "Cotidiano", "Saúde", "Pessoas"];
 
-/** Letras do filtro do dicionário completo. */
-export const letrasDoFiltro = ["A", "B", "C", "F", "M", "P", "V"];
-
 /** Busca padrão do design quando nenhum termo é informado. */
 export const BUSCA_PADRAO = "BANCO";
 
@@ -35,6 +32,11 @@ export const BUSCA_PADRAO = "BANCO";
 export function normalizar(texto: string) {
   return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
 }
+
+/** Letras do filtro do dicionário completo: iniciais das palavras cadastradas. */
+export const letrasDoFiltro = [
+  ...new Set(palavras.map((p) => normalizar(p.titulo).charAt(0).toUpperCase())),
+].sort();
 
 export function contarSentidos(palavra: Palavra) {
   const n = palavra.sentidos.length;
