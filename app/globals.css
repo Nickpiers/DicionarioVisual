@@ -1,0 +1,149 @@
+@import "tailwindcss";
+
+/* Breakpoints idênticos ao design (desktop-first, limites inclusivos). */
+@custom-variant tablet (@media (max-width: 900px));
+@custom-variant phone (@media (max-width: 600px));
+
+:root {
+  --navy: #073b79;
+  --navy-dark: #042b5d;
+  --blue: #0c58a6;
+  --blue-soft: #e9f3ff;
+  --orange: #e54b1a;
+  --orange-soft: #fff0ea;
+  --green: #087a49;
+  --red: #b42318;
+  --ink: #11243d;
+  --muted: #53657b;
+  --line: #cbd8e7;
+  --surface: #ffffff;
+  --canvas: #f5f8fc;
+  --focus: #f6c744;
+}
+
+/* Alto contraste: redefine os tokens. */
+.high-contrast {
+  --navy: #001d4a;
+  --navy-dark: #00102b;
+  --blue: #003d82;
+  --blue-soft: #e6f1ff;
+  --ink: #000b1d;
+  --muted: #26384d;
+  --line: #6f8399;
+  --canvas: #ffffff;
+  --orange: #c83200;
+  --focus: #ffd500;
+}
+
+@theme inline {
+  --color-navy: var(--navy);
+  --color-navy-dark: var(--navy-dark);
+  --color-blue: var(--blue);
+  --color-blue-soft: var(--blue-soft);
+  --color-orange: var(--orange);
+  --color-orange-soft: var(--orange-soft);
+  --color-green: var(--green);
+  --color-red: var(--red);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-surface: var(--surface);
+  --color-canvas: var(--canvas);
+  --color-focus: var(--focus);
+
+  --font-sans: var(--font-atkinson), Arial, sans-serif;
+  --font-display: var(--font-manrope), sans-serif;
+
+  --shadow-card: 0 10px 30px rgba(20, 55, 90, 0.09);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    background: var(--canvas);
+    color: var(--ink);
+    font-family: var(--font-atkinson), Arial, sans-serif;
+    font-size: 17px;
+    line-height: 1.5;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+
+  button {
+    color: inherit;
+  }
+
+  button,
+  select {
+    cursor: pointer;
+  }
+
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 4px solid var(--focus);
+    outline-offset: 3px;
+  }
+
+  img {
+    display: block;
+    max-width: 100%;
+  }
+
+  h1,
+  h2,
+  h3,
+  p {
+    margin-top: 0;
+  }
+
+  h1,
+  h2,
+  h3,
+  strong {
+    font-family: var(--font-manrope), sans-serif;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 4vw, 3.6rem);
+    line-height: 1.08;
+    letter-spacing: -0.04em;
+  }
+
+  h2 {
+    font-size: clamp(1.45rem, 2.2vw, 2rem);
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+  }
+
+  h3 {
+    font-size: 1.05rem;
+  }
+
+  @media (max-width: 600px) {
+    body {
+      font-size: 16px;
+      padding-bottom: 70px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      scroll-behavior: auto !important;
+      transition: none !important;
+    }
+  }
+}

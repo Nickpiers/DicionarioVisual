@@ -1,0 +1,265 @@
+{
+  "palavras": [
+    {
+      "slug": "banco",
+      "titulo": "BANCO",
+      "categoria": "Cotidiano",
+      "descricao": "Pode ser um lugar para guardar dinheiro, um assento ou um banco de dados.",
+      "sentidos": [
+        {
+          "curto": "Financeiro",
+          "titulo": "Banco — instituição financeira",
+          "definicao": "Um banco é um lugar que guarda dinheiro, faz pagamentos e oferece outros serviços financeiros.",
+          "exemplo": "Eu fui ao banco pagar uma conta.",
+          "categoria": "Dinheiro e finanças",
+          "imagem": "escritorio",
+          "video": null
+        },
+        {
+          "curto": "Assento",
+          "titulo": "Banco — lugar para sentar",
+          "definicao": "Um banco é um assento comprido, usado por uma ou mais pessoas.",
+          "exemplo": "Ela sentou no banco da praça.",
+          "categoria": "Objetos e cotidiano",
+          "imagem": "sinalizante",
+          "video": null
+        },
+        {
+          "curto": "Dados",
+          "titulo": "Banco de dados",
+          "definicao": "Um banco de dados guarda informações organizadas para serem encontradas com facilidade.",
+          "exemplo": "O sistema consultou o banco de dados.",
+          "categoria": "Tecnologia",
+          "imagem": "sinalizante",
+          "video": null
+        }
+      ]
+    },
+    {
+      "slug": "banco-de-dados",
+      "titulo": "BANCO DE DADOS",
+      "categoria": "Tecnologia",
+      "descricao": "Conjunto de informações organizadas que podem ser consultadas.",
+      "sentidos": [
+        {
+          "curto": "Tecnologia",
+          "titulo": "Banco de dados",
+          "definicao": "Um banco de dados guarda informações organizadas para serem encontradas com facilidade.",
+          "exemplo": "O sistema consultou o banco de dados.",
+          "categoria": "Tecnologia",
+          "imagem": "sinalizante",
+          "video": null
+        }
+      ]
+    },
+    {
+      "slug": "banco-de-sangue",
+      "titulo": "BANCO DE SANGUE",
+      "categoria": "Saúde",
+      "descricao": "Local que recebe e guarda sangue para ajudar outras pessoas.",
+      "sentidos": [
+        {
+          "curto": "Saúde",
+          "titulo": "Banco de sangue",
+          "definicao": "Um banco de sangue é um lugar que recebe, guarda e distribui sangue doado.",
+          "exemplo": "Ele doou sangue no banco de sangue do hospital.",
+          "categoria": "Saúde",
+          "imagem": "sinalizante",
+          "video": null
+        }
+      ]
+    },
+    {
+      "slug": "casa",
+      "titulo": "CASA",
+      "categoria": "Cotidiano",
+      "descricao": "Lugar onde uma pessoa mora ou organização legislativa.",
+      "sentidos": [
+        {
+          "curto": "Moradia",
+          "titulo": "Casa — lugar para morar",
+          "definicao": "Uma casa é um lugar onde uma pessoa ou família mora.",
+          "exemplo": "Minha casa fica perto da escola.",
+          "categoria": "Cotidiano",
+          "imagem": "sinalizante",
+          "video": null
+        },
+        {
+          "curto": "Legislativa",
+          "titulo": "Casa — organização legislativa",
+          "definicao": "Uma casa legislativa é o lugar onde as pessoas eleitas discutem e votam as leis.",
+          "exemplo": "A Casa aprovou a nova lei.",
+          "categoria": "Pessoas e sociedade",
+          "imagem": "sinalizante",
+          "video": null
+        }
+      ]
+    },
+    {
+      "slug": "folha",
+      "titulo": "FOLHA",
+      "categoria": "Natureza",
+      "descricao": "Parte de uma planta, papel ou registro de pagamento.",
+      "sentidos": [
+        {
+          "curto": "Planta",
+          "titulo": "Folha — parte da planta",
+          "definicao": "A folha é a parte verde da planta que nasce nos galhos.",
+          "exemplo": "A folha da árvore caiu no chão.",
+          "categoria": "Natureza",
+          "imagem": "sinalizante",
+          "video": null
+        },
+        {
+          "curto": "Papel",
+          "titulo": "Folha — pedaço de papel",
+          "definicao": "Uma folha é um pedaço de papel usado para escrever, desenhar ou imprimir.",
+          "exemplo": "Escrevi meu nome na folha.",
+          "categoria": "Objetos e cotidiano",
+          "imagem": "sinalizante",
+          "video": null
+        },
+        {
+          "curto": "Pagamento",
+          "titulo": "Folha de pagamento",
+          "definicao": "A folha de pagamento é a lista dos salários que uma empresa paga.",
+          "exemplo": "A empresa fechou a folha de pagamento do mês.",
+          "categoria": "Dinheiro e finanças",
+          "imagem": "escritorio",
+          "video": null
+        }
+      ]
+    },
+    {
+      "slug": "manga",
+      "titulo": "MANGA",
+      "categoria": "Alimentos",
+      "descricao": "Uma fruta ou a parte de uma roupa que cobre o braço.",
+      "sentidos": [
+        {
+          "curto": "Fruta",
+          "titulo": "Manga — fruta",
+          "definicao": "Manga é uma fruta doce que cresce em árvores.",
+          "exemplo": "Comprei uma manga madura na feira.",
+          "categoria": "Alimentos",
+          "imagem": "sinalizante",
+          "video": null
+        },
+        {
+          "curto": "Roupa",
+          "titulo": "Manga — parte da roupa",
+          "definicao": "A manga é a parte da roupa que cobre o braço.",
+          "exemplo": "A manga da camisa ficou curta.",
+          "categoria": "Objetos e cotidiano",
+          "imagem": "sinalizante",
+          "video": null
+        }
+      ]
+    },
+    {
+      "slug": "pena",
+      "titulo": "PENA",
+      "categoria": "Cotidiano",
+      "descricao": "Pluma de ave, sentimento de compaixão ou punição.",
+      "sentidos": [
+        {
+          "curto": "Pluma",
+          "titulo": "Pena — pluma de ave",
+          "definicao": "A pena cobre o corpo das aves e ajuda a voar.",
+          "exemplo": "O pássaro perdeu uma pena azul.",
+          "categoria": "Natureza",
+          "imagem": "sinalizante",
+          "video": null
+        },
+        {
+          "curto": "Compaixão",
+          "titulo": "Pena — sentimento",
+          "definicao": "Sentir pena é ficar triste pelo sofrimento de outra pessoa.",
+          "exemplo": "Senti pena do cachorro na chuva.",
+          "categoria": "Pessoas e sentimentos",
+          "imagem": "sinalizante",
+          "video": null
+        },
+        {
+          "curto": "Punição",
+          "titulo": "Pena — punição",
+          "definicao": "A pena é o castigo dado pela justiça a quem cometeu um crime.",
+          "exemplo": "O juiz decidiu a pena.",
+          "categoria": "Pessoas e sociedade",
+          "imagem": "sinalizante",
+          "video": null
+        }
+      ]
+    },
+    {
+      "slug": "vela",
+      "titulo": "VELA",
+      "categoria": "Objetos",
+      "descricao": "Objeto de iluminação, peça de barco ou ato de vigiar.",
+      "sentidos": [
+        {
+          "curto": "Iluminação",
+          "titulo": "Vela — objeto de iluminação",
+          "definicao": "A vela é um objeto de cera com um pavio que se acende para iluminar.",
+          "exemplo": "Acendemos uma vela quando a luz acabou.",
+          "categoria": "Objetos e cotidiano",
+          "imagem": "sinalizante",
+          "video": null
+        },
+        {
+          "curto": "Barco",
+          "titulo": "Vela — peça de barco",
+          "definicao": "A vela é o pano grande que recebe o vento e faz o barco andar.",
+          "exemplo": "O vento encheu a vela do barco.",
+          "categoria": "Objetos e cotidiano",
+          "imagem": "sinalizante",
+          "video": null
+        },
+        {
+          "curto": "Vigiar",
+          "titulo": "Vela — ato de vigiar",
+          "definicao": "Velar é ficar acordado para cuidar ou vigiar alguém.",
+          "exemplo": "A mãe vela o sono do filho.",
+          "categoria": "Pessoas e cotidiano",
+          "imagem": "sinalizante",
+          "video": null
+        }
+      ]
+    },
+    {
+      "slug": "planta",
+      "titulo": "PLANTA",
+      "categoria": "Natureza",
+      "descricao": "Ser vivo vegetal, desenho de construção ou sola do pé.",
+      "sentidos": [
+        {
+          "curto": "Vegetal",
+          "titulo": "Planta — ser vivo vegetal",
+          "definicao": "A planta é um ser vivo que nasce da terra e precisa de água e sol.",
+          "exemplo": "Reguei a planta da varanda.",
+          "categoria": "Natureza",
+          "imagem": "sinalizante",
+          "video": null
+        },
+        {
+          "curto": "Desenho",
+          "titulo": "Planta — desenho de construção",
+          "definicao": "A planta é o desenho que mostra como uma casa ou prédio será construído.",
+          "exemplo": "O arquiteto mostrou a planta da casa.",
+          "categoria": "Objetos e cotidiano",
+          "imagem": "sinalizante",
+          "video": null
+        },
+        {
+          "curto": "Pé",
+          "titulo": "Planta do pé",
+          "definicao": "A planta do pé é a parte de baixo do pé, que toca o chão.",
+          "exemplo": "Senti a areia quente na planta do pé.",
+          "categoria": "Saúde",
+          "imagem": "sinalizante",
+          "video": null
+        }
+      ]
+    }
+  ]
+}
