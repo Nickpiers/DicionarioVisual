@@ -1,26 +1,38 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, type FormEvent } from "react";
-import { lerSessao } from "@/lib/armazenamento";
-import {
-  categoriasDeContribuicao,
-  enviarContribuicao,
-  type NovoSentido,
-} from "@/lib/contribuicoes";
-import { palavras } from "@/lib/palavras";
-import { Campo, CampoSelecao, ZonaUpload } from "./campos";
+import { classesGramaticais, enviarContribuicao } from "@/lib/contribuicoes";
+import { capitalizar } from "@/lib/palavras";
+import { useSessao } from "@/lib/sessao";
+import { AvisoVerificacao } from "./aviso-verificacao";
+import { Alerta, Campo, CampoSelecao, ZonaUpload } from "./campos";
 import { Icone } from "./icone";
-import { Botao, classeSecao, Eyebrow } from "./ui";
+import { Botao, classeLinkTexto, classeSecao, Eyebrow } from "./ui";
 
 type TipoContribuicao = "palavra" | "sentido";
 
+/** Palavra publicada, para escolher ao sugerir um novo sentido. */
+export type OpcaoPalavra = { slug: string; titulo: string };
+
 type EstadoSentido = {
   id: number;
-  video: NovoSentido["video"];
+  /**
+   * "comissao" pede que a equipe grave o sinal. O envio de vídeo e de imagem
+   * ainda não existe na API: a opção continua na tela, mas o pedido segue
+   * como pedido de gravação.
+   */
+  video: "upload" | "comissao";
   arquivoVideo: string | null;
   arquivoImagem: string | null;
 };
+
+/** Só letras, espaços e hífens (regra da API). */
+const TERMO_VALIDO = "[\\p{L}][\\p{L} \\-]*";
+/** No máximo 5 palavras (regra da API). */
+const termoTemMaisDe5Palavras = (termo: string) =>
+  termo.trim().split(/[\s-]+/).filter(Boolean).length > 5;
 
 const passos = [
   "Envie a palavra e os significados",
@@ -41,7 +53,7 @@ const classeOpcao = (ativa: boolean) =>
 let proximoId = 1;
 const novoSentido = (): EstadoSentido => ({
   id: proximoId++,
-  video: "upload",
+  video: "comissao",
   arquivoVideo: null,
   arquivoImagem: null,
 });
@@ -68,9 +80,16 @@ function SecaoFormulario({
   );
 }
 
-export function FormularioContribuicao() {
+export function FormularioContribuicao({
+  palavras,
+}: {
+  palavras: OpcaoPalavra[];
+}) {
   const router = useRouter();
   const parametros = useSearchParams();
+  const sessao = useSessao();
+  const usuario = sessao.status === "autenticado" ? sessao.usuario : undefined;
+  const podeEnviar = usuario?.emailVerified === true;
   const palavraInicial =
     parametros.get("palavra")?.toLocaleUpperCase("pt-BR") ?? "";
   const [tipo, setTipo] = useState<TipoContribuicao>(
@@ -80,6 +99,7 @@ export function FormularioContribuicao() {
     novoSentido(),
   ]);
   const [enviando, setEnviando] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
 
   const atualizarSentido = (id: number, mudanca: Partial<EstadoSentido>) =>
     setSentidos((lista) =>
@@ -91,25 +111,36 @@ export function FormularioContribuicao() {
     const formulario = evento.currentTarget;
     const dados = new FormData(formulario);
     const texto = (nome: string) => String(dados.get(nome) ?? "").trim();
+    const termo = tipo === "palavra" ? texto("termo") : texto("palavra");
+    if (termoTemMaisDe5Palavras(termo)) {
+      setErro("A palavra ou expressão pode ter no máximo 5 palavras.");
+      return;
+    }
     setEnviando(true);
-    await enviarContribuicao(
-      {
-        tipo,
-        termo: tipo === "palavra" ? texto("termo") : texto("palavra"),
-        categoria: texto("categoria"),
-        email: texto("email"),
-        sentidos: sentidos.map((s) => ({
-          nome: texto(`nome-${s.id}`),
-          definicao: texto(`definicao-${s.id}`),
-          exemplo: texto(`exemplo-${s.id}`),
-          fonte: texto(`fonte-${s.id}`),
-          video: s.video,
-          arquivoVideo: s.arquivoVideo,
-          arquivoImagem: s.arquivoImagem,
-        })),
-      },
-      lerSessao(),
-    );
+    setErro(null);
+    const { enviados, falha } = await enviarContribuicao({
+      termo,
+      classeGramatical: texto("categoria"),
+      // Fonte, e-mail de contato e arquivos ainda não existem na API.
+      sentidos: sentidos.map((s) => ({
+        nome: texto(`nome-${s.id}`),
+        definicao: texto(`definicao-${s.id}`),
+        exemplo: texto(`exemplo-${s.id}`),
+      })),
+    });
+
+    if (falha) {
+      // Tira da tela o que já foi enviado, para tentar de novo só o resto.
+      setSentidos(sentidos.slice(falha.indice));
+      setErro(
+        enviados.length > 0
+          ? `${enviados.length} ${enviados.length === 1 ? "sentido foi enviado" : "sentidos foram enviados"}, mas o seguinte não: ${falha.erro.detail}`
+          : falha.erro.detail,
+      );
+      setEnviando(false);
+      return;
+    }
+
     // A rota fica preservada em segundo plano (Activity): volta limpa no próximo pedido.
     formulario.reset();
     setSentidos([novoSentido()]);
@@ -131,6 +162,10 @@ export function FormularioContribuicao() {
           <p className="text-[1.1rem] text-muted">
             Sua contribuição será revisada antes de entrar no dicionário.
           </p>
+          <Link href="/contribuir/minhas" className={classeLinkTexto}>
+            <Icone nome="book" />
+            Acompanhar minhas contribuições
+          </Link>
           <div className="mt-7 rounded-[14px] bg-navy p-5 text-white tablet:grid tablet:grid-cols-3 tablet:gap-3 phone:block">
             <strong className="mb-[14px] block tablet:col-span-full">
               Como funciona
@@ -153,6 +188,7 @@ export function FormularioContribuicao() {
           className="rounded-[14px] border border-line bg-white p-[30px] shadow-card phone:px-[14px] phone:py-[18px]"
           onSubmit={enviar}
         >
+          <AvisoVerificacao className="mt-0 mb-6" />
           <div
             className="mb-7 grid grid-cols-2 gap-[10px] phone:grid-cols-1"
             role="tablist"
@@ -212,6 +248,9 @@ export function FormularioContribuicao() {
                 name="termo"
                 placeholder="Ex.: Banco"
                 required
+                maxLength={60}
+                pattern={TERMO_VALIDO}
+                title="Use só letras, espaços e hífens (no máximo 5 palavras)."
               />
             ) : (
               <CampoSelecao
@@ -225,36 +264,46 @@ export function FormularioContribuicao() {
                 }
               >
                 <option value="" disabled>
-                  Selecione uma palavra
+                  {palavras.length > 0
+                    ? "Selecione uma palavra"
+                    : "Não foi possível carregar as palavras"}
                 </option>
                 {palavras.map((p) => (
-                  <option key={p.slug}>{p.titulo}</option>
+                  <option key={p.slug} value={p.titulo}>
+                    {capitalizar(p.titulo)}
+                  </option>
                 ))}
               </CampoSelecao>
             )}
             <CampoSelecao
-              rotulo="Categoria *"
+              rotulo="Classe gramatical *"
               name="categoria"
               required
               defaultValue=""
             >
               <option value="" disabled>
-                Selecione uma categoria
+                Selecione uma classe
               </option>
-              {categoriasDeContribuicao.map((c) => (
-                <option key={c}>{c}</option>
+              {classesGramaticais.map((c) => (
+                <option key={c} value={c}>
+                  {capitalizar(c)}
+                </option>
               ))}
             </CampoSelecao>
           </div>
           <Campo
+            key={usuario?.email}
             rotulo="E-mail para contato *"
             name="email"
             type="email"
             placeholder="voce@exemplo.com"
+            defaultValue={usuario?.email}
+            readOnly
             required
           />
           <p className="mt-[6px] mb-0 text-[.8rem] text-muted">
-            Usaremos este e-mail somente para informar o resultado da revisão.
+            Usaremos o e-mail da sua conta somente para informar o resultado da
+            revisão.
           </p>
           <div className="my-7 h-px bg-line" />
 
@@ -295,6 +344,8 @@ export function FormularioContribuicao() {
                 name={`nome-${sentido.id}`}
                 placeholder="Ex.: Instituição financeira"
                 required
+                minLength={3}
+                maxLength={80}
               />
               <Campo
                 rotulo="Definição em português *"
@@ -302,11 +353,14 @@ export function FormularioContribuicao() {
                 placeholder="Explique com frases curtas e palavras fáceis."
                 multilinha
                 required
+                minLength={10}
+                maxLength={500}
               />
               <Campo
                 rotulo="Frase de exemplo"
                 name={`exemplo-${sentido.id}`}
                 placeholder="Ex.: Eu fui ao banco pagar uma conta."
+                maxLength={300}
               />
               <Campo
                 rotulo="Fonte ou referência"
@@ -379,6 +433,13 @@ export function FormularioContribuicao() {
                 />
               </div>
               {sentido.video === "upload" && (
+                <Alerta tipo="info">
+                  O envio de vídeo e imagem pelo site ainda não está
+                  disponível. Seu pedido seguirá como pedido de gravação: a
+                  comissão produzirá o vídeo após aprovar.
+                </Alerta>
+              )}
+              {sentido.video === "upload" && (
                 <label className="mt-[22px] flex items-start gap-[10px] rounded-[9px] bg-orange-soft p-3 text-[.88rem]">
                   <input
                     type="checkbox"
@@ -412,14 +473,20 @@ export function FormularioContribuicao() {
               enviado pode ser usado no Dicionário Libras.
             </span>
           </label>
+          {erro && <Alerta>{erro}</Alerta>}
           <Botao
             type="submit"
             icone="check"
             className="mt-4 w-full"
-            disabled={enviando}
+            disabled={enviando || !podeEnviar}
           >
-            Enviar para aprovação
+            {enviando ? "Enviando…" : "Enviar para aprovação"}
           </Botao>
+          {!podeEnviar && usuario && (
+            <p className="mt-[10px] mb-0 text-center text-[.8rem] font-extrabold text-[#6b4300]">
+              Confirme seu e-mail para liberar o envio.
+            </p>
+          )}
           <p className="mt-[10px] mb-0 text-center text-[.8rem] text-muted">
             Seu conteúdo será analisado por uma pessoa moderadora antes da
             publicação.

@@ -4,7 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { registrarRecente } from "@/lib/armazenamento";
-import { imagensDeApoio, type Palavra } from "@/lib/palavras";
+import {
+  IMAGEM_APOIO_PADRAO,
+  textoDaFonte,
+  type Palavra,
+} from "@/lib/palavras";
 import { Icone } from "./icone";
 import { classeBotao, classeRotuloMidia, Eyebrow } from "./ui";
 import { VideoSinal } from "./video-sinal";
@@ -17,11 +21,17 @@ export function ConsultaSentidos({ palavra }: { palavra: Palavra }) {
   const [ativo, setAtivo] = useState(0);
   const sentido = palavra.sentidos[ativo];
   const total = palavra.sentidos.length;
-  const imagem = imagensDeApoio[sentido.imagem];
+  const imagem = sentido.imagem
+    ? { src: sentido.imagem, alt: `Imagem de apoio: ${sentido.curto}` }
+    : IMAGEM_APOIO_PADRAO;
 
   useEffect(() => {
-    registrarRecente(palavra.slug);
-  }, [palavra.slug]);
+    registrarRecente({
+      slug: palavra.slug,
+      titulo: palavra.titulo,
+      sentidos: palavra.sentidos.length,
+    });
+  }, [palavra.slug, palavra.titulo, palavra.sentidos.length]);
 
   return (
     <>
@@ -67,7 +77,7 @@ export function ConsultaSentidos({ palavra }: { palavra: Palavra }) {
             Sentido {ativo + 1}
           </span>
           <div>
-            <Eyebrow>{sentido.categoria}</Eyebrow>
+            {sentido.categoria && <Eyebrow>{sentido.categoria}</Eyebrow>}
             <h2 className="mt-[2px] mb-0">{sentido.titulo}</h2>
           </div>
         </div>
@@ -94,19 +104,22 @@ export function ConsultaSentidos({ palavra }: { palavra: Palavra }) {
               width={1200}
               height={800}
               unoptimized
+              loading="eager"
               sizes="(max-width: 900px) 100vw, 440px"
               className="h-[190px] w-full rounded-[12px] object-cover tablet:h-[300px] phone:h-[190px]"
             />
             <div className="p-[18px]">
               <Eyebrow>O que significa?</Eyebrow>
               <p className="text-[1.06rem]">{sentido.definicao}</p>
-              <div className="rounded-[10px] bg-orange-soft p-[14px]">
-                <strong>Exemplo em português</strong>
-                <p className="mt-1 mb-0">“{sentido.exemplo}”</p>
-              </div>
+              {sentido.exemplo && (
+                <div className="rounded-[10px] bg-orange-soft p-[14px]">
+                  <strong>Exemplo em português</strong>
+                  <p className="mt-1 mb-0">“{sentido.exemplo}”</p>
+                </div>
+              )}
               <p className="mt-[14px] mb-0 flex items-center gap-[7px] border-t border-line pt-3 text-[1.06rem] text-muted">
-                <Icone nome="shield" /> Conteúdo revisado pela equipe do projeto
-                • Referência terminológica: INES
+                <Icone nome="shield" className="flex-none" />
+                {textoDaFonte[sentido.fonte]}
               </p>
             </div>
           </div>

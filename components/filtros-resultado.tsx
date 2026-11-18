@@ -16,7 +16,7 @@ export function aplicarFiltros(lista: Palavra[], filtros: EstadoFiltros) {
   return filtros.ordenadoAZ ? ordenarAZ(filtrada) : filtrada;
 }
 
-/** Botões "A–Z" e "Categoria" (.filter-group). */
+/** Botões "A–Z" e "Classe" gramatical (.filter-group). */
 export function FiltrosResultado({
   palavras,
   filtros,
@@ -76,13 +76,13 @@ export function FiltrosResultado({
         aria-expanded={aberto}
         onClick={() => setAberto((a) => !a)}
       >
-        {filtros.categoria ?? "Categoria"}
+        {filtros.categoria ?? "Classe"}
       </Botao>
 
       {aberto && (
         <div
           role="menu"
-          aria-label="Filtrar por categoria"
+          aria-label="Filtrar por classe gramatical"
           className="absolute top-full right-0 z-10 mt-2 flex min-w-56 flex-col rounded-[14px] border border-line bg-white p-2 text-ink shadow-card"
         >
           {[null, ...categorias].map((categoria) => {
@@ -101,7 +101,7 @@ export function FiltrosResultado({
                   setAberto(false);
                 }}
               >
-                {categoria ?? "Todas as categorias"}
+                {categoria ?? "Todas as classes"}
               </button>
             );
           })}

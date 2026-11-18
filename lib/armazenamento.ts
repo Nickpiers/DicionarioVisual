@@ -65,43 +65,44 @@ export function definirAltoContraste(ativo: boolean) {
 
 /* Buscas recentes ----------------------------------------------------- */
 
-export const RECENTES_PADRAO = ["banco", "manga", "luz"];
-const recentes = criarStore<string[]>("dicionario:recentes", RECENTES_PADRAO);
+/** Resumo da palavra consultada, para listar sem depender da API. */
+export type Recente = { slug: string; titulo: string; sentidos: number };
+
+const recentes = criarStore<unknown>("dicionario:recentes", []);
+const SEM_RECENTES: Recente[] = [];
+let ultimoBruto: unknown;
+let ultimos: Recente[] = SEM_RECENTES;
+
+/** Ignora formatos antigos (lista de slugs) ou corrompidos. */
+function lerRecentes(): Recente[] {
+  const bruto = recentes.ler();
+  if (bruto !== ultimoBruto) {
+    ultimoBruto = bruto;
+    ultimos = Array.isArray(bruto)
+      ? bruto.filter(
+          (r): r is Recente =>
+            typeof r === "object" &&
+            r !== null &&
+            typeof r.slug === "string" &&
+            typeof r.titulo === "string" &&
+            typeof r.sentidos === "number",
+        )
+      : SEM_RECENTES;
+  }
+  return ultimos;
+}
 
 export function useRecentes() {
   return useSyncExternalStore(
     recentes.inscrever,
-    recentes.ler,
-    () => recentes.padrao,
+    lerRecentes,
+    () => SEM_RECENTES,
   );
 }
 
-export function registrarRecente(slug: string) {
-  const atuais = recentes.ler().filter((s) => s !== slug);
-  recentes.gravar([slug, ...atuais].slice(0, 10));
-}
-
-/* Sessão (login mockado) ---------------------------------------------- */
-
-export type Papel = "user" | "admin";
-export type Sessao = { papel: Papel; email: string } | null;
-
-const sessao = criarStore<Sessao>("dicionario:sessao", null);
-
-export function useSessao() {
-  return useSyncExternalStore(
-    sessao.inscrever,
-    sessao.ler,
-    () => sessao.padrao,
-  );
-}
-
-export function lerSessao() {
-  return sessao.ler();
-}
-
-export function definirSessao(nova: Sessao) {
-  sessao.gravar(nova);
+export function registrarRecente(recente: Recente) {
+  const atuais = lerRecentes().filter((r) => r.slug !== recente.slug);
+  recentes.gravar([recente, ...atuais].slice(0, 10));
 }
 
 /* Hidratação ---------------------------------------------------------- */

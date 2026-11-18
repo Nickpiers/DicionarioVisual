@@ -2,38 +2,43 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, type FormEvent } from "react";
-import { entrar } from "@/lib/contribuicoes";
-import { Campo } from "./campos";
+import { useEffect, useState, type FormEvent } from "react";
+import { mensagemDeErro } from "@/lib/api/erros";
+import { destinoSeguro } from "@/lib/destino";
+import { entrar, useSessao } from "@/lib/sessao";
+import { Alerta, Campo } from "./campos";
 import { Icone } from "./icone";
 import { Botao, classeLinkTexto, Eyebrow } from "./ui";
 
-/** Só aceita caminhos internos como destino depois do login. */
-function destinoSeguro(valor: string | null) {
-  return valor && valor.startsWith("/") && !valor.startsWith("//")
-    ? valor
-    : "/contribuir";
-}
 
 export function FormularioEntrada() {
   const router = useRouter();
   const destino = destinoSeguro(useSearchParams().get("para"));
   const ehModeracao = destino.startsWith("/moderacao");
+  const sessao = useSessao();
   const [enviando, setEnviando] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
+  const jaEntrou = sessao.status === "autenticado" && !enviando;
+
+  // Quem já tem sessão segue direto para o destino.
+  useEffect(() => {
+    if (jaEntrou) router.replace(destino);
+  }, [jaEntrou, destino, router]);
 
   const enviar = async (evento: FormEvent<HTMLFormElement>) => {
     evento.preventDefault();
     const formulario = evento.currentTarget;
     const dados = new FormData(formulario);
     setEnviando(true);
-    await entrar(
-      String(dados.get("email")),
-      String(dados.get("senha")),
-      ehModeracao ? "admin" : "user",
-    );
-    formulario.reset();
-    setEnviando(false);
-    router.replace(destino);
+    setErro(null);
+    try {
+      await entrar(String(dados.get("email")), String(dados.get("senha")));
+      formulario.reset();
+      router.replace(destino);
+    } catch (e) {
+      setErro(mensagemDeErro(e));
+      setEnviando(false);
+    }
   };
 
   return (
@@ -54,6 +59,7 @@ export function FormularioEntrada() {
             : "O acesso identifica sua contribuição e permite receber atualizações da revisão."}
         </p>
         <form onSubmit={enviar}>
+          {erro && <Alerta>{erro}</Alerta>}
           <Campo
             rotulo="E-mail *"
             name="email"
@@ -78,7 +84,11 @@ export function FormularioEntrada() {
             className="mt-4 w-full"
             disabled={enviando}
           >
-            {ehModeracao ? "Entrar na moderação" : "Entrar e continuar"}
+            {enviando
+              ? "Entrando…"
+              : ehModeracao
+                ? "Entrar na moderação"
+                : "Entrar e continuar"}
           </Botao>
         </form>
         <Link href="/" className={`${classeLinkTexto} mt-[14px]`}>
@@ -86,11 +96,23 @@ export function FormularioEntrada() {
         </Link>
         <aside className="mt-[18px] flex items-start gap-[10px] rounded-[10px] bg-blue-soft p-[14px] text-[.82rem] text-muted">
           <Icone nome="info" />
-          <span>
-            {ehModeracao
-              ? "Cadastro de moderadores é realizado somente pela administração do sistema."
-              : "Ainda não tem acesso? Solicite uma conta à equipe responsável pelo dicionário."}
-          </span>
+          {ehModeracao ? (
+            <span>
+              Cadastro de moderadores é realizado somente pela administração do
+              sistema.
+            </span>
+          ) : (
+            <span>
+              Ainda não tem conta?{" "}
+              <Link
+                href={`/cadastrar?para=${encodeURIComponent(destino)}`}
+                className="font-extrabold text-blue underline"
+              >
+                Crie sua conta
+              </Link>{" "}
+              para enviar palavras e sentidos.
+            </span>
+          )}
         </aside>
       </section>
     </main>

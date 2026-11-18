@@ -2,16 +2,18 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { ConsultaSentidos } from "@/components/consulta-sentidos";
-import { PainelLateral, PainelLateralBase } from "@/components/painel-lateral";
+import { PainelLateralBase } from "@/components/painel-lateral";
 import { classeSecao, Eyebrow, SeloSentidos } from "@/components/ui";
 import {
-  buscarPalavra,
-  capitalizar,
-  contarSentidos,
-  palavras,
-} from "@/lib/palavras";
+  buscarPalavras,
+  listarPalavras,
+  obterPalavra,
+} from "@/lib/api/servidor";
+import { capitalizar, contarSentidos, type Palavra } from "@/lib/palavras";
 
-export function generateStaticParams() {
+/** Pré-renderiza as palavras publicadas; as novas são geradas na 1ª visita. */
+export async function generateStaticParams() {
+  const palavras = await listarPalavras();
   return palavras.map((palavra) => ({ slug: palavra.slug }));
 }
 
@@ -19,16 +21,16 @@ export async function generateMetadata(
   props: PageProps<"/palavras/[slug]">,
 ): Promise<Metadata> {
   const { slug } = await props.params;
-  const palavra = buscarPalavra(slug);
+  const palavra = await obterPalavra(slug);
   return {
     title: palavra ? capitalizar(palavra.titulo) : "Palavra não encontrada",
   };
 }
 
 /**
- * As palavras do mock são pré-renderizadas (generateStaticParams), então ler
- * `params` antes do Suspense não atrasa a navegação; e permite responder 404
- * de verdade para slugs inexistentes.
+ * As palavras são pré-renderizadas (generateStaticParams) e ficam em cache,
+ * então ler `params` antes do Suspense não atrasa a navegação; e permite
+ * responder 404 de verdade para palavras inexistentes.
  */
 export const instant = false;
 
@@ -36,7 +38,7 @@ export default async function PalavraPage(
   props: PageProps<"/palavras/[slug]">,
 ) {
   const { slug } = await props.params;
-  const palavra = buscarPalavra(slug);
+  const palavra = await obterPalavra(slug);
   if (!palavra) notFound();
 
   return (
@@ -46,10 +48,14 @@ export default async function PalavraPage(
       >
         <Suspense
           fallback={
-            <PainelLateralBase palavra={palavra} consulta={palavra.titulo} />
+            <PainelLateralBase
+              palavra={palavra}
+              consulta={palavra.titulo}
+              resultados={[palavra]}
+            />
           }
         >
-          <PainelLateral palavra={palavra} />
+          <PainelLateral palavra={palavra} searchParams={props.searchParams} />
         </Suspense>
 
         <div className="min-w-0">
@@ -73,5 +79,31 @@ export default async function PalavraPage(
         </div>
       </section>
     </main>
+  );
+}
+
+/** Painel "Buscar outra palavra" com os resultados da busca de origem (?q=). */
+async function PainelLateral({
+  palavra,
+  searchParams,
+}: {
+  palavra: Palavra;
+  searchParams: PageProps<"/palavras/[slug]">["searchParams"];
+}) {
+  const q = (await searchParams).q;
+  const consulta = (Array.isArray(q) ? q[0] : q)?.trim() || palavra.titulo;
+  let encontrados: Palavra[] = [];
+  try {
+    encontrados = await buscarPalavras(consulta);
+  } catch {
+    // Sem a busca, o painel mostra só a palavra atual.
+  }
+  return (
+    <PainelLateralBase
+      key={consulta}
+      palavra={palavra}
+      consulta={consulta}
+      resultados={encontrados.length > 0 ? encontrados : [palavra]}
+    />
   );
 }

@@ -25,7 +25,7 @@ export function CartaoResultado({
           <h3 className="my-[6px] text-navy">{palavra.titulo}</h3>
           <SeloSentidos>{contarSentidos(palavra)}</SeloSentidos>
         </div>
-        <Eyebrow>{palavra.categoria}</Eyebrow>
+        {palavra.categoria && <Eyebrow>{palavra.categoria}</Eyebrow>}
         <p className="text-muted">{palavra.descricao}</p>
         <Link href={href} className={`${classeLinkTexto} mt-auto self-start`}>
           Ver significados <Icone nome="arrow" tamanho={17} />

@@ -1,9 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { buscarPorTermo, type Palavra } from "@/lib/palavras";
+import type { Palavra } from "@/lib/palavras";
 import { CampoBusca } from "./campo-busca";
 import {
   aplicarFiltros,
@@ -12,27 +11,20 @@ import {
 } from "./filtros-resultado";
 import { classeEyebrow, Eyebrow, IconeSinal } from "./ui";
 
-/** Painel "Buscar outra palavra" que respeita o termo da busca (?q=). */
-export function PainelLateral({ palavra }: { palavra: Palavra }) {
-  const consulta = useSearchParams().get("q")?.trim() || palavra.titulo;
-  return (
-    <PainelLateralBase key={consulta} palavra={palavra} consulta={consulta} />
-  );
-}
-
+/** Painel "Buscar outra palavra" com os resultados da busca de origem. */
 export function PainelLateralBase({
   palavra,
   consulta,
+  resultados,
 }: {
   palavra: Palavra;
   consulta: string;
+  resultados: Palavra[];
 }) {
   const [filtros, setFiltros] = useState<EstadoFiltros>({
     ordenadoAZ: false,
     categoria: null,
   });
-  const encontrados = buscarPorTermo(consulta);
-  const resultados = encontrados.length > 0 ? encontrados : [palavra];
   const visiveis = aplicarFiltros(resultados, filtros);
   const sufixo = `?q=${encodeURIComponent(consulta)}`;
 

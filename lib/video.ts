@@ -1,12 +1,14 @@
 const ID_YOUTUBE = /^[\w-]{11}$/;
 
 /**
- * Extrai o id de um link do YouTube. Aceita os formatos usados no cadastro:
- * `youtube.com/watch?v=ID`, `youtu.be/ID`, `youtube.com/embed/ID` e
- * `youtube.com/shorts/ID`. Retorna `null` se o link não for do YouTube.
+ * Extrai o id de um vídeo do YouTube. Aceita o id puro (como a API devolve) e
+ * os formatos de link `youtube.com/watch?v=ID`, `youtu.be/ID`,
+ * `youtube.com/embed/ID` e `youtube.com/shorts/ID`. Retorna `null` se não for
+ * um vídeo do YouTube.
  */
 export function idDoYoutube(link: string | null | undefined): string | null {
   if (!link) return null;
+  if (ID_YOUTUBE.test(link.trim())) return link.trim();
 
   let url: URL;
   try {

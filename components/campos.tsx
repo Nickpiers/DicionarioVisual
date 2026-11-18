@@ -53,6 +53,37 @@ export function CampoSelecao({
   );
 }
 
+/* Mensagem de erro ou sucesso ------------------------------------------ */
+
+const estilosAlerta = {
+  erro: { classe: "border-[#f3b8ae] bg-[#fff0ee] text-red", icone: "x" },
+  sucesso: { classe: "border-[#8ac9a9] bg-[#e8f8ef] text-[#075d39]", icone: "check" },
+  aviso: { classe: "border-[#f1d58a] bg-[#fff8e1] text-[#6b4300]", icone: "info" },
+  info: { classe: "border-[#acd0f4] bg-blue-soft text-navy", icone: "info" },
+} as const;
+
+/** Faixa de mensagem. Erros são anunciados na hora pelos leitores de tela. */
+export function Alerta({
+  tipo = "erro",
+  children,
+  className = "",
+}: {
+  tipo?: keyof typeof estilosAlerta;
+  children: ReactNode;
+  className?: string;
+}) {
+  const estilo = estilosAlerta[tipo];
+  return (
+    <div
+      role={tipo === "erro" ? "alert" : "status"}
+      className={`mt-4 flex items-start gap-[10px] rounded-[10px] border p-[14px] text-[.92rem] ${estilo.classe} ${className}`}
+    >
+      <Icone nome={estilo.icone} className="mt-[2px] flex-none" />
+      <div className="min-w-0">{children}</div>
+    </div>
+  );
+}
+
 /* Área de upload (.upload-zone) --------------------------------------- */
 
 const configuracaoUpload = {

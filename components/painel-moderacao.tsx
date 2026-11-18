@@ -1,339 +1,94 @@
 "use client";
 
-import Image from "next/image";
-import { useState } from "react";
+import Link from "next/link";
+import { useCallback, useEffect, useState } from "react";
+import { ErroApi, mensagemDeErro } from "@/lib/api/erros";
+import type {
+  AdminSenseApi,
+  AdminWordApi,
+  AprovacaoApi,
+  ItemFilaApi,
+} from "@/lib/api/tipos";
 import {
-  categoriasDeModeracao,
-  decidir,
+  classesGramaticais,
   formatarData,
-  iniciais,
-  porSituacao,
-  salvarAjustes,
-  situacoes,
-  useContribuicoes,
-  type CamposEditaveis,
-  type Contribuicao,
-  type Situacao,
+  formatarDataCurta,
 } from "@/lib/contribuicoes";
-import { IMAGEM_SINALIZANTE, imagensDeApoio } from "@/lib/palavras";
-import { classeCampo, classeControle, classeRotuloCampo } from "./campos";
-import { Icone } from "./icone";
 import {
-  Botao,
-  classeBotaoPlay,
-  classeControlesVideo,
-  classePlayer,
-  classeRotuloMidia,
-  classeSecao,
-  Eyebrow,
-} from "./ui";
+  aprovar,
+  carregarFila,
+  carregarPalavraAdmin,
+  marcarParaGravacao,
+  rejeitar,
+} from "@/lib/moderacao";
+import { idDoYoutube } from "@/lib/video";
+import { Alerta, classeCampo, classeControle, classeRotuloCampo } from "./campos";
+import { Icone } from "./icone";
+import { EtiquetaSituacao } from "./minhas-contribuicoes";
+import { Botao, classeBotao, classeRotuloMidia, classeSecao, Eyebrow } from "./ui";
+import { VideoSinal } from "./video-sinal";
 
-const coresSituacao: Record<Situacao, string> = {
-  Pendente: "bg-[#fff1c7] text-[#884008]",
-  Aprovado: "bg-[#e8f8ef] text-[#075d39]",
-  Rejeitado: "bg-[#fff0ee] text-red",
+const emAberto = (s: AdminSenseApi) =>
+  s.status === "PENDING" || s.status === "IN_RECORDING";
+
+const rotuloFonte = { INES: "INES", EQUIPE: "Equipe", COLABORADOR: "Comunidade" };
+
+/* Fila ---------------------------------------------------------------- */
+
+type EstadoFila = {
+  itens: ItemFilaApi[];
+  proximo: string | null;
+  carregando: boolean;
+  erro: string | null;
 };
 
-function EtiquetaSituacao({
-  situacao,
-  className = "",
-}: {
-  situacao: Situacao;
-  className?: string;
-}) {
-  return (
-    <span
-      className={`rounded-[99px] px-2 py-[5px] text-center text-[.72rem] font-extrabold ${coresSituacao[situacao]} ${className}`}
-    >
-      {situacao}
-    </span>
-  );
-}
-
-const campos = (c: Contribuicao): CamposEditaveis => ({
-  termo: c.termo,
-  sentido: c.sentido,
-  categoria: c.categoria,
-  definicao: c.definicao,
-  exemplo: c.exemplo,
-  fonte: c.fonte,
-  arquivoVideo: c.arquivoVideo,
-  arquivoImagem: c.arquivoImagem,
-});
-
-const classeAcaoArquivo =
-  "flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-[9px] border border-line bg-white px-[14px] py-[10px] font-extrabold text-navy hover:border-blue hover:bg-blue-soft";
-
-/** Painel de revisão de uma contribuição (.review-panel). */
-function PainelRevisao({ contribuicao }: { contribuicao: Contribuicao }) {
-  const [rascunho, setRascunho] = useState(() => campos(contribuicao));
-  const [salvo, setSalvo] = useState(false);
-  const pendente = contribuicao.situacao === "Pendente";
-  const opcoesCategoria = categoriasDeModeracao.includes(rascunho.categoria)
-    ? categoriasDeModeracao
-    : [...categoriasDeModeracao, rascunho.categoria];
-
-  const mudar = (campo: keyof CamposEditaveis, valor: string) => {
-    setSalvo(false);
-    setRascunho((r) => ({ ...r, [campo]: valor }));
-  };
-
-  return (
-    <aside className="col-[1] row-[1] rounded-[14px] border border-line bg-white p-[22px] shadow-card phone:p-4">
-      <div className="mb-[18px] flex items-start justify-between gap-[10px]">
-        <div>
-          <Eyebrow>Revisar submissão</Eyebrow>
-          <h2 className="my-[3px] text-navy">
-            {rascunho.termo.toLocaleUpperCase("pt-BR")}
-          </h2>
-          <p className="m-0 text-[.85rem] text-muted">
-            Enviado por {contribuicao.pessoa}
-          </p>
-        </div>
-        <EtiquetaSituacao situacao={contribuicao.situacao} />
-      </div>
-
-      <aside className="mb-[22px] grid grid-cols-[auto_1fr_auto] items-center gap-3 rounded-[10px] border border-[#acd0f4] bg-blue-soft p-[14px] phone:grid-cols-[auto_1fr]">
-        <span className="block size-[42px] place-items-center rounded-[10px] bg-blue text-white">
-          <Icone nome="mail" />
-        </span>
-        <div>
-          <span className="block text-[.76rem] text-muted">
-            Contato do solicitante
-          </span>
-          <strong className="block text-[.88rem] text-navy">
-            {contribuicao.email}
-          </strong>
-        </div>
-        <Botao
-          variante="secondary"
-          className="phone:col-span-full phone:w-full [&>span]:block"
-          onClick={() => {
-            window.location.href = `mailto:${contribuicao.email}`;
-          }}
-        >
-          Enviar e-mail
-        </Botao>
-      </aside>
-
-      <div className="mb-1 flex items-end justify-between gap-4 phone:flex-col phone:items-start">
-        <div>
-          <Eyebrow>Conteúdo editável</Eyebrow>
-          <h3 className="mt-[3px] mb-0 text-navy">
-            Faça os ajustes necessários
-          </h3>
-        </div>
-        <span className="text-[.76rem] text-muted">
-          As alterações serão usadas na publicação.
-        </span>
-      </div>
-      <div className="grid grid-cols-2 gap-[14px] phone:grid-cols-1">
-        <label className={classeCampo}>
-          <span className={classeRotuloCampo}>Palavra *</span>
-          <input
-            className={classeControle}
-            value={rascunho.termo}
-            onChange={(e) => mudar("termo", e.target.value)}
-          />
-        </label>
-        <label className={classeCampo}>
-          <span className={classeRotuloCampo}>Nome do sentido *</span>
-          <input
-            className={classeControle}
-            value={rascunho.sentido}
-            onChange={(e) => mudar("sentido", e.target.value)}
-          />
-        </label>
-      </div>
-      <label className={classeCampo}>
-        <span className={classeRotuloCampo}>Categoria *</span>
-        <select
-          className={classeControle}
-          value={rascunho.categoria}
-          onChange={(e) => mudar("categoria", e.target.value)}
-        >
-          {opcoesCategoria.map((c) => (
-            <option key={c}>{c}</option>
-          ))}
-        </select>
-      </label>
-      <label className={classeCampo}>
-        <span className={classeRotuloCampo}>Definição em português *</span>
-        <textarea
-          rows={4}
-          className={`${classeControle} resize-y`}
-          value={rascunho.definicao}
-          onChange={(e) => mudar("definicao", e.target.value)}
-        />
-      </label>
-      <label className={classeCampo}>
-        <span className={classeRotuloCampo}>Frase de exemplo *</span>
-        <textarea
-          rows={3}
-          className={`${classeControle} resize-y`}
-          value={rascunho.exemplo}
-          onChange={(e) => mudar("exemplo", e.target.value)}
-        />
-      </label>
-      <label className={classeCampo}>
-        <span className={classeRotuloCampo}>Fonte ou referência *</span>
-        <input
-          className={classeControle}
-          value={rascunho.fonte}
-          onChange={(e) => mudar("fonte", e.target.value)}
-        />
-      </label>
-
-      <div className="mt-5 grid grid-cols-2 gap-[14px] phone:grid-cols-1">
-        <div>
-          <span className={classeRotuloMidia}>
-            <Icone nome="video" /> Vídeo em Libras
-          </span>
-          <div
-            className={`${classePlayer} mb-[10px] min-h-[240px] phone:min-h-[250px]`}
-          >
-            <Image
-              src={IMAGEM_SINALIZANTE}
-              alt="Prévia do vídeo em Libras enviado"
-              fill
-              unoptimized
-              sizes="(max-width: 600px) 100vw, 360px"
-              className="object-cover object-[center_30%]"
-            />
-            <button
-              type="button"
-              className={classeBotaoPlay}
-              aria-label="Reproduzir vídeo"
-            >
-              <Icone nome="play" />
-            </button>
-            <div className={classeControlesVideo}>
-              <Icone nome="play" />
-              <span className="h-1 flex-1 rounded-[99px] bg-white/35">
-                <i className="block h-full w-[35%] rounded-[inherit] bg-white" />
-              </span>
-              <Icone nome="volume" />
-              <Icone nome="expand" />
-            </div>
-          </div>
-          <label className={classeAcaoArquivo}>
-            <input
-              type="file"
-              accept="video/*"
-              className="absolute size-px overflow-hidden [clip:rect(0,0,0,0)]"
-              onChange={(e) =>
-                mudar(
-                  "arquivoVideo",
-                  e.target.files?.[0]?.name || rascunho.arquivoVideo,
-                )
-              }
-            />
-            <Icone nome="upload" />
-            <span>Substituir vídeo</span>
-          </label>
-          <small className="mt-[5px] block text-center text-muted">
-            {rascunho.arquivoVideo}
-          </small>
-        </div>
-        <div>
-          <span className={classeRotuloMidia}>
-            <Icone nome="image" /> Imagem de apoio
-          </span>
-          <Image
-            src={imagensDeApoio.escritorio.src}
-            alt="Prévia da imagem enviada"
-            width={1200}
-            height={800}
-            unoptimized
-            className="mb-[10px] h-[240px] w-full rounded-[10px] object-cover"
-          />
-          <label className={classeAcaoArquivo}>
-            <input
-              type="file"
-              accept="image/*"
-              className="absolute size-px overflow-hidden [clip:rect(0,0,0,0)]"
-              onChange={(e) =>
-                mudar(
-                  "arquivoImagem",
-                  e.target.files?.[0]?.name || rascunho.arquivoImagem,
-                )
-              }
-            />
-            <Icone nome="upload" />
-            <span>Substituir imagem</span>
-          </label>
-          <small className="mt-[5px] block text-center text-muted">
-            {rascunho.arquivoImagem}
-          </small>
-        </div>
-      </div>
-
-      <Botao
-        icone="check"
-        className="mt-4 w-full"
-        onClick={async () => {
-          await salvarAjustes(contribuicao.id, rascunho);
-          setSalvo(true);
-        }}
-      >
-        Salvar ajustes
-      </Botao>
-      {salvo && (
-        <div
-          className="mt-[10px] flex items-center justify-center gap-2 rounded-[9px] bg-[#e8f8ef] p-3 font-extrabold text-[#075d39]"
-          role="status"
-        >
-          <Icone nome="check" />
-          <span>Ajustes salvos com sucesso.</span>
-        </div>
-      )}
-      {pendente ? (
-        <div className="mt-[18px] grid gap-[9px]">
-          <Botao
-            variante="success"
-            icone="check"
-            onClick={() => decidir(contribuicao.id, "Aprovado", rascunho)}
-          >
-            Aprovar e publicar
-          </Botao>
-          <Botao
-            variante="danger"
-            icone="x"
-            onClick={() => decidir(contribuicao.id, "Rejeitado", rascunho)}
-          >
-            Rejeitar
-          </Botao>
-        </div>
-      ) : (
-        <div
-          role="status"
-          className={`mt-[18px] flex min-h-[58px] items-center gap-[10px] rounded-[10px] p-3 ${
-            contribuicao.situacao === "Aprovado"
-              ? "bg-[#e8f8ef] text-[#075d39]"
-              : "bg-[#fff0ee] text-red"
-          }`}
-        >
-          <Icone nome={contribuicao.situacao === "Aprovado" ? "check" : "x"} />
-          <strong>
-            {contribuicao.situacao === "Aprovado"
-              ? "Conteúdo aprovado para publicação"
-              : "Conteúdo rejeitado"}
-          </strong>
-        </div>
-      )}
-    </aside>
-  );
-}
-
 export function PainelModeracao() {
-  const contribuicoes = useContribuicoes();
-  const [aba, setAba] = useState<Situacao>("Pendente");
-  const lista = porSituacao(contribuicoes, aba);
-  const [selecionada, setSelecionada] = useState<string | null>(
-    lista[0]?.id ?? null,
-  );
-  const atual = contribuicoes.find((c) => c.id === selecionada);
-  const pendentes = porSituacao(contribuicoes, "Pendente").length;
+  const [fila, setFila] = useState<EstadoFila>({
+    itens: [],
+    proximo: null,
+    carregando: true,
+    erro: null,
+  });
+  const [selecionada, setSelecionada] = useState<string | null>(null);
+
+  const carregar = useCallback(async (cursor: string | null) => {
+    setFila((f) => ({ ...f, carregando: true, erro: null }));
+    try {
+      const pagina = await carregarFila(cursor);
+      setFila((f) => ({
+        itens: cursor ? [...f.itens, ...pagina.items] : pagina.items,
+        proximo: pagina.nextCursor,
+        carregando: false,
+        erro: null,
+      }));
+      if (!cursor) {
+        setSelecionada((atual) => atual ?? pagina.items[0]?.wordId ?? null);
+      }
+    } catch (erro) {
+      setFila((f) => ({ ...f, carregando: false, erro: mensagemDeErro(erro) }));
+    }
+  }, []);
+
+  useEffect(() => {
+    void carregar(null);
+  }, [carregar]);
+
+  /** Depois de uma decisão, atualiza a contagem (ou tira a palavra da fila). */
+  const aoAtualizar = useCallback((palavra: AdminWordApi) => {
+    setFila((f) => ({
+      ...f,
+      itens: f.itens
+        .map((i) =>
+          i.wordId === palavra.wordId
+            ? { ...i, pendingCount: palavra.pendingCount }
+            : i,
+        )
+        .filter((i) => i.pendingCount > 0 || i.wordId === palavra.wordId),
+    }));
+  }, []);
+
+  const pendentes = fila.itens.reduce((total, i) => total + i.pendingCount, 0);
+  const atual = fila.itens.find((i) => i.wordId === selecionada);
 
   return (
     <main className="bg-canvas">
@@ -345,92 +100,106 @@ export function PainelModeracao() {
             <p className="m-0 text-muted">
               Analise cada envio com atenção antes de publicar no dicionário.
             </p>
-          </div>
-          <div className="flex h-[82px] w-[92px] flex-col items-center justify-center rounded-[14px] bg-orange text-white phone:h-[58px] phone:w-full phone:flex-row phone:gap-2">
-            <strong className="text-[1.8rem] leading-none">{pendentes}</strong>
-            <span className="text-[.8rem]">
-              {pendentes === 1 ? "pendente" : "pendentes"}
-            </span>
-          </div>
-        </div>
-
-        <div
-          className="mb-5 flex gap-2 border-b border-line phone:overflow-x-auto"
-          role="tablist"
-        >
-          {situacoes.map(({ situacao, aba: rotulo }) => (
-            <button
-              key={situacao}
-              type="button"
-              role="tab"
-              aria-selected={aba === situacao}
-              onClick={() => {
-                setAba(situacao);
-                setSelecionada(
-                  porSituacao(contribuicoes, situacao)[0]?.id ?? selecionada,
-                );
-              }}
-              className={`flex min-h-[50px] items-center gap-2 border-0 border-b-[3px] bg-transparent px-[18px] font-extrabold phone:px-3 phone:whitespace-nowrap ${
-                aba === situacao
-                  ? "border-navy text-navy"
-                  : "border-transparent"
-              }`}
+            <Link
+              href="/moderacao/usuarios"
+              className={`${classeBotao("secondary", true)} mt-4`}
             >
-              {rotulo}
-              <span className="min-w-6 rounded-[99px] bg-[#e1e8f0] px-[6px] py-[2px] text-[.76rem]">
-                {porSituacao(contribuicoes, situacao).length}
-              </span>
-            </button>
-          ))}
+              <Icone nome="user" />
+              <span>Gestão de usuários</span>
+            </Link>
+          </div>
+          <div
+            className="flex h-[82px] w-[92px] flex-none flex-col items-center justify-center rounded-[14px] bg-orange text-white phone:h-[58px] phone:w-full phone:flex-row phone:gap-2"
+            aria-live="polite"
+          >
+            <strong className="text-[1.8rem] leading-none">
+              {pendentes}
+              {fila.proximo ? "+" : ""}
+            </strong>
+            <span className="text-[.8rem]">em aberto</span>
+          </div>
         </div>
 
         <div className="grid grid-cols-[minmax(0,1.25fr)_minmax(380px,.75fr)] items-start gap-5 tablet:mx-auto tablet:max-w-[680px] tablet:grid-cols-1 tablet:gap-10">
-          <section className="col-[2] overflow-hidden rounded-[14px] border border-line bg-white shadow-card tablet:col-[1] tablet:row-[2]">
+          <section
+            className="col-[2] overflow-hidden rounded-[14px] border border-line bg-white shadow-card tablet:col-[1] tablet:row-[2]"
+            aria-labelledby="fila-titulo"
+          >
             <div className="flex min-h-[68px] items-center justify-between border-b border-line px-5 py-[15px] phone:flex-col phone:items-start">
-              <h2 className="m-0 text-[1.2rem]">
-                {situacoes.find((s) => s.situacao === aba)?.aba}
+              <h2 id="fila-titulo" className="m-0 text-[1.2rem]">
+                Fila de moderação
               </h2>
               <span className="text-[.8rem] text-muted">
-                Mais recentes primeiro
+                Mais antigas primeiro
               </span>
             </div>
-            {lista.length === 0 && (
+            {fila.erro && (
+              <div className="border-b border-line px-5 pb-5">
+                <Alerta>
+                  <span className="block">{fila.erro}</span>
+                  <Botao
+                    variante="secondary"
+                    className="mt-3"
+                    onClick={() => carregar(null)}
+                  >
+                    Tentar de novo
+                  </Botao>
+                </Alerta>
+              </div>
+            )}
+            {!fila.carregando && !fila.erro && fila.itens.length === 0 && (
               <p className="m-0 border-b border-line px-5 py-6 text-muted">
-                Nenhuma contribuição nesta lista.
+                Nenhuma contribuição aguardando revisão. Bom trabalho!
               </p>
             )}
-            {lista.map((c) => (
+            {fila.itens.map((item) => (
               <button
-                key={c.id}
+                key={item.wordId}
                 type="button"
-                aria-current={selecionada === c.id ? "true" : undefined}
-                onClick={() => setSelecionada(c.id)}
-                className={`grid min-h-[84px] w-full grid-cols-[44px_1fr_130px_80px_82px] items-center gap-[10px] border-0 border-b border-line px-[18px] py-3 text-left hover:bg-blue-soft phone:grid-cols-[44px_1fr_auto] ${
-                  selecionada === c.id ? "bg-blue-soft" : "bg-white"
+                aria-current={selecionada === item.wordId ? "true" : undefined}
+                onClick={() => setSelecionada(item.wordId)}
+                className={`grid min-h-[84px] w-full grid-cols-[44px_1fr_auto_82px] items-center gap-[10px] border-0 border-b border-line px-[18px] py-3 text-left hover:bg-blue-soft phone:grid-cols-[44px_1fr_auto] ${
+                  selecionada === item.wordId ? "bg-blue-soft" : "bg-white"
                 }`}
               >
                 <span className="grid size-10 place-items-center rounded-full bg-blue font-extrabold text-white">
-                  {iniciais(c.pessoa)}
+                  {item.term.charAt(0).toLocaleUpperCase("pt-BR")}
                 </span>
-                <span>
-                  <strong className="block">{c.termo}</strong>
+                <span className="min-w-0">
+                  <strong className="block truncate">{item.term}</strong>
                   <small className="block text-[.8rem] text-muted">
-                    {c.pessoa}
+                    {item.pendingCount === 0
+                      ? "Revisão concluída"
+                      : `${item.pendingCount} ${item.pendingCount === 1 ? "sentido em aberto" : "sentidos em aberto"}`}
                   </small>
                 </span>
                 <span className="flex items-center gap-[5px] text-[.8rem] text-muted phone:col-[2]">
                   <Icone nome="calendar" />
-                  {formatarData(c.data)}
+                  <span className="whitespace-nowrap">
+                    {formatarDataCurta(item.lastSubmittedAt)}
+                  </span>
                 </span>
-                <EtiquetaSituacao
-                  situacao={c.situacao}
-                  className="phone:col-[3] phone:row-[1]"
-                />
-                <span className="flex items-center text-[.82rem] font-extrabold text-blue phone:col-[3] phone:row-[2]">
+                <span className="flex items-center text-[.82rem] font-extrabold text-blue phone:col-[3] phone:row-[1]">
                   Revisar <Icone nome="arrow" />
                 </span>
               </button>
             ))}
+            {fila.carregando && (
+              <p role="status" className="m-0 border-b border-line px-5 py-6 text-muted">
+                Carregando a fila…
+              </p>
+            )}
+            {fila.proximo && !fila.carregando && (
+              <div className="border-b border-line p-4">
+                <Botao
+                  variante="secondary"
+                  className="w-full"
+                  onClick={() => carregar(fila.proximo)}
+                >
+                  Carregar mais
+                </Botao>
+              </div>
+            )}
             <aside className="m-5 flex gap-3 rounded-[10px] bg-blue-soft p-[17px]">
               <Icone nome="shield" />
               <div>
@@ -443,9 +212,540 @@ export function PainelModeracao() {
             </aside>
           </section>
 
-          {atual && <PainelRevisao key={atual.id} contribuicao={atual} />}
+          {atual && (
+            <PainelRevisao
+              key={atual.wordId}
+              wordId={atual.wordId}
+              aoAtualizar={aoAtualizar}
+            />
+          )}
         </div>
       </section>
     </main>
+  );
+}
+
+/* Revisão de uma palavra --------------------------------------------- */
+
+type EstadoPalavra =
+  | { tipo: "carregando" }
+  | { tipo: "erro"; mensagem: string }
+  | { tipo: "pronto"; palavra: AdminWordApi };
+
+async function carregarEstadoPalavra(wordId: string): Promise<EstadoPalavra> {
+  try {
+    return { tipo: "pronto", palavra: await carregarPalavraAdmin(wordId) };
+  } catch (erro) {
+    return { tipo: "erro", mensagem: mensagemDeErro(erro) };
+  }
+}
+
+function PainelRevisao({
+  wordId,
+  aoAtualizar,
+}: {
+  wordId: string;
+  aoAtualizar: (palavra: AdminWordApi) => void;
+}) {
+  const [estado, setEstado] = useState<EstadoPalavra>({ tipo: "carregando" });
+  const [sentidoId, setSentidoId] = useState<string | null>(null);
+  const [aviso, setAviso] = useState<{ tipo: "sucesso" | "aviso"; texto: string } | null>(null);
+
+  /** Aplica o resultado de uma carga, mantendo o sentido escolhido se existir. */
+  const aplicar = useCallback((novo: EstadoPalavra) => {
+    setEstado(novo);
+    if (novo.tipo !== "pronto") return;
+    const { senses } = novo.palavra;
+    setSentidoId(
+      (atual) =>
+        (atual && senses.some((s) => s.senseId === atual) ? atual : null) ??
+        senses.find(emAberto)?.senseId ??
+        senses[0]?.senseId ??
+        null,
+    );
+  }, []);
+
+  const recarregar = useCallback(async () => {
+    const novo = await carregarEstadoPalavra(wordId);
+    aplicar(novo);
+    return novo.tipo === "pronto" ? novo.palavra : null;
+  }, [wordId, aplicar]);
+
+  useEffect(() => {
+    let ativo = true;
+    carregarEstadoPalavra(wordId).then((novo) => ativo && aplicar(novo));
+    return () => {
+      ativo = false;
+    };
+  }, [wordId, aplicar]);
+
+  const aoDecidir = (palavra: AdminWordApi, texto: string) => {
+    setEstado({ tipo: "pronto", palavra });
+    aoAtualizar(palavra);
+    setAviso({ tipo: "sucesso", texto });
+    // Segue para o próximo sentido em aberto, se houver.
+    const proximo = palavra.senses.find(emAberto);
+    if (proximo) setSentidoId(proximo.senseId);
+  };
+
+  const aoConflito = async () => {
+    const palavra = await recarregar();
+    if (palavra) aoAtualizar(palavra);
+    setAviso({
+      tipo: "aviso",
+      texto:
+        "Esta palavra mudou enquanto você revisava (outra pessoa pode ter decidido). Recarregamos os dados: confira e tente de novo.",
+    });
+  };
+
+  const classePainel =
+    "col-[1] row-[1] rounded-[14px] border border-line bg-white p-[22px] shadow-card phone:p-4";
+
+  if (estado.tipo === "carregando") {
+    return (
+      <aside className={classePainel}>
+        <p role="status" className="m-0 text-muted">
+          Carregando a palavra…
+        </p>
+      </aside>
+    );
+  }
+
+  if (estado.tipo === "erro") {
+    return (
+      <aside className={classePainel}>
+        <Alerta className="mt-0">
+          <span className="block">{estado.mensagem}</span>
+          <Botao
+            variante="secondary"
+            className="mt-3"
+            onClick={() => {
+              setEstado({ tipo: "carregando" });
+              void recarregar();
+            }}
+          >
+            Tentar de novo
+          </Botao>
+        </Alerta>
+      </aside>
+    );
+  }
+
+  const { palavra } = estado;
+  const sentido = palavra.senses.find((s) => s.senseId === sentidoId);
+
+  return (
+    <aside className={classePainel} aria-labelledby="revisao-titulo">
+      <div className="mb-[18px] flex items-start justify-between gap-[10px]">
+        <div className="min-w-0">
+          <Eyebrow>Revisar submissão</Eyebrow>
+          <h2 id="revisao-titulo" className="my-[3px] break-words text-navy">
+            {palavra.term.toLocaleUpperCase("pt-BR")}
+          </h2>
+          <p className="m-0 text-[.85rem] text-muted">
+            {palavra.publishedCount}{" "}
+            {palavra.publishedCount === 1 ? "sentido publicado" : "sentidos publicados"}{" "}
+            • {palavra.pendingCount} em aberto
+          </p>
+        </div>
+        {palavra.publishedCount > 0 && (
+          <Link
+            href={`/palavras/${palavra.wordId}`}
+            target="_blank"
+            className="flex min-h-11 flex-none items-center gap-1 text-[.85rem] font-extrabold text-blue"
+          >
+            Ver no site <Icone nome="arrow" tamanho={16} />
+          </Link>
+        )}
+      </div>
+
+      {aviso && (
+        <Alerta tipo={aviso.tipo} className="mt-0 mb-4">
+          {aviso.texto}
+        </Alerta>
+      )}
+
+      <div className="mb-5" role="tablist" aria-label="Sentidos da palavra">
+        <span className={classeRotuloCampo}>Sentidos</span>
+        <div className="grid grid-cols-1 gap-2">
+          {palavra.senses.map((s, indice) => (
+            <button
+              key={s.senseId}
+              type="button"
+              role="tab"
+              aria-selected={s.senseId === sentidoId}
+              onClick={() => {
+                setSentidoId(s.senseId);
+                setAviso(null);
+              }}
+              className={`flex min-h-12 min-w-0 items-center justify-between gap-3 rounded-[10px] border-2 px-3 py-2 text-left ${
+                s.senseId === sentidoId
+                  ? "border-blue bg-blue-soft"
+                  : "border-line bg-white hover:border-blue"
+              }`}
+            >
+              <span className="min-w-0">
+                <small className="block text-[.72rem] font-extrabold text-orange uppercase">
+                  Sentido {indice + 1}
+                </small>
+                <strong className="block truncate text-navy">{s.title}</strong>
+              </span>
+              <EtiquetaSituacao situacao={s.status} />
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {sentido && (
+        <RevisaoSentido
+          key={`${sentido.senseId}:${palavra.version}`}
+          palavra={palavra}
+          sentido={sentido}
+          aoDecidir={aoDecidir}
+          aoConflito={aoConflito}
+        />
+      )}
+    </aside>
+  );
+}
+
+/* Revisão de um sentido ---------------------------------------------- */
+
+type Rascunho = {
+  titulo: string;
+  classe: string;
+  definicao: string;
+  exemplo: string;
+  video: string;
+  observacao: string;
+};
+
+function RevisaoSentido({
+  palavra,
+  sentido,
+  aoDecidir,
+  aoConflito,
+}: {
+  palavra: AdminWordApi;
+  sentido: AdminSenseApi;
+  aoDecidir: (palavra: AdminWordApi, texto: string) => void;
+  aoConflito: () => void;
+}) {
+  const original: Rascunho = {
+    titulo: sentido.title,
+    classe: sentido.grammaticalClass ?? "",
+    definicao: sentido.explanation,
+    exemplo: sentido.example ?? "",
+    video: sentido.youtubeVideoId ?? "",
+    observacao: "",
+  };
+  const [rascunho, setRascunho] = useState(original);
+  const [ocupado, setOcupado] = useState<string | null>(null);
+  const [erro, setErro] = useState<string | null>(null);
+  const aberto = emAberto(sentido);
+  const idVideo = idDoYoutube(rascunho.video);
+  const contribuicao = sentido.contribution;
+
+  const mudar = (campo: keyof Rascunho, valor: string) =>
+    setRascunho((r) => ({ ...r, [campo]: valor }));
+
+  /** Executa a decisão; 409 recarrega a palavra. */
+  const decidir = async (
+    nome: string,
+    acao: () => Promise<AdminWordApi>,
+    sucesso: string,
+  ) => {
+    setOcupado(nome);
+    setErro(null);
+    try {
+      aoDecidir(await acao(), sucesso);
+    } catch (e) {
+      if (e instanceof ErroApi && e.status === 409) {
+        aoConflito();
+      } else {
+        setErro(mensagemDeErro(e));
+        setOcupado(null);
+      }
+    }
+  };
+
+  const aprovarSentido = () => {
+    if (!idVideo) {
+      setErro("Informe o link ou o id do vídeo em Libras no YouTube. Nenhum sentido é publicado sem vídeo.");
+      return;
+    }
+    const titulo = rascunho.titulo.trim();
+    const definicao = rascunho.definicao.trim();
+    if (titulo.length < 3 || titulo.length > 80) {
+      setErro("O nome do sentido precisa ter de 3 a 80 caracteres.");
+      return;
+    }
+    if (definicao.length < 10 || definicao.length > 500) {
+      setErro("A definição precisa ter de 10 a 500 caracteres.");
+      return;
+    }
+    // Só envia os textos alterados: os enviados substituem os do colaborador.
+    const dados: AprovacaoApi = { version: palavra.version, youtubeVideo: idVideo };
+    if (titulo !== original.titulo) dados.title = titulo;
+    if (definicao !== original.definicao) dados.explanation = definicao;
+    if (rascunho.exemplo.trim() !== original.exemplo) dados.example = rascunho.exemplo.trim();
+    if (rascunho.classe.trim() !== original.classe) dados.grammaticalClass = rascunho.classe.trim();
+    if (rascunho.observacao.trim()) dados.reviewNote = rascunho.observacao.trim();
+    void decidir(
+      "aprovar",
+      () => aprovar(palavra.wordId, sentido.senseId, dados),
+      `Sentido “${titulo}” aprovado e publicado.`,
+    );
+  };
+
+  const rejeitarSentido = () => {
+    const motivo = rascunho.observacao.trim();
+    if (motivo.length < 5) {
+      setErro("Escreva o motivo da rejeição (pelo menos 5 caracteres). O colaborador vai ler esta mensagem.");
+      return;
+    }
+    void decidir(
+      "rejeitar",
+      () => rejeitar(palavra.wordId, sentido.senseId, palavra.version, motivo),
+      `Sentido “${sentido.title}” rejeitado.`,
+    );
+  };
+
+  const marcarGravacao = () =>
+    decidir(
+      "gravacao",
+      () =>
+        marcarParaGravacao(
+          palavra.wordId,
+          sentido.senseId,
+          palavra.version,
+          rascunho.observacao.trim() || undefined,
+        ),
+      `Sentido “${sentido.title}” marcado para gravação.`,
+    );
+
+  return (
+    <div>
+      {contribuicao ? (
+        <aside className="mb-[22px] grid grid-cols-[auto_1fr_auto] items-center gap-3 rounded-[10px] border border-[#acd0f4] bg-blue-soft p-[14px] phone:grid-cols-[auto_1fr]">
+          <span className="grid size-[42px] place-items-center rounded-[10px] bg-blue text-white">
+            <Icone nome="mail" />
+          </span>
+          <div className="min-w-0">
+            <span className="block text-[.76rem] text-muted">
+              Enviado por {contribuicao.submitterName} em{" "}
+              {formatarData(contribuicao.submittedAt)}
+            </span>
+            <strong className="block truncate text-[.88rem] text-navy">
+              {contribuicao.contactEmail}
+            </strong>
+            <span className="block text-[.76rem] text-muted">
+              {contribuicao.type === "NEW_WORD" ? "Nova palavra" : "Novo sentido"} •{" "}
+              {contribuicao.mode === "RECORDING_REQUEST"
+                ? "Pediu gravação à equipe"
+                : "Enviou vídeo"}
+            </span>
+          </div>
+          <a
+            href={`mailto:${contribuicao.contactEmail}`}
+            className={`${classeBotao("secondary")} phone:col-span-full phone:w-full`}
+          >
+            <span>Enviar e-mail</span>
+          </a>
+        </aside>
+      ) : (
+        <p className="mt-0 mb-[22px] rounded-[10px] bg-blue-soft p-[14px] text-[.88rem] text-muted">
+          Sentido cadastrado pela equipe • Fonte: {rotuloFonte[sentido.source]}
+        </p>
+      )}
+
+      {!aberto && (
+        <div
+          role="status"
+          className={`mb-4 flex min-h-[58px] items-start gap-[10px] rounded-[10px] p-3 ${
+            sentido.status === "APPROVED"
+              ? "bg-[#e8f8ef] text-[#075d39]"
+              : "bg-[#fff0ee] text-red"
+          }`}
+        >
+          <Icone nome={sentido.status === "APPROVED" ? "check" : "x"} className="mt-[2px] flex-none" />
+          <div>
+            <strong className="block">
+              {sentido.status === "APPROVED"
+                ? "Conteúdo aprovado e publicado"
+                : "Conteúdo rejeitado"}
+              {sentido.reviewedAt && ` em ${formatarData(sentido.reviewedAt)}`}
+            </strong>
+            {sentido.reviewNote && (
+              <span className="block text-[.88rem]">Observação: {sentido.reviewNote}</span>
+            )}
+          </div>
+        </div>
+      )}
+
+      <div className="mb-1 flex items-end justify-between gap-4 phone:flex-col phone:items-start">
+        <div>
+          <Eyebrow>{aberto ? "Conteúdo editável" : "Conteúdo"}</Eyebrow>
+          <h3 className="mt-[3px] mb-0 text-navy">
+            {aberto ? "Faça os ajustes necessários" : "Dados do sentido"}
+          </h3>
+        </div>
+        {aberto && (
+          <span className="text-[.76rem] text-muted">
+            As alterações serão usadas na publicação.
+          </span>
+        )}
+      </div>
+
+      <fieldset disabled={!aberto || ocupado !== null} className="m-0 min-w-0 border-0 p-0">
+        <div className="grid grid-cols-2 gap-[14px] phone:grid-cols-1">
+          <label className={classeCampo}>
+            <span className={classeRotuloCampo}>Nome do sentido *</span>
+            <input
+              className={classeControle}
+              value={rascunho.titulo}
+              minLength={3}
+              maxLength={80}
+              onChange={(e) => mudar("titulo", e.target.value)}
+            />
+          </label>
+          <label className={classeCampo}>
+            <span className={classeRotuloCampo}>Classe gramatical</span>
+            <input
+              className={classeControle}
+              value={rascunho.classe}
+              maxLength={30}
+              list="classes-gramaticais"
+              onChange={(e) => mudar("classe", e.target.value)}
+            />
+            <datalist id="classes-gramaticais">
+              {classesGramaticais.map((c) => (
+                <option key={c} value={c} />
+              ))}
+            </datalist>
+          </label>
+        </div>
+        <label className={classeCampo}>
+          <span className={classeRotuloCampo}>Definição em português *</span>
+          <textarea
+            rows={4}
+            className={`${classeControle} resize-y`}
+            value={rascunho.definicao}
+            maxLength={500}
+            onChange={(e) => mudar("definicao", e.target.value)}
+          />
+        </label>
+        <label className={classeCampo}>
+          <span className={classeRotuloCampo}>Frase de exemplo</span>
+          <textarea
+            rows={3}
+            className={`${classeControle} resize-y`}
+            value={rascunho.exemplo}
+            maxLength={300}
+            onChange={(e) => mudar("exemplo", e.target.value)}
+          />
+        </label>
+
+        <div className="mt-5 grid grid-cols-2 gap-[14px] phone:grid-cols-1">
+          <div>
+            <span className={classeRotuloMidia}>
+              <Icone nome="video" /> Vídeo em Libras
+            </span>
+            {idVideo ? (
+              <VideoSinal video={idVideo} titulo={rascunho.titulo} />
+            ) : (
+              <div className="flex aspect-video flex-col items-center justify-center rounded-[12px] border-2 border-dashed border-[#98aec5] bg-white p-4 text-center text-muted">
+                <Icone nome="video" tamanho={26} className="text-blue" />
+                <strong className="mt-2 text-navy">Sem vídeo</strong>
+                <small className="mt-1 block">
+                  Cole o link do YouTube abaixo para ver a prévia.
+                </small>
+              </div>
+            )}
+            <label className={classeCampo}>
+              <span className={classeRotuloCampo}>
+                Link do YouTube {aberto && "*"}
+              </span>
+              <input
+                className={classeControle}
+                value={rascunho.video}
+                placeholder="https://youtu.be/…"
+                onChange={(e) => mudar("video", e.target.value)}
+                aria-describedby="dica-video"
+              />
+            </label>
+            <small id="dica-video" className="mt-[5px] block text-muted">
+              {rascunho.video && !idVideo
+                ? "Link não reconhecido. Use um link do YouTube ou o id de 11 caracteres."
+                : "Obrigatório para aprovar: nenhum sentido é publicado sem vídeo."}
+            </small>
+          </div>
+          <div>
+            <span className={classeRotuloMidia}>
+              <Icone nome="image" /> Imagem de apoio
+            </span>
+            <div className="flex min-h-[200px] flex-col items-center justify-center rounded-[10px] border-2 border-dashed border-[#98aec5] bg-white p-4 text-center text-muted">
+              <Icone nome="image" tamanho={26} className="text-blue" />
+              <strong className="mt-2 text-navy">
+                {sentido.imageKey ? "Imagem cadastrada" : "Sem imagem"}
+              </strong>
+              <small className="mt-1 block break-all">
+                {sentido.imageKey ?? "O envio de imagens chega numa próxima versão."}
+              </small>
+            </div>
+          </div>
+        </div>
+
+        {aberto && (
+          <label className={classeCampo}>
+            <span className={classeRotuloCampo}>
+              Observação para o colaborador{" "}
+              <span className="font-normal text-muted">(obrigatória para rejeitar)</span>
+            </span>
+            <textarea
+              rows={3}
+              className={`${classeControle} resize-y`}
+              value={rascunho.observacao}
+              maxLength={300}
+              placeholder="Ex.: Ajustamos a definição para ficar mais simples."
+              onChange={(e) => mudar("observacao", e.target.value)}
+            />
+          </label>
+        )}
+      </fieldset>
+
+      {erro && <Alerta>{erro}</Alerta>}
+
+      {aberto && (
+        <div className="mt-[18px] grid gap-[9px]">
+          {sentido.status === "PENDING" && (
+            <Botao
+              variante="secondary"
+              icone="video"
+              disabled={ocupado !== null}
+              onClick={marcarGravacao}
+            >
+              {ocupado === "gravacao" ? "Salvando…" : "Aceitar e marcar para gravação"}
+            </Botao>
+          )}
+          <Botao
+            variante="success"
+            icone="check"
+            disabled={ocupado !== null}
+            onClick={aprovarSentido}
+          >
+            {ocupado === "aprovar" ? "Publicando…" : "Aprovar e publicar"}
+          </Botao>
+          <Botao
+            variante="danger"
+            icone="x"
+            disabled={ocupado !== null}
+            onClick={rejeitarSentido}
+          >
+            {ocupado === "rejeitar" ? "Rejeitando…" : "Rejeitar"}
+          </Botao>
+        </div>
+      )}
+    </div>
   );
 }

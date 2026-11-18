@@ -1,21 +1,103 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { BuscasRecentes } from "@/components/buscas-recentes";
 import { CampoBusca } from "@/components/campo-busca";
-import { Icone, type NomeIcone } from "@/components/icone";
+import { Icone } from "@/components/icone";
 import {
   classeIconeQuadrado,
   classeLinkTexto,
   classeSecao,
   Eyebrow,
 } from "@/components/ui";
-import { categoriasDaHome } from "@/lib/palavras";
+import { listarPalavras } from "@/lib/api/servidor";
+import { capitalizar, contarSentidos, type Palavra } from "@/lib/palavras";
 
-const estiloCategoria: { icone: NomeIcone; cor: string }[] = [
-  { icone: "shield", cor: "bg-blue-soft text-navy" },
-  { icone: "home", cor: "bg-[#fff5c7] text-[#725200]" },
-  { icone: "plus", cor: "bg-orange-soft text-[#8a2d16]" },
-  { icone: "user", cor: "bg-[#f0e9ff] text-[#4b317b]" },
+const coresPalavra = [
+  "bg-blue-soft text-navy",
+  "bg-[#fff5c7] text-[#725200]",
+  "bg-orange-soft text-[#8a2d16]",
+  "bg-[#f0e9ff] text-[#4b317b]",
 ];
+
+/** Algumas palavras publicadas; vazio se a API estiver fora do ar. */
+async function palavrasEmDestaque(): Promise<Palavra[]> {
+  try {
+    return (await listarPalavras()).slice(0, 4);
+  } catch {
+    return [];
+  }
+}
+
+async function SugestaoDeBusca() {
+  const nomes = (await palavrasEmDestaque())
+    .slice(0, 3)
+    .map((p) => p.titulo.toLocaleLowerCase("pt-BR"));
+  if (nomes.length === 0) return null;
+  const lista =
+    nomes.length === 1
+      ? nomes[0]
+      : `${nomes.slice(0, -1).join(", ")} ou ${nomes.at(-1)}`;
+  return `Experimente: ${lista}`;
+}
+
+async function PalavrasEmDestaque() {
+  const palavras = await palavrasEmDestaque();
+  if (palavras.length === 0) {
+    return (
+      <p className="m-0 rounded-[14px] border border-line bg-white px-4 py-6 text-muted">
+        Não foi possível carregar as palavras agora.{" "}
+        <Link href="/palavras" className="font-extrabold text-blue">
+          Tente ver a lista completa
+        </Link>
+        .
+      </p>
+    );
+  }
+  return (
+    <div className="grid grid-cols-2 gap-3 phone:grid-cols-1">
+      {palavras.map((palavra, indice) => (
+        <Link
+          key={palavra.slug}
+          href={`/palavras/${palavra.slug}`}
+          className="grid min-h-[76px] grid-cols-[46px_1fr_auto] items-center gap-3 rounded-[14px] border border-line bg-surface px-[14px] py-3 text-left font-bold shadow-[0_3px_12px_rgba(20,55,90,.04)] hover:-translate-y-0.5 hover:border-blue"
+        >
+          <span
+            className={`${classeIconeQuadrado} size-11 ${coresPalavra[indice % coresPalavra.length]}`}
+          >
+            <Icone nome="hand" />
+          </span>
+          <span>
+            <span className="block">{capitalizar(palavra.titulo)}</span>
+            <small className="block font-normal text-muted">
+              {contarSentidos(palavra)}
+            </small>
+          </span>
+          <Icone nome="arrow" />
+        </Link>
+      ))}
+    </div>
+  );
+}
+
+/** Total de palavras publicadas; some se a API estiver fora do ar. */
+async function TotalDePalavras() {
+  let total: number;
+  try {
+    total = (await listarPalavras()).length;
+  } catch {
+    return null;
+  }
+  return (
+    <div className="absolute right-0 bottom-[30px] flex flex-col items-center gap-0 rounded-[12px] bg-white px-[18px] py-[14px] font-bold text-ink shadow-card">
+      <span className="font-display text-[2rem] leading-none font-extrabold text-orange">
+        {total.toLocaleString("pt-BR")}
+      </span>
+      <small className="text-muted">
+        {total === 1 ? "palavra" : "palavras"}
+      </small>
+    </div>
+  );
+}
 
 const classeCabecalhoSecao =
   "mb-7 flex items-end justify-between gap-6 phone:flex-col phone:items-start";
@@ -39,8 +121,10 @@ export default function InicioPage() {
             simples e acessível.
           </p>
           <CampoBusca id="search-main" className="max-w-[680px]" />
-          <span className="mt-3 block text-[.88rem] text-[#cfdef1]">
-            Experimente: banco, manga ou luz
+          <span className="mt-3 block min-h-[1.5em] text-[.88rem] text-[#cfdef1]">
+            <Suspense fallback={null}>
+              <SugestaoDeBusca />
+            </Suspense>
           </span>
         </div>
 
@@ -55,43 +139,29 @@ export default function InicioPage() {
           <div className="grid aspect-square w-[260px] place-items-center rounded-full border-2 border-white/45 bg-white/8 text-[#a8d6ff] shadow-[0_0_0_28px_rgba(255,255,255,.035)]">
             <Icone nome="book" tamanho={80} />
           </div>
-          <div className="absolute right-0 bottom-[30px] flex flex-col items-center gap-0 rounded-[12px] bg-white px-[18px] py-[14px] font-bold text-ink shadow-card">
-            <span className="font-display text-[2rem] leading-none font-extrabold text-orange">
-              3
-            </span>
-            <small className="text-muted">sentidos</small>
-          </div>
+          <Suspense fallback={null}>
+            <TotalDePalavras />
+          </Suspense>
         </div>
       </section>
 
-      {/* Categorias e buscas recentes */}
+      {/* Palavras em destaque e buscas recentes */}
       <section
         className={`${classeSecao} grid grid-cols-2 gap-16 tablet:grid-cols-1 tablet:gap-10`}
       >
         <div>
           <div className={classeCabecalhoSecao}>
             <div>
-              <Eyebrow>Navegue por temas</Eyebrow>
-              <h2 className="mt-1 mb-0">Explore por categoria</h2>
+              <Eyebrow>Comece por aqui</Eyebrow>
+              <h2 className="mt-1 mb-0">Palavras do dicionário</h2>
             </div>
+            <Link href="/palavras" className={classeLinkTexto}>
+              Ver todas
+            </Link>
           </div>
-          <div className="grid grid-cols-2 gap-3 phone:grid-cols-1">
-            {categoriasDaHome.map((categoria, indice) => (
-              <Link
-                key={categoria}
-                href={`/busca?categoria=${encodeURIComponent(categoria)}`}
-                className="grid min-h-[76px] grid-cols-[46px_1fr_auto] items-center gap-3 rounded-[14px] border border-line bg-surface px-[14px] py-3 text-left font-bold shadow-[0_3px_12px_rgba(20,55,90,.04)] hover:-translate-y-0.5 hover:border-blue"
-              >
-                <span
-                  className={`${classeIconeQuadrado} size-11 ${estiloCategoria[indice].cor}`}
-                >
-                  <Icone nome={estiloCategoria[indice].icone} />
-                </span>
-                <span>{categoria}</span>
-                <Icone nome="arrow" />
-              </Link>
-            ))}
-          </div>
+          <Suspense fallback={null}>
+            <PalavrasEmDestaque />
+          </Suspense>
         </div>
 
         <div>
@@ -100,9 +170,6 @@ export default function InicioPage() {
               <Eyebrow>Continue aprendendo</Eyebrow>
               <h2 className="mt-1 mb-0">Buscas recentes</h2>
             </div>
-            <Link href="/palavras" className={classeLinkTexto}>
-              Ver todas
-            </Link>
           </div>
           <BuscasRecentes />
         </div>

@@ -1,0 +1,1241 @@
+openapi: 3.0.3
+info:
+  title: Dicionário de Palavras Polissêmicas - API
+  version: 0.3.0
+  description: |
+    API do dicionário de palavras polissêmicas para a Comunidade Surda (TCC UTFPR).
+
+    **Como o front deve usar**
+
+    - Todas as rotas ficam sob `/api`, no mesmo domínio do site. Em desenvolvimento, configure o proxy
+      do servidor de desenvolvimento para encaminhar `/api` para a API. Não há CORS.
+    - **Access token:** vem no corpo do login (`accessToken`), vale 15 minutos e vai no cabeçalho
+      `Authorization: Bearer <token>`. Guarde só em memória, nunca em `localStorage`.
+    - **Refresh token:** vem em um cookie `HttpOnly` (`refreshToken`, `SameSite=Strict`, caminho `/api/auth`).
+      O JavaScript não o lê; o navegador o envia sozinho para `/api/auth/refresh` e `/api/auth/logout`.
+      Nas chamadas com `fetch`, use `credentials: "include"` (ou `same-origin`).
+    - Ao receber `401` em uma rota protegida, chame `POST /api/auth/refresh` uma vez e repita a chamada
+      com o novo access token. Se o refresh também der `401`, mande a pessoa para o login.
+    - Ao abrir o site, chame `POST /api/auth/refresh` para recuperar a sessão (o access token não
+      sobrevive a um recarregamento da página).
+    - **Erros:** sempre no formato *Problem Details* (`application/problem+json`); mostre o campo `detail`.
+    - **Vídeos:** monte o player com `https://www.youtube-nocookie.com/embed/{youtubeVideoId}`.
+
+    **Estado em 16/11/2026**
+
+    - No ar em `dev`: consulta de palavras, autenticação e gestão de usuários.
+    - As rotas de **Contribuições** e **Moderação** já funcionam na API local, mas ainda não na AWS.
+    - Envio de vídeo e de imagem e o cadastro direto de palavras por admins estão em desenvolvimento
+      e entram numa próxima versão deste arquivo.
+    - O envio de e-mail está em modo de teste: só endereços verificados pela equipe recebem mensagens.
+servers:
+  - url: https://doudh9dqt2uk3.cloudfront.net
+    description: Ambiente dev (AWS)
+  - url: http://localhost:8080
+    description: API local
+tags:
+  - name: Palavras
+    description: Consulta pública do dicionário. Não exige login.
+  - name: Autenticação
+    description: Cadastro, verificação de e-mail, login e sessão.
+  - name: Contribuições
+    description: Sugestões de palavras e sentidos. Exigem login; para sugerir, também e-mail verificado.
+  - name: Moderação
+    description: |
+      Análise das sugestões. Perfis ADMIN e MASTER. **Ainda não disponível na AWS; funciona na API local.**
+  - name: Administração
+    description: Gestão de usuários. Perfis ADMIN e MASTER.
+  - name: Sistema
+
+paths:
+  /api/health:
+    get:
+      tags: [Sistema]
+      summary: Verifica se a API está no ar
+      responses:
+        '200':
+          description: API respondendo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+
+  /api/words:
+    get:
+      tags: [Palavras]
+      summary: Lista as palavras publicadas
+      description: |
+        Sem `letter`, lista todas as palavras; com `letter`, só as daquela letra. Sempre em ordem
+        alfabética. Cada palavra já traz os sentidos aprovados, iguais aos do detalhe.
+
+        Para a página seguinte, repita a chamada com o `nextCursor` recebido. `nextCursor` vem `null`
+        na última página.
+      parameters:
+        - name: letter
+          in: query
+          required: false
+          description: Uma letra de `a` a `z` (maiúscula ou minúscula).
+          schema:
+            type: string
+            pattern: '^[A-Za-z]$'
+            example: b
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 50
+        - name: cursor
+          in: query
+          required: false
+          description: Valor de `nextCursor` da página anterior. Não tente montar nem interpretar.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Página de palavras (lista vazia se não houver nenhuma)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WordList'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /api/words/search:
+    get:
+      tags: [Palavras]
+      summary: Busca aproximada
+      description: |
+        Aceita erros de grafia (ex.: `bamco` encontra `banco`). Devolve até 10 resultados, do mais
+        para o menos relevante. Uma palavra recém-aprovada pode levar até 5 minutos para aparecer.
+      parameters:
+        - name: q
+          in: query
+          required: true
+          description: Texto buscado, de 2 a 50 caracteres.
+          schema:
+            type: string
+            minLength: 2
+            maxLength: 50
+            example: bamco
+      responses:
+        '200':
+          description: Resultados (lista vazia se nada for encontrado)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResult'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /api/words/{wordId}:
+    get:
+      tags: [Palavras]
+      summary: Detalhe de uma palavra
+      description: Devolve a palavra com os sentidos aprovados, na ordem de exibição.
+      parameters:
+        - name: wordId
+          in: path
+          required: true
+          description: Identificador da palavra (minúsculo, sem acento, espaços trocados por hífen).
+          schema:
+            type: string
+            example: banco
+      responses:
+        '200':
+          description: Palavra encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WordDetail'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/auth/register:
+    post:
+      tags: [Autenticação]
+      summary: Cria uma conta
+      description: |
+        Cria uma conta de perfil `USER`, ainda não verificada, e envia um e-mail com o link de
+        verificação (válido por 24 horas). A pessoa já consegue fazer login, mas só pode enviar
+        sugestões depois de verificar o e-mail.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: Conta criada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          description: E-mail já cadastrado
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+  /api/auth/verify-email:
+    post:
+      tags: [Autenticação]
+      summary: Confirma o e-mail
+      description: |
+        O link do e-mail aponta para o front, em `/verificar-email?token=...`. Essa tela deve ler o
+        `token` do endereço e enviá-lo para esta rota. Cada token vale uma vez. Depois de verificar,
+        chame `POST /api/auth/refresh` para o novo access token já trazer `emailVerified: true`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token]
+              properties:
+                token:
+                  type: string
+      responses:
+        '204':
+          description: E-mail verificado
+        '400':
+          description: Link inválido, vencido ou já usado
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+  /api/auth/resend-verification:
+    post:
+      tags: [Autenticação]
+      summary: Reenvia o e-mail de verificação
+      description: Para a pessoa logada. No máximo 3 reenvios por hora.
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: E-mail reenviado
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: O e-mail já foi verificado
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Muitos reenvios na última hora
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+  /api/auth/login:
+    post:
+      tags: [Autenticação]
+      summary: Faz login
+      description: |
+        Devolve o access token no corpo e define o cookie do refresh token. O portal de administração
+        usa esta mesma rota; libere as telas de admin quando `user.role` for `ADMIN` ou `MASTER`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login realizado
+          headers:
+            Set-Cookie:
+              description: Cookie `refreshToken` (HttpOnly, Secure, SameSite=Strict, Path=/api/auth, 7 dias).
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          description: E-mail ou senha inválidos (a mensagem não diz qual dos dois)
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '423':
+          description: Conta bloqueada por 15 minutos depois de 5 tentativas erradas
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+  /api/auth/refresh:
+    post:
+      tags: [Autenticação]
+      summary: Renova a sessão
+      description: |
+        Usa o cookie `refreshToken` (sem corpo e sem cabeçalho `Authorization`). Devolve um novo access
+        token e troca o cookie. Cada refresh token vale uma vez: não dispare duas renovações ao mesmo
+        tempo, porque reutilizar um token antigo encerra todas as sessões da pessoa.
+      security:
+        - refreshCookie: []
+      responses:
+        '200':
+          description: Sessão renovada
+          headers:
+            Set-Cookie:
+              description: Novo cookie `refreshToken`.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        '401':
+          description: Sem cookie, sessão vencida ou encerrada
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+  /api/auth/logout:
+    post:
+      tags: [Autenticação]
+      summary: Encerra a sessão
+      description: Invalida o refresh token e apaga o cookie. Descarte também o access token guardado em memória.
+      security:
+        - refreshCookie: []
+      responses:
+        '204':
+          description: Sessão encerrada
+
+  /api/auth/me:
+    get:
+      tags: [Autenticação]
+      summary: Dados da pessoa logada
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Usuário atual
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/contributions:
+    post:
+      tags: [Contribuições]
+      summary: Sugere uma palavra ou um sentido
+      description: |
+        **Ainda não disponível na AWS; funciona na API local.**
+
+        A sugestão fica `PENDING` até um administrador analisar e não aparece na consulta pública.
+        Se a palavra já existe, a sugestão vira um sentido novo dela; o servidor decide isso sozinho
+        (campo `type` da resposta). A pessoa recebe um e-mail confirmando o recebimento.
+
+        Regras: conta com e-mail verificado; no máximo 10 sugestões em análise por pessoa.
+        Por enquanto só o modo `RECORDING_REQUEST` (pedir que a equipe grave o sinal); o envio de
+        vídeo (`VIDEO_UPLOAD`) responde `400` até ser liberado.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContributionRequest'
+      responses:
+        '201':
+          description: Sugestão registrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContributionCreated'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          description: E-mail ainda não verificado, ou conta bloqueada
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: A pessoa já tem 10 sugestões em análise
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+  /api/contributions/mine:
+    get:
+      tags: [Contribuições]
+      summary: Minhas contribuições
+      description: |
+        **Ainda não disponível na AWS; funciona na API local.**
+
+        Sugestões enviadas pela pessoa logada, da mais recente para a mais antiga, com o status atual.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista (vazia se a pessoa nunca contribuiu)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MyContribution'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/admin/moderation:
+    get:
+      tags: [Moderação]
+      summary: Fila de moderação
+      description: |
+        Palavras com pelo menos um sentido aguardando decisão, da sugestão mais antiga para a mais
+        nova. Abra o detalhe da palavra para ver os sentidos.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 20
+        - name: cursor
+          in: query
+          required: false
+          description: Valor de `nextCursor` da página anterior.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Página da fila
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        wordId:
+                          type: string
+                          example: banco
+                        term:
+                          type: string
+                          example: Banco
+                        pendingCount:
+                          type: integer
+                          description: Sentidos em aberto (`PENDING` ou `IN_RECORDING`).
+                        lastSubmittedAt:
+                          type: string
+                          format: date-time
+                  nextCursor:
+                    type: string
+                    nullable: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /api/admin/words/{wordId}:
+    get:
+      tags: [Moderação]
+      summary: Palavra com todos os sentidos, para moderação
+      description: |
+        Traz os sentidos em qualquer status, os dados de quem sugeriu e a `version` da palavra.
+        Funciona também para palavra que ainda não tem sentido publicado.
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/WordId'
+      responses:
+        '200':
+          description: Palavra encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminWord'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/admin/words/{wordId}/senses/{senseId}/start-recording:
+    post:
+      tags: [Moderação]
+      summary: Marca o sentido para gravação
+      description: |
+        Aceita a sugestão e indica que a equipe vai gravar o vídeo: `PENDING` vira `IN_RECORDING`.
+        O sentido continua fora do site público e na fila. O colaborador recebe um e-mail.
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/WordId'
+        - $ref: '#/components/parameters/SenseId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [version]
+              properties:
+                version:
+                  $ref: '#/components/schemas/WordVersion'
+                reviewNote:
+                  type: string
+                  maxLength: 300
+                  description: Observação opcional para o colaborador.
+      responses:
+        '200':
+          $ref: '#/components/responses/AdminWordUpdated'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/ModerationConflict'
+
+  /api/admin/words/{wordId}/senses/{senseId}/approve:
+    post:
+      tags: [Moderação]
+      summary: Aprova e publica o sentido
+      description: |
+        Vale para sentido `PENDING` ou `IN_RECORDING`. O vídeo do YouTube é obrigatório: nenhum
+        sentido é publicado sem vídeo em Libras. Os textos são opcionais; quando enviados,
+        substituem o que o colaborador escreveu. O colaborador recebe um e-mail.
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/WordId'
+        - $ref: '#/components/parameters/SenseId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [version, youtubeVideo]
+              properties:
+                version:
+                  $ref: '#/components/schemas/WordVersion'
+                youtubeVideo:
+                  type: string
+                  description: Endereço do vídeo no YouTube ou o id de 11 caracteres.
+                  example: https://youtu.be/jNQXAC9IVRw
+                title:
+                  type: string
+                  minLength: 3
+                  maxLength: 80
+                explanation:
+                  type: string
+                  minLength: 10
+                  maxLength: 500
+                example:
+                  type: string
+                  maxLength: 300
+                grammaticalClass:
+                  type: string
+                  maxLength: 30
+                imageKey:
+                  type: string
+                  maxLength: 300
+                  description: Imagem do sentido (o envio de imagens entra numa próxima versão).
+                reviewNote:
+                  type: string
+                  maxLength: 300
+                  description: Observação opcional para o colaborador.
+      responses:
+        '200':
+          $ref: '#/components/responses/AdminWordUpdated'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/ModerationConflict'
+
+  /api/admin/words/{wordId}/senses/{senseId}/reject:
+    post:
+      tags: [Moderação]
+      summary: Rejeita o sentido
+      description: |
+        Vale para sentido `PENDING` ou `IN_RECORDING`. O motivo é obrigatório, porque é o que o
+        colaborador lê em "minhas contribuições" e no e-mail.
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/WordId'
+        - $ref: '#/components/parameters/SenseId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [version, reviewNote]
+              properties:
+                version:
+                  $ref: '#/components/schemas/WordVersion'
+                reviewNote:
+                  type: string
+                  minLength: 5
+                  maxLength: 300
+                  example: Já existe um sentido igual.
+      responses:
+        '200':
+          $ref: '#/components/responses/AdminWordUpdated'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/ModerationConflict'
+
+  /api/admin/users:
+    get:
+      tags: [Administração]
+      summary: Lista usuários de um perfil
+      description: ADMIN só pode listar `USER`. Listar `ADMIN` ou `MASTER` é só para o MASTER.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: role
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/Role'
+      responses:
+        '200':
+          description: Usuários do perfil, em ordem de nome
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdminUser'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /api/admin/users/{userId}:
+    patch:
+      tags: [Administração]
+      summary: Bloqueia, desbloqueia ou muda o perfil de um usuário
+      description: |
+        Envie só o que quer mudar. ADMIN altera apenas o `status` de contas `USER`. Mudar `role`
+        (entre `USER` e `ADMIN`) e alterar contas `ADMIN` é só para o MASTER. Ninguém altera o MASTER.
+        Bloquear encerra as sessões da pessoa.
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  $ref: '#/components/schemas/UserStatus'
+                role:
+                  type: string
+                  enum: [USER, ADMIN]
+      responses:
+        '200':
+          description: Usuário atualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminUser'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/admin/admins:
+    post:
+      tags: [Administração]
+      summary: Cria um administrador
+      description: Só o MASTER. A conta nasce com o e-mail já verificado e a senha provisória informada.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: Administrador criado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminUser'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          description: E-mail já cadastrado
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+  /api/admin/admins/{userId}:
+    delete:
+      tags: [Administração]
+      summary: Remove um administrador
+      description: Só o MASTER.
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        '204':
+          description: Administrador removido
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Access token devolvido pelo login ou pelo refresh.
+    refreshCookie:
+      type: apiKey
+      in: cookie
+      name: refreshToken
+      description: Cookie HttpOnly definido pelo login. O navegador envia sozinho.
+
+  parameters:
+    UserId:
+      name: userId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+    WordId:
+      name: wordId
+      in: path
+      required: true
+      schema:
+        type: string
+        example: banco
+    SenseId:
+      name: senseId
+      in: path
+      required: true
+      schema:
+        type: string
+
+  responses:
+    AdminWordUpdated:
+      description: Decisão gravada. Devolve a palavra atualizada, já com a nova `version`.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AdminWord'
+    ModerationConflict:
+      description: |
+        A palavra mudou desde que foi carregada (`version` antiga), ou a ação não vale para o status
+        atual do sentido. Recarregue o detalhe da palavra e tente de novo.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    BadRequest:
+      description: Parâmetro ou campo ausente ou inválido
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Unauthorized:
+      description: Sem login, ou access token vencido (tente `POST /api/auth/refresh`)
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Forbidden:
+      description: Perfil sem permissão para esta ação
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    NotFound:
+      description: Não encontrado
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+
+  schemas:
+    Problem:
+      type: object
+      description: Erro no formato Problem Details (RFC 9457). Mostre `detail` para a pessoa.
+      properties:
+        type:
+          type: string
+          example: about:blank
+        title:
+          type: string
+          example: Bad Request
+        status:
+          type: integer
+          example: 400
+        detail:
+          type: string
+          example: O parâmetro 'letter' deve ser uma letra de a a z.
+        instance:
+          type: string
+          example: /api/words
+
+    Role:
+      type: string
+      enum: [MASTER, ADMIN, USER]
+
+    UserStatus:
+      type: string
+      enum: [ACTIVE, BLOCKED]
+
+    Sense:
+      type: object
+      description: Um sentido aprovado da palavra.
+      properties:
+        senseId:
+          type: string
+          example: s1
+        title:
+          type: string
+          example: Instituição financeira
+        explanation:
+          type: string
+          description: Explicação em português simplificado.
+          example: Lugar onde as pessoas guardam dinheiro, pagam contas e pedem empréstimo.
+        example:
+          type: string
+          nullable: true
+          example: Eu fui ao banco pagar a conta de luz.
+        grammaticalClass:
+          type: string
+          nullable: true
+          example: substantivo
+        youtubeVideoId:
+          type: string
+          nullable: true
+          description: Id do vídeo em Libras no YouTube.
+          example: jNQXAC9IVRw
+        imageUrl:
+          type: string
+          nullable: true
+          description: Endereço completo da imagem ilustrativa. Pode vir `null`.
+        source:
+          type: string
+          description: De onde veio o conteúdo.
+          enum: [INES, EQUIPE, COLABORADOR]
+
+    WordListItem:
+      type: object
+      properties:
+        wordId:
+          type: string
+          example: banco
+        term:
+          type: string
+          description: Palavra como deve ser exibida.
+          example: Banco
+        senseCount:
+          type: integer
+          description: Quantidade de sentidos em `senses`.
+          example: 2
+        senses:
+          type: array
+          items:
+            $ref: '#/components/schemas/Sense'
+
+    WordList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/WordListItem'
+        nextCursor:
+          type: string
+          nullable: true
+          description: Envie em `cursor` para pedir a próxima página; `null` quando acabou.
+
+    WordDetail:
+      type: object
+      properties:
+        wordId:
+          type: string
+          example: banco
+        term:
+          type: string
+          example: Banco
+        senses:
+          type: array
+          items:
+            $ref: '#/components/schemas/Sense'
+
+    SearchResult:
+      type: object
+      properties:
+        query:
+          type: string
+          description: Texto buscado, já normalizado.
+          example: bamco
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              wordId:
+                type: string
+                example: banco
+              term:
+                type: string
+                example: Banco
+              match:
+                type: string
+                description: |
+                  Como o termo combinou com a busca: `EXACT` (igual), `PREFIX` (começa com),
+                  `CONTAINS` (contém) ou `SIMILAR` (parecido).
+                enum: [EXACT, PREFIX, CONTAINS, SIMILAR]
+
+    RegisterRequest:
+      type: object
+      required: [name, email, password]
+      properties:
+        name:
+          type: string
+          maxLength: 100
+          example: Maria Silva
+        email:
+          type: string
+          format: email
+          maxLength: 254
+          example: maria@exemplo.com
+        password:
+          type: string
+          format: password
+          minLength: 8
+          description: Pelo menos 8 caracteres, com letras e números.
+
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+
+    User:
+      type: object
+      properties:
+        userId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        role:
+          $ref: '#/components/schemas/Role'
+        emailVerified:
+          type: boolean
+          description: Só com `true` a pessoa pode enviar sugestões.
+
+    Session:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          description: JWT. Guarde só em memória.
+        tokenType:
+          type: string
+          example: Bearer
+        expiresIn:
+          type: integer
+          description: Validade do access token, em segundos.
+          example: 900
+        user:
+          $ref: '#/components/schemas/User'
+
+    AdminUser:
+      type: object
+      properties:
+        userId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        role:
+          $ref: '#/components/schemas/Role'
+        status:
+          $ref: '#/components/schemas/UserStatus'
+        emailVerified:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+
+    WordVersion:
+      type: integer
+      format: int64
+      description: |
+        A `version` da palavra que o admin está vendo (vem no detalhe e em cada resposta de ação).
+        Se a palavra mudou nesse meio tempo, a ação é recusada com `409`.
+      example: 7
+
+    AdminSense:
+      type: object
+      properties:
+        senseId:
+          type: string
+        title:
+          type: string
+        explanation:
+          type: string
+        example:
+          type: string
+          nullable: true
+        grammaticalClass:
+          type: string
+          nullable: true
+        youtubeVideoId:
+          type: string
+          nullable: true
+        imageKey:
+          type: string
+          nullable: true
+        source:
+          type: string
+          enum: [INES, EQUIPE, COLABORADOR]
+        order:
+          type: integer
+          nullable: true
+          description: Ordem de exibição do sentido na palavra.
+        status:
+          type: string
+          enum: [PENDING, IN_RECORDING, APPROVED, REJECTED]
+        reviewedBy:
+          type: string
+          nullable: true
+          description: Id do admin que tomou a última decisão.
+        reviewedAt:
+          type: string
+          format: date-time
+          nullable: true
+        reviewNote:
+          type: string
+          nullable: true
+        contribution:
+          type: object
+          nullable: true
+          description: Dados de quem sugeriu. `null` em sentido cadastrado pela equipe.
+          properties:
+            submittedBy:
+              type: string
+              format: uuid
+            submitterName:
+              type: string
+            submittedAt:
+              type: string
+              format: date-time
+            type:
+              type: string
+              enum: [NEW_WORD, NEW_SENSE]
+            mode:
+              type: string
+              enum: [RECORDING_REQUEST, VIDEO_UPLOAD]
+            contactEmail:
+              type: string
+              format: email
+
+    AdminWord:
+      type: object
+      properties:
+        wordId:
+          type: string
+          example: banco
+        term:
+          type: string
+          example: Banco
+        publishedCount:
+          type: integer
+          description: Sentidos aprovados.
+        pendingCount:
+          type: integer
+          description: Sentidos em aberto.
+        version:
+          $ref: '#/components/schemas/WordVersion'
+        senses:
+          type: array
+          description: Todos os sentidos, em ordem de exibição.
+          items:
+            $ref: '#/components/schemas/AdminSense'
+
+    ContributionRequest:
+      type: object
+      required: [term, title, explanation, mode]
+      properties:
+        term:
+          type: string
+          maxLength: 60
+          description: |
+            A palavra ou expressão. Só letras, espaços e hífens; no máximo 5 palavras.
+          example: Banco
+        title:
+          type: string
+          minLength: 3
+          maxLength: 80
+          description: Nome curto do sentido.
+          example: Banco de dados
+        explanation:
+          type: string
+          minLength: 10
+          maxLength: 500
+          example: Lugar no computador onde ficam guardadas as informações.
+        example:
+          type: string
+          maxLength: 300
+          nullable: true
+          example: O sistema salva os nomes no banco de dados.
+        grammaticalClass:
+          type: string
+          maxLength: 30
+          nullable: true
+          example: substantivo
+        mode:
+          type: string
+          enum: [RECORDING_REQUEST, VIDEO_UPLOAD]
+          description: |
+            `RECORDING_REQUEST`: a pessoa pede que a equipe grave o sinal.
+            `VIDEO_UPLOAD`: a pessoa envia um vídeo (ainda não disponível).
+
+    ContributionCreated:
+      type: object
+      properties:
+        wordId:
+          type: string
+          example: banco
+        senseId:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum: [NEW_WORD, NEW_SENSE]
+          description: Se a sugestão criou uma palavra nova ou um sentido novo de palavra já publicada.
+        status:
+          type: string
+          enum: [PENDING]
+
+    MyContribution:
+      type: object
+      properties:
+        wordId:
+          type: string
+          example: banco
+        term:
+          type: string
+          example: Banco
+        senseId:
+          type: string
+          format: uuid
+        title:
+          type: string
+          example: Banco de dados
+        type:
+          type: string
+          enum: [NEW_WORD, NEW_SENSE]
+        mode:
+          type: string
+          enum: [RECORDING_REQUEST, VIDEO_UPLOAD]
+        status:
+          type: string
+          description: |
+            `PENDING` (em análise), `IN_RECORDING` (aceita, vídeo sendo gravado),
+            `APPROVED` (publicada) ou `REJECTED` (não aprovada).
+          enum: [PENDING, IN_RECORDING, APPROVED, REJECTED]
+        submittedAt:
+          type: string
+          format: date-time
+        reviewedAt:
+          type: string
+          format: date-time
+          description: Só aparece depois de uma decisão.
+        reviewNote:
+          type: string
+          description: Observação da equipe; na rejeição, o motivo. Só aparece quando existe.

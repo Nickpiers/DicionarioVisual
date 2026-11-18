@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { filtrarDicionario, letrasDoFiltro } from "@/lib/palavras";
+import { filtrarDicionario, letrasDe, type Palavra } from "@/lib/palavras";
 import { CampoBusca } from "./campo-busca";
 import { CartaoResultado, NenhumaPalavra } from "./cartao-resultado";
 import {
@@ -15,9 +15,10 @@ import {
 const classeLetra =
   "min-h-12 min-w-12 rounded-[9px] border border-line bg-white px-3 font-extrabold text-navy hover:border-blue hover:bg-blue-soft";
 
-export function Dicionario() {
+export function Dicionario({ palavras }: { palavras: Palavra[] }) {
   const [filtro, setFiltro] = useState("");
-  const visiveis = filtrarDicionario(filtro);
+  const visiveis = filtrarDicionario(palavras, filtro);
+  const letras = letrasDe(palavras);
 
   return (
     <main>
@@ -56,7 +57,7 @@ export function Dicionario() {
             className="flex max-w-[440px] flex-wrap justify-end gap-[7px] phone:justify-start"
             aria-label="Filtrar por letra"
           >
-            {letrasDoFiltro.map((letra) => (
+            {letras.map((letra) => (
               <button
                 key={letra}
                 type="button"

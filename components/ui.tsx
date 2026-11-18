@@ -17,7 +17,7 @@ export const classeBotao = (
   variante: keyof typeof variantesBotao = "primary",
   compacto = false,
 ) =>
-  `inline-flex min-h-12 items-center justify-center gap-[9px] rounded-[10px] border-2 py-[10px] font-extrabold transition-all duration-180 ease-[ease] hover:-translate-y-px ${compacto ? "px-3" : "px-[18px]"} ${variantesBotao[variante]}`;
+  `inline-flex min-h-12 items-center justify-center gap-[9px] rounded-[10px] border-2 py-[10px] font-extrabold transition-all duration-180 ease-[ease] hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-55 disabled:hover:translate-y-0 ${compacto ? "px-3" : "px-[18px]"} ${variantesBotao[variante]}`;
 
 export function Botao({
   children,

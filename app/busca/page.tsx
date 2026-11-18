@@ -11,11 +11,8 @@ import {
   classeTituloFaixa,
   Eyebrow,
 } from "@/components/ui";
-import {
-  BUSCA_PADRAO,
-  buscarPorCategoria,
-  buscarPorTermo,
-} from "@/lib/palavras";
+import { buscarPalavras } from "@/lib/api/servidor";
+import { BUSCA_PADRAO } from "@/lib/palavras";
 
 export const metadata: Metadata = {
   title: "Busca",
@@ -30,7 +27,7 @@ function primeiro(valor: string | string[] | undefined) {
 export default function BuscaPage(props: PageProps<"/busca">) {
   return (
     <main>
-      <Suspense fallback={null}>
+      <Suspense fallback={<CarregandoResultados />}>
         <Resultados searchParams={props.searchParams} />
       </Suspense>
     </main>
@@ -39,14 +36,9 @@ export default function BuscaPage(props: PageProps<"/busca">) {
 
 async function Resultados({ searchParams }: { searchParams: ParametrosBusca }) {
   const parametros = await searchParams;
-  const categoria = primeiro(parametros.categoria)?.trim() || undefined;
-  const termo = categoria
-    ? undefined
-    : primeiro(parametros.q)?.trim() || BUSCA_PADRAO;
-  const palavras = categoria
-    ? buscarPorCategoria(categoria)
-    : buscarPorTermo(termo!);
-  const rotulo = categoria ?? termo!;
+  const termo = primeiro(parametros.q)?.trim() || BUSCA_PADRAO;
+  const palavras = await buscarPalavras(termo);
+  const rotulo = termo;
 
   return (
     <>
@@ -64,7 +56,7 @@ async function Resultados({ searchParams }: { searchParams: ParametrosBusca }) {
           key={rotulo}
           id="search-light"
           claro
-          valorInicial={termo ?? ""}
+          valorInicial={termo}
         />
       </section>
 
@@ -93,6 +85,30 @@ async function Resultados({ searchParams }: { searchParams: ParametrosBusca }) {
             <span>Cadastrar palavra</span>
           </Link>
         </aside>
+      </section>
+    </>
+  );
+}
+
+function CarregandoResultados() {
+  return (
+    <>
+      <section className={classeFaixaBusca}>
+        <div>
+          <Eyebrow claro>Consulta do dicionário</Eyebrow>
+          <h1 className={classeTituloFaixa}>
+            Encontre uma palavra e seus sentidos.
+          </h1>
+          <p className="m-0 text-[#dbeaff]">
+            Pesquise termos, veja os sinais e compare os contextos.
+          </p>
+        </div>
+        <CampoBusca id="search-light" claro />
+      </section>
+      <section className={classeSecao}>
+        <p role="status" className="m-0 text-muted">
+          Buscando palavras…
+        </p>
       </section>
     </>
   );

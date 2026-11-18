@@ -33,8 +33,15 @@ export default function ContribuicaoEnviadaPage() {
           <div>
             <strong>Confira seu e-mail</strong>
             <p className="mt-[3px] mb-0 text-muted">
-              Enviaremos uma confirmação do pedido e as próximas atualizações
-              para você acompanhar a revisão.
+              Enviaremos uma confirmação do pedido e as próximas atualizações.
+              Você também pode acompanhar a revisão em{" "}
+              <Link
+                href="/contribuir/minhas"
+                className="font-extrabold text-blue underline"
+              >
+                Minhas contribuições
+              </Link>
+              .
             </p>
           </div>
         </aside>
