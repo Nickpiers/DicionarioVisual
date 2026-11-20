@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Dicionário de Palavras Polissêmicas - API
-  version: 0.3.0
+  version: 0.5.0
   description: |
     API do dicionário de palavras polissêmicas para a Comunidade Surda (TCC UTFPR).
 
@@ -24,9 +24,10 @@ info:
     **Estado em 16/11/2026**
 
     - No ar em `dev`: consulta de palavras, autenticação e gestão de usuários.
-    - As rotas de **Contribuições** e **Moderação** já funcionam na API local, mas ainda não na AWS.
-    - Envio de vídeo e de imagem e o cadastro direto de palavras por admins estão em desenvolvimento
-      e entram numa próxima versão deste arquivo.
+    - As rotas de **Contribuições**, **Moderação** e **Cadastro de palavras** funcionam também no
+      ambiente `dev` da AWS (desde 16/11/2026).
+    - O envio de vídeo (colaborador) e de imagem (equipe) está em desenvolvimento e entra numa
+      próxima versão deste arquivo.
     - O envio de e-mail está em modo de teste: só endereços verificados pela equipe recebem mensagens.
 servers:
   - url: https://doudh9dqt2uk3.cloudfront.net
@@ -42,7 +43,11 @@ tags:
     description: Sugestões de palavras e sentidos. Exigem login; para sugerir, também e-mail verificado.
   - name: Moderação
     description: |
-      Análise das sugestões. Perfis ADMIN e MASTER. **Ainda não disponível na AWS; funciona na API local.**
+      Análise das sugestões. Perfis ADMIN e MASTER.
+  - name: Cadastro de palavras
+    description: |
+      Criação, edição e remoção de palavras e sentidos pela equipe. Perfis ADMIN e MASTER.
+      Toda alteração exige a `version` da palavra.
   - name: Administração
     description: Gestão de usuários. Perfis ADMIN e MASTER.
   - name: Sistema
@@ -341,7 +346,7 @@ paths:
       tags: [Contribuições]
       summary: Sugere uma palavra ou um sentido
       description: |
-        **Ainda não disponível na AWS; funciona na API local.**
+       
 
         A sugestão fica `PENDING` até um administrador analisar e não aparece na consulta pública.
         Se a palavra já existe, a sugestão vira um sentido novo dela; o servidor decide isso sozinho
@@ -387,7 +392,7 @@ paths:
       tags: [Contribuições]
       summary: Minhas contribuições
       description: |
-        **Ainda não disponível na AWS; funciona na API local.**
+       
 
         Sugestões enviadas pela pessoa logada, da mais recente para a mais antiga, com o status atual.
       security:
@@ -490,6 +495,213 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
+
+    patch:
+      tags: [Cadastro de palavras]
+      summary: Corrige a grafia da palavra
+      description: |
+        Só para acentos, maiúsculas e espaços: a nova grafia precisa ter o mesmo `wordId`
+        (ex.: `Acao` → `Ação`). Para outra palavra, crie uma nova.
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/WordId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [version, term]
+              properties:
+                version:
+                  $ref: '#/components/schemas/WordVersion'
+                term:
+                  type: string
+                  example: Ação
+      responses:
+        '200':
+          $ref: '#/components/responses/AdminWordUpdated'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/ModerationConflict'
+    delete:
+      tags: [Cadastro de palavras]
+      summary: Remove a palavra inteira
+      description: Só se não houver sugestão aguardando decisão (`pendingCount` = 0); senão `409`.
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/WordId'
+        - $ref: '#/components/parameters/VersionQuery'
+      responses:
+        '204':
+          description: Palavra removida
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Versão antiga, ou há sugestões em aberto na palavra
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+  /api/admin/words:
+    post:
+      tags: [Cadastro de palavras]
+      summary: Cria uma palavra com o primeiro sentido
+      description: |
+        A palavra já nasce publicada, com o sentido aprovado. O vídeo do YouTube é obrigatório.
+        Se a palavra já existe (inclusive só com sugestões pendentes), responde `409`: use
+        `POST /api/admin/words/{wordId}/senses`.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - type: object
+                  required: [term]
+                  properties:
+                    term:
+                      type: string
+                      maxLength: 60
+                      description: Só letras, espaços e hífens; no máximo 5 palavras.
+                      example: Manga
+                - $ref: '#/components/schemas/SenseContent'
+      responses:
+        '201':
+          description: Palavra criada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminWord'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          description: A palavra já existe
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+  /api/admin/words/{wordId}/senses:
+    post:
+      tags: [Cadastro de palavras]
+      summary: Acrescenta um sentido aprovado
+      description: |
+        O sentido já nasce publicado. Sem `order`, entra depois do último. O vídeo é obrigatório.
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/WordId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/VersionBody'
+                - $ref: '#/components/schemas/SenseContent'
+      responses:
+        '201':
+          description: Sentido criado. Devolve a palavra atualizada.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminWord'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/ModerationConflict'
+
+  /api/admin/words/{wordId}/senses/{senseId}:
+    put:
+      tags: [Cadastro de palavras]
+      summary: Edita o conteúdo de um sentido
+      description: |
+        **Envie o conteúdo completo**: o que for enviado substitui o sentido, e campo opcional
+        ausente (`example`, `grammaticalClass`, `imageKey`, `youtubeVideo`) é apagado. `order` e
+        `source` ausentes ficam como estão.
+
+        Não muda o status nem os dados de contribuição e moderação. Sentido aprovado não pode
+        ficar sem vídeo. Vale também para sugestões pendentes (corrigir o texto antes de decidir).
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/WordId'
+        - $ref: '#/components/parameters/SenseId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/VersionBody'
+                - $ref: '#/components/schemas/SenseContent'
+      responses:
+        '200':
+          $ref: '#/components/responses/AdminWordUpdated'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/ModerationConflict'
+    delete:
+      tags: [Cadastro de palavras]
+      summary: Remove um sentido
+      description: |
+        Remove o sentido em qualquer status e ajusta os contadores. Se era o último sentido, a
+        palavra também é removida. Depois, recarregue o detalhe para obter a nova `version`.
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/WordId'
+        - $ref: '#/components/parameters/SenseId'
+        - $ref: '#/components/parameters/VersionQuery'
+      responses:
+        '204':
+          description: Sentido removido
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/ModerationConflict'
 
   /api/admin/words/{wordId}/senses/{senseId}/start-recording:
     post:
@@ -791,6 +1003,14 @@ components:
       required: true
       schema:
         type: string
+    VersionQuery:
+      name: version
+      in: query
+      required: true
+      description: A `version` da palavra que o admin está vendo.
+      schema:
+        type: integer
+        format: int64
 
   responses:
     AdminWordUpdated:
@@ -883,10 +1103,17 @@ components:
           type: string
           nullable: true
           example: substantivo
+        category:
+          type: string
+          nullable: true
+          description: Categoria temática do sentido.
+          example: Dinheiro e finanças
         youtubeVideoId:
           type: string
           nullable: true
-          description: Id do vídeo em Libras no YouTube.
+          description: |
+            Id do vídeo em Libras no YouTube. Pode vir `null`: parte da carga inicial foi publicada
+            antes de os vídeos ficarem prontos; nesse caso mostre o sentido sem o player.
           example: jNQXAC9IVRw
         imageUrl:
           type: string
@@ -1059,6 +1286,61 @@ components:
         Se a palavra mudou nesse meio tempo, a ação é recusada com `409`.
       example: 7
 
+    VersionBody:
+      type: object
+      required: [version]
+      properties:
+        version:
+          $ref: '#/components/schemas/WordVersion'
+
+    SenseContent:
+      type: object
+      description: Conteúdo de um sentido, usado no cadastro direto.
+      required: [title, explanation]
+      properties:
+        title:
+          type: string
+          minLength: 3
+          maxLength: 80
+          example: Fruta
+        explanation:
+          type: string
+          minLength: 10
+          maxLength: 500
+          example: Fruta doce e amarela, com caroço grande.
+        example:
+          type: string
+          maxLength: 300
+          example: Eu comi uma manga madura.
+        grammaticalClass:
+          type: string
+          maxLength: 30
+          example: substantivo
+        category:
+          type: string
+          maxLength: 50
+          description: Categoria temática (texto livre).
+          example: Cotidiano
+        youtubeVideo:
+          type: string
+          description: |
+            Endereço do YouTube ou id de 11 caracteres. Obrigatório para sentido aprovado
+            (sempre na criação).
+          example: https://youtu.be/jNQXAC9IVRw
+        imageKey:
+          type: string
+          maxLength: 300
+          description: Imagem do sentido (o envio de imagens entra numa próxima versão).
+        source:
+          type: string
+          description: Na criação, `EQUIPE` (padrão) ou `INES`. Na edição, também `COLABORADOR`.
+          enum: [EQUIPE, INES, COLABORADOR]
+        order:
+          type: integer
+          minimum: 1
+          maximum: 1000
+          description: Ordem de exibição. Na criação, sem valor, entra depois do último sentido.
+
     AdminSense:
       type: object
       properties:
@@ -1072,6 +1354,9 @@ components:
           type: string
           nullable: true
         grammaticalClass:
+          type: string
+          nullable: true
+        category:
           type: string
           nullable: true
         youtubeVideoId:

@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
-import { Dicionario } from "@/components/dicionario";
-import { listarPalavras } from "@/lib/api/servidor";
+import { DicionarioCarregado } from "@/components/dicionario-carregado";
 
 export const metadata: Metadata = {
   title: "Todas as palavras",
 };
 
-export default async function PalavrasPage() {
-  return <Dicionario palavras={await listarPalavras()} />;
+export default function PalavrasPage() {
+  return <DicionarioCarregado />;
 }
