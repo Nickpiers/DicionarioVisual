@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Dicionário de Palavras Polissêmicas - API
-  version: 0.5.0
+  version: 0.6.0
   description: |
     API do dicionário de palavras polissêmicas para a Comunidade Surda (TCC UTFPR).
 
@@ -26,7 +26,7 @@ info:
     - No ar em `dev`: consulta de palavras, autenticação e gestão de usuários.
     - As rotas de **Contribuições**, **Moderação** e **Cadastro de palavras** funcionam também no
       ambiente `dev` da AWS (desde 16/11/2026).
-    - O envio de vídeo (colaborador) e de imagem (equipe) está em desenvolvimento e entra numa
+    - O envio de imagem (equipe) está em desenvolvimento e entra numa
       próxima versão deste arquivo.
     - O envio de e-mail está em modo de teste: só endereços verificados pela equipe recebem mensagens.
 servers:
@@ -353,8 +353,18 @@ paths:
         (campo `type` da resposta). A pessoa recebe um e-mail confirmando o recebimento.
 
         Regras: conta com e-mail verificado; no máximo 10 sugestões em análise por pessoa.
-        Por enquanto só o modo `RECORDING_REQUEST` (pedir que a equipe grave o sinal); o envio de
-        vídeo (`VIDEO_UPLOAD`) responde `400` até ser liberado.
+
+        **Com vídeo (`VIDEO_UPLOAD`)**, em três passos:
+        1. `POST /api/contributions/uploads` com o tipo e o tamanho do arquivo: devolve `uploadUrl`
+           (vale 5 minutos), `headers` e `key`.
+        2. `PUT` do arquivo direto em `uploadUrl`, com os `headers` devolvidos (o `Content-Type`
+           precisa ser exatamente o informado; o tamanho também é conferido). Não envie
+           `Authorization` nem cookies nesse `PUT`: o endereço já é assinado.
+        3. Esta rota, com `mode: VIDEO_UPLOAD`, `videoKey` (a `key` do passo 1) e
+           `consentAccepted: true` (o termo de autorização de imagem precisa estar marcado na tela).
+
+        O vídeo só é usado pela equipe para analisar e gravar a versão oficial; ele é apagado
+        depois da aprovação ou da rejeição.
       security:
         - bearerAuth: []
       requestBody:
@@ -382,6 +392,76 @@ paths:
                 $ref: '#/components/schemas/Problem'
         '429':
           description: A pessoa já tem 10 sugestões em análise
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+  /api/contributions/uploads:
+    post:
+      tags: [Contribuições]
+      summary: Prepara o envio de um vídeo
+      description: |
+        Devolve um endereço temporário (5 minutos) para o navegador enviar o vídeo direto ao
+        armazenamento, sem passar pela API. Só para conta com e-mail verificado.
+
+        Exemplo de envio com `fetch`:
+        `fetch(uploadUrl, { method: "PUT", headers, body: arquivo })` (sem `credentials`).
+        Para mostrar progresso, use `XMLHttpRequest` (`upload.onprogress`).
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [kind, contentType, sizeBytes]
+              properties:
+                kind:
+                  type: string
+                  enum: [VIDEO]
+                contentType:
+                  type: string
+                  enum: [video/mp4, video/quicktime, video/webm]
+                  description: Tipo do arquivo (`file.type`). `.mov` é `video/quicktime`.
+                sizeBytes:
+                  type: integer
+                  format: int64
+                  minimum: 1
+                  maximum: 104857600
+                  description: Tamanho exato do arquivo (`file.size`), até 100 MB.
+      responses:
+        '200':
+          description: Endereço de envio pronto
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  key:
+                    type: string
+                    description: Identificador do vídeo; envie em `videoKey` na sugestão.
+                    example: incoming/9d61c3d9-c27e-4ea2-a287-98f34e2e6346/1b2c3d4e.mp4
+                  uploadUrl:
+                    type: string
+                    description: Endereço assinado para o `PUT` do arquivo (vale 5 minutos).
+                  expiresAt:
+                    type: string
+                    format: date-time
+                  headers:
+                    type: object
+                    additionalProperties:
+                      type: string
+                    description: Cabeçalhos obrigatórios no `PUT`.
+                    example:
+                      Content-Type: video/mp4
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          description: E-mail ainda não verificado, ou conta bloqueada
           content:
             application/problem+json:
               schema:
@@ -1408,6 +1488,22 @@ components:
             contactEmail:
               type: string
               format: email
+            videoUrl:
+              type: string
+              nullable: true
+              description: |
+                Endereço temporário (5 minutos) do vídeo enviado pela pessoa, para assistir na
+                análise. `null` sem vídeo ou depois da decisão (o vídeo é apagado ao aprovar ou
+                rejeitar). Recarregue a palavra para um endereço novo.
+            consentAcceptedAt:
+              type: string
+              format: date-time
+              nullable: true
+              description: Quando a pessoa aceitou o termo de autorização de imagem.
+            consentVersion:
+              type: string
+              nullable: true
+              description: Versão do texto do termo aceito.
 
     AdminWord:
       type: object
@@ -1468,7 +1564,20 @@ components:
           enum: [RECORDING_REQUEST, VIDEO_UPLOAD]
           description: |
             `RECORDING_REQUEST`: a pessoa pede que a equipe grave o sinal.
-            `VIDEO_UPLOAD`: a pessoa envia um vídeo (ainda não disponível).
+            `VIDEO_UPLOAD`: a pessoa envia um vídeo (ver `POST /api/contributions/uploads`).
+        videoKey:
+          type: string
+          nullable: true
+          description: Com `VIDEO_UPLOAD`, a `key` devolvida por `POST /api/contributions/uploads`.
+        consentAccepted:
+          type: boolean
+          description: Com `VIDEO_UPLOAD`, precisa ser `true` (termo de autorização de imagem aceito).
+        consentVersion:
+          type: string
+          nullable: true
+          maxLength: 30
+          description: Versão do texto do termo mostrado na tela (padrão `v1`).
+          example: 2026-11
 
     ContributionCreated:
       type: object

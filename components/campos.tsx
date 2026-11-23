@@ -90,8 +90,8 @@ const configuracaoUpload = {
   video: {
     icone: "video",
     titulo: "Upload Vídeo Libras",
-    formatos: "MP4 ou MOV • até 100 MB",
-    aceita: "video/mp4,video/quicktime,.mp4,.mov",
+    formatos: "MP4, MOV ou WebM • até 100 MB",
+    aceita: "video/mp4,video/quicktime,video/webm,.mp4,.mov,.webm",
     limite: 100 * 1024 * 1024,
   },
   image: {
@@ -108,7 +108,8 @@ export function ZonaUpload({
   aoSelecionar,
 }: {
   tipo: "video" | "image";
-  aoSelecionar: (nome: string | null) => void;
+  /** Recebe o arquivo escolhido (já conferido quanto a formato e tamanho). */
+  aoSelecionar: (arquivo: File | null) => void;
 }) {
   const config = configuracaoUpload[tipo];
   const entrada = useRef<HTMLInputElement>(null);
@@ -132,7 +133,7 @@ export function ZonaUpload({
     }
     setErro(null);
     setArquivo(selecionado.name);
-    aoSelecionar(selecionado.name);
+    aoSelecionar(selecionado);
   };
 
   return (

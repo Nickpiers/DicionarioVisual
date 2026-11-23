@@ -545,6 +545,36 @@ function RevisaoSentido({
                 ? "Pediu gravação à equipe"
                 : "Enviou vídeo"}
             </span>
+            {contribuicao.mode === "VIDEO_UPLOAD" && (
+              <div className="mt-3">
+                {contribuicao.videoUrl ? (
+                  <>
+                    {/* Endereço temporário (5 minutos), gerado ao abrir a palavra. */}
+                    <video
+                      key={contribuicao.videoUrl}
+                      src={contribuicao.videoUrl}
+                      controls
+                      preload="metadata"
+                      className="aspect-video w-full rounded-[10px] bg-ink"
+                    >
+                      Seu navegador não reproduz este vídeo.
+                    </video>
+                    <small className="mt-1 block text-[.72rem] text-muted">
+                      Vídeo enviado pela pessoa, só para análise. Se não
+                      carregar, abra a palavra de novo (o link vale 5 minutos).
+                      {contribuicao.consentAcceptedAt &&
+                        ` Termo de imagem aceito em ${formatarData(contribuicao.consentAcceptedAt)}.`}
+                    </small>
+                  </>
+                ) : (
+                  <small className="block text-[.76rem] text-muted">
+                    O vídeo enviado já foi apagado depois da decisão.
+                    {contribuicao.consentAcceptedAt &&
+                      ` Termo de imagem aceito em ${formatarData(contribuicao.consentAcceptedAt)}.`}
+                  </small>
+                )}
+              </div>
+            )}
           </div>
           <a
             href={`mailto:${contribuicao.contactEmail}`}

@@ -8,6 +8,7 @@ import { ErroApi } from "./api/erros";
 import type {
   ContribuicaoApi,
   ContribuicaoCriadaApi,
+  EnvioPreparadoApi,
   MinhaContribuicaoApi,
   SituacaoSentido,
 } from "./api/tipos";
@@ -31,7 +32,71 @@ export type NovoSentido = {
   nome: string;
   definicao: string;
   exemplo: string;
+  /** Vídeo em Libras enviado pela pessoa; sem vídeo, o pedido é de gravação pela equipe. */
+  video: File | null;
 };
+
+/** Versão do texto do termo de autorização de imagem mostrado no formulário. */
+export const VERSAO_TERMO_IMAGEM = "2026-11";
+
+/** Tipos de vídeo aceitos pela API; arquivos sem tipo são reconhecidos pela extensão. */
+const TIPOS_VIDEO: Record<string, string> = {
+  mp4: "video/mp4",
+  mov: "video/quicktime",
+  webm: "video/webm",
+};
+
+function tipoDoVideo(arquivo: File) {
+  if (Object.values(TIPOS_VIDEO).includes(arquivo.type)) return arquivo.type;
+  const extensao = arquivo.name.split(".").pop()?.toLowerCase() ?? "";
+  return TIPOS_VIDEO[extensao] ?? arquivo.type;
+}
+
+/** Progresso do envio de um vídeo: índice do sentido e fração enviada (0 a 1). */
+export type AoProgredir = (indice: number, fracao: number) => void;
+
+/**
+ * Envia o arquivo direto ao armazenamento (não passa pela API): pede um
+ * endereço temporário à API e faz o PUT com o tipo informado. Usa
+ * XMLHttpRequest para acompanhar o progresso. Devolve a chave do vídeo.
+ */
+async function enviarVideo(
+  arquivo: File,
+  aoProgredir: (fracao: number) => void,
+): Promise<string> {
+  const tipo = tipoDoVideo(arquivo);
+  const preparado = await requisitarAutenticado<EnvioPreparadoApi>(
+    "/api/contributions/uploads",
+    {
+      metodo: "POST",
+      corpo: { kind: "VIDEO", contentType: tipo, sizeBytes: arquivo.size },
+    },
+  );
+  await new Promise<void>((resolver, rejeitar) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("PUT", preparado.uploadUrl);
+    for (const [nome, valor] of Object.entries(preparado.headers)) {
+      xhr.setRequestHeader(nome, valor);
+    }
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable) aoProgredir(e.loaded / e.total);
+    };
+    const falhou = () =>
+      rejeitar(
+        new ErroApi(
+          xhr.status || 0,
+          "Não foi possível enviar o vídeo. Verifique a conexão e tente de novo.",
+        ),
+      );
+    xhr.onload = () =>
+      xhr.status >= 200 && xhr.status < 300 ? resolver() : falhou();
+    xhr.onerror = falhou;
+    xhr.ontimeout = falhou;
+    xhr.send(arquivo);
+  });
+  aoProgredir(1);
+  return preparado.key;
+}
 
 export type NovaContribuicao = {
   termo: string;
@@ -47,23 +112,36 @@ export type ResultadoEnvio = {
 
 /**
  * A API recebe um sentido por vez, então cada sentido do formulário vira uma
- * sugestão. Por enquanto só existe o modo "pedir gravação à equipe"; o envio
- * de vídeo e imagem ainda não está disponível na API.
+ * sugestão. Sentido com vídeo: primeiro o arquivo vai para o armazenamento,
+ * depois a sugestão segue com a chave dele e o aceite do termo. Sem vídeo, é
+ * um pedido de gravação pela equipe. A imagem ainda não é enviada.
  */
 export async function enviarContribuicao(
   nova: NovaContribuicao,
+  aoProgredir?: AoProgredir,
 ): Promise<ResultadoEnvio> {
   const enviados: ContribuicaoCriadaApi[] = [];
   for (const [indice, sentido] of nova.sentidos.entries()) {
-    const corpo: ContribuicaoApi = {
-      term: nova.termo.trim(),
-      title: sentido.nome.trim(),
-      explanation: sentido.definicao.trim(),
-      example: sentido.exemplo.trim() || null,
-      grammaticalClass: nova.classeGramatical.trim() || null,
-      mode: "RECORDING_REQUEST",
-    };
     try {
+      const videoKey = sentido.video
+        ? await enviarVideo(sentido.video, (f) => aoProgredir?.(indice, f))
+        : null;
+      const corpo: ContribuicaoApi = {
+        term: nova.termo.trim(),
+        title: sentido.nome.trim(),
+        explanation: sentido.definicao.trim(),
+        example: sentido.exemplo.trim() || null,
+        grammaticalClass: nova.classeGramatical.trim() || null,
+        ...(videoKey
+          ? {
+              mode: "VIDEO_UPLOAD" as const,
+              videoKey,
+              // O formulário só deixa enviar vídeo com o termo marcado.
+              consentAccepted: true,
+              consentVersion: VERSAO_TERMO_IMAGEM,
+            }
+          : { mode: "RECORDING_REQUEST" as const }),
+      };
       enviados.push(
         await requisitarAutenticado<ContribuicaoCriadaApi>(
           "/api/contributions",

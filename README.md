@@ -12,7 +12,7 @@ npm run dev        # http://localhost:3000
 
 ## Integração com a API
 
-- Contrato: [`docs/openapi.yaml`](docs/openapi.yaml) (v0.5.0).
+- Contrato: [`docs/openapi.yaml`](docs/openapi.yaml) (v0.6.0).
 - Endereço da API: variável `API_URL` (padrão: ambiente dev na AWS,
   `https://doudh9dqt2uk3.cloudfront.net`). Ex.: `API_URL=http://localhost:8080 npm run dev`.
 - O navegador fala só com `/api/*` do próprio site; o `next.config.ts` encaminha

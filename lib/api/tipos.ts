@@ -87,6 +87,19 @@ export type ContribuicaoApi = {
   example?: string | null;
   grammaticalClass?: string | null;
   mode: ModoContribuicao;
+  /** Com mode VIDEO_UPLOAD: a chave devolvida por POST /api/contributions/uploads. */
+  videoKey?: string | null;
+  /** Com mode VIDEO_UPLOAD: aceite do termo de autorização de uso de imagem. */
+  consentAccepted?: boolean;
+  consentVersion?: string | null;
+};
+
+/** Resposta de POST /api/contributions/uploads. */
+export type EnvioPreparadoApi = {
+  key: string;
+  uploadUrl: string;
+  expiresAt: string;
+  headers: Record<string, string>;
 };
 
 export type ContribuicaoCriadaApi = {
@@ -144,6 +157,10 @@ export type AdminSenseApi = {
     type: TipoContribuicao;
     mode: ModoContribuicao;
     contactEmail: string;
+    /** Endereço temporário (5 minutos) do vídeo enviado pelo colaborador. */
+    videoUrl?: string | null;
+    consentAcceptedAt?: string | null;
+    consentVersion?: string | null;
   } | null;
 };
 

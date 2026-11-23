@@ -19,13 +19,13 @@ export type OpcaoPalavra = { slug: string; titulo: string };
 type EstadoSentido = {
   id: number;
   /**
-   * "comissao" pede que a equipe grave o sinal. O envio de vídeo e de imagem
-   * ainda não existe na API: a opção continua na tela, mas o pedido segue
-   * como pedido de gravação.
+   * "upload": a pessoa envia o vídeo (direto ao armazenamento, com o aceite do
+   * termo de imagem). "comissao": pede que a equipe grave o sinal. A imagem
+   * ainda não é enviada pela API.
    */
   video: "upload" | "comissao";
-  arquivoVideo: string | null;
-  arquivoImagem: string | null;
+  arquivoVideo: File | null;
+  arquivoImagem: File | null;
 };
 
 /** Só letras, espaços e hífens (regra da API). */
@@ -99,6 +99,8 @@ export function FormularioContribuicao({
     novoSentido(),
   ]);
   const [enviando, setEnviando] = useState(false);
+  /** Progresso do vídeo sendo enviado agora (sentido e porcentagem), para o botão. */
+  const [progresso, setProgresso] = useState<{ sentido: number; porcento: number } | null>(null);
   const [erro, setErro] = useState<string | null>(null);
 
   const atualizarSentido = (id: number, mudanca: Partial<EstadoSentido>) =>
@@ -116,18 +118,32 @@ export function FormularioContribuicao({
       setErro("A palavra ou expressão pode ter no máximo 5 palavras.");
       return;
     }
+    if (sentidos.some((s) => s.video === "upload" && !s.arquivoVideo)) {
+      setErro(
+        "Selecione o vídeo em Libras de cada sentido marcado como “Vou enviar o vídeo”, ou escolha “Solicitar gravação”.",
+      );
+      return;
+    }
     setEnviando(true);
     setErro(null);
-    const { enviados, falha } = await enviarContribuicao({
-      termo,
-      classeGramatical: texto("categoria"),
-      // Fonte, e-mail de contato e arquivos ainda não existem na API.
-      sentidos: sentidos.map((s) => ({
-        nome: texto(`nome-${s.id}`),
-        definicao: texto(`definicao-${s.id}`),
-        exemplo: texto(`exemplo-${s.id}`),
-      })),
-    });
+    const { enviados, falha } = await enviarContribuicao(
+      {
+        termo,
+        classeGramatical: texto("categoria"),
+        // Fonte, e-mail de contato e imagem ainda não existem na API.
+        sentidos: sentidos.map((s) => ({
+          nome: texto(`nome-${s.id}`),
+          definicao: texto(`definicao-${s.id}`),
+          exemplo: texto(`exemplo-${s.id}`),
+          video: s.video === "upload" ? s.arquivoVideo : null,
+        })),
+      },
+      (indice, fracao) =>
+        setProgresso(
+          fracao < 1 ? { sentido: indice + 1, porcento: Math.round(fracao * 100) } : null,
+        ),
+    );
+    setProgresso(null);
 
     if (falha) {
       // Tira da tela o que já foi enviado, para tentar de novo só o resto.
@@ -412,8 +428,8 @@ export function FormularioContribuicao({
                 {sentido.video === "upload" ? (
                   <ZonaUpload
                     tipo="video"
-                    aoSelecionar={(nome) =>
-                      atualizarSentido(sentido.id, { arquivoVideo: nome })
+                    aoSelecionar={(arquivo) =>
+                      atualizarSentido(sentido.id, { arquivoVideo: arquivo })
                     }
                   />
                 ) : (
@@ -427,16 +443,16 @@ export function FormularioContribuicao({
                 )}
                 <ZonaUpload
                   tipo="image"
-                  aoSelecionar={(nome) =>
-                    atualizarSentido(sentido.id, { arquivoImagem: nome })
+                  aoSelecionar={(arquivo) =>
+                    atualizarSentido(sentido.id, { arquivoImagem: arquivo })
                   }
                 />
               </div>
-              {sentido.video === "upload" && (
+              {sentido.arquivoImagem && (
                 <Alerta tipo="info">
-                  O envio de vídeo e imagem pelo site ainda não está
-                  disponível. Seu pedido seguirá como pedido de gravação: a
-                  comissão produzirá o vídeo após aprovar.
+                  O envio de imagem pelo site ainda não está disponível: a
+                  imagem escolhida não será enviada. A equipe escolhe a imagem
+                  ao publicar.
                 </Alerta>
               )}
               {sentido.video === "upload" && (
@@ -480,7 +496,11 @@ export function FormularioContribuicao({
             className="mt-4 w-full"
             disabled={enviando || !podeEnviar}
           >
-            {enviando ? "Enviando…" : "Enviar para aprovação"}
+            {progresso
+              ? `Enviando vídeo${sentidos.length > 1 ? ` do sentido ${progresso.sentido}` : ""}… ${progresso.porcento}%`
+              : enviando
+                ? "Enviando…"
+                : "Enviar para aprovação"}
           </Botao>
           {!podeEnviar && usuario && (
             <p className="mt-[10px] mb-0 text-center text-[.8rem] font-extrabold text-[#6b4300]">
