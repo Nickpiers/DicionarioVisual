@@ -10,6 +10,7 @@ import type {
   AprovacaoApi,
   FilaModeracaoApi,
 } from "./api/tipos";
+import { enviarArquivo, tipoDoArquivo } from "./envio-arquivo";
 import { requisitarAutenticado } from "./sessao";
 
 export function carregarFila(cursor?: string | null) {
@@ -63,4 +64,27 @@ export function rejeitar(
   reviewNote: string,
 ) {
   return acao(wordId, senseId, "reject", { version, reviewNote });
+}
+
+/** Tipos de imagem aceitos pela API (até 2 MB). */
+const TIPOS_IMAGEM: Record<string, string> = {
+  webp: "image/webp",
+  png: "image/png",
+  jpg: "image/jpeg",
+  jpeg: "image/jpeg",
+};
+
+/**
+ * Envia a imagem do sentido ao armazenamento. A chave devolvida vai como
+ * `imageKey` na aprovação; a API copia a imagem para o site ao publicar.
+ */
+export function enviarImagem(arquivo: File, aoProgredir?: (fracao: number) => void) {
+  const tipo = tipoDoArquivo(arquivo, TIPOS_IMAGEM);
+  return enviarArquivo(
+    "/api/admin/uploads/image",
+    { contentType: tipo, sizeBytes: arquivo.size },
+    arquivo,
+    "Não foi possível enviar a imagem. Verifique a conexão e tente de novo.",
+    aoProgredir,
+  );
 }

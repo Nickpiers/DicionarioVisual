@@ -143,7 +143,10 @@ export type AdminSenseApi = {
   example: string | null;
   grammaticalClass: string | null;
   youtubeVideoId: string | null;
+  /** Valor gravado: reenviar para manter a imagem. */
   imageKey: string | null;
+  /** Endereço para exibir a imagem. */
+  imageUrl: string | null;
   source: FonteSentido;
   order: number | null;
   status: SituacaoSentido;
@@ -180,6 +183,7 @@ export type AprovacaoApi = {
   explanation?: string;
   example?: string;
   grammaticalClass?: string;
+  /** Chave devolvida pelo envio da imagem; ausente mantém a imagem atual. */
   imageKey?: string;
   reviewNote?: string;
 };

@@ -97,9 +97,9 @@ const configuracaoUpload = {
   image: {
     icone: "image",
     titulo: "Upload Imagem",
-    formatos: "JPG ou PNG • até 10 MB",
-    aceita: "image/jpeg,image/png,.jpg,.jpeg,.png",
-    limite: 10 * 1024 * 1024,
+    formatos: "WebP, PNG ou JPG • até 2 MB",
+    aceita: "image/webp,image/jpeg,image/png,.webp,.jpg,.jpeg,.png",
+    limite: 2 * 1024 * 1024,
   },
 } as const;
 

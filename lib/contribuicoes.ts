@@ -8,10 +8,10 @@ import { ErroApi } from "./api/erros";
 import type {
   ContribuicaoApi,
   ContribuicaoCriadaApi,
-  EnvioPreparadoApi,
   MinhaContribuicaoApi,
   SituacaoSentido,
 } from "./api/tipos";
+import { enviarArquivo, tipoDoArquivo } from "./envio-arquivo";
 import { requisitarAutenticado } from "./sessao";
 
 /** Classes gramaticais oferecidas no formulário (campo livre na API). */
@@ -46,56 +46,22 @@ const TIPOS_VIDEO: Record<string, string> = {
   webm: "video/webm",
 };
 
-function tipoDoVideo(arquivo: File) {
-  if (Object.values(TIPOS_VIDEO).includes(arquivo.type)) return arquivo.type;
-  const extensao = arquivo.name.split(".").pop()?.toLowerCase() ?? "";
-  return TIPOS_VIDEO[extensao] ?? arquivo.type;
-}
-
 /** Progresso do envio de um vídeo: índice do sentido e fração enviada (0 a 1). */
 export type AoProgredir = (indice: number, fracao: number) => void;
 
-/**
- * Envia o arquivo direto ao armazenamento (não passa pela API): pede um
- * endereço temporário à API e faz o PUT com o tipo informado. Usa
- * XMLHttpRequest para acompanhar o progresso. Devolve a chave do vídeo.
- */
-async function enviarVideo(
+/** Envia o vídeo ao armazenamento e devolve a chave dele. */
+function enviarVideo(
   arquivo: File,
   aoProgredir: (fracao: number) => void,
 ): Promise<string> {
-  const tipo = tipoDoVideo(arquivo);
-  const preparado = await requisitarAutenticado<EnvioPreparadoApi>(
+  const tipo = tipoDoArquivo(arquivo, TIPOS_VIDEO);
+  return enviarArquivo(
     "/api/contributions/uploads",
-    {
-      metodo: "POST",
-      corpo: { kind: "VIDEO", contentType: tipo, sizeBytes: arquivo.size },
-    },
+    { kind: "VIDEO", contentType: tipo, sizeBytes: arquivo.size },
+    arquivo,
+    "Não foi possível enviar o vídeo. Verifique a conexão e tente de novo.",
+    aoProgredir,
   );
-  await new Promise<void>((resolver, rejeitar) => {
-    const xhr = new XMLHttpRequest();
-    xhr.open("PUT", preparado.uploadUrl);
-    for (const [nome, valor] of Object.entries(preparado.headers)) {
-      xhr.setRequestHeader(nome, valor);
-    }
-    xhr.upload.onprogress = (e) => {
-      if (e.lengthComputable) aoProgredir(e.loaded / e.total);
-    };
-    const falhou = () =>
-      rejeitar(
-        new ErroApi(
-          xhr.status || 0,
-          "Não foi possível enviar o vídeo. Verifique a conexão e tente de novo.",
-        ),
-      );
-    xhr.onload = () =>
-      xhr.status >= 200 && xhr.status < 300 ? resolver() : falhou();
-    xhr.onerror = falhou;
-    xhr.ontimeout = falhou;
-    xhr.send(arquivo);
-  });
-  aoProgredir(1);
-  return preparado.key;
 }
 
 export type NovaContribuicao = {

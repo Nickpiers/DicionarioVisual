@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { ErroApi, mensagemDeErro } from "@/lib/api/erros";
@@ -18,11 +19,18 @@ import {
   aprovar,
   carregarFila,
   carregarPalavraAdmin,
+  enviarImagem,
   marcarParaGravacao,
   rejeitar,
 } from "@/lib/moderacao";
 import { idDoYoutube } from "@/lib/video";
-import { Alerta, classeCampo, classeControle, classeRotuloCampo } from "./campos";
+import {
+  Alerta,
+  classeCampo,
+  classeControle,
+  classeRotuloCampo,
+  ZonaUpload,
+} from "./campos";
 import { Icone } from "./icone";
 import { EtiquetaSituacao } from "./minhas-contribuicoes";
 import { Botao, classeBotao, classeRotuloMidia, classeSecao, Eyebrow } from "./ui";
@@ -442,9 +450,23 @@ function RevisaoSentido({
   const [rascunho, setRascunho] = useState(original);
   const [ocupado, setOcupado] = useState<string | null>(null);
   const [erro, setErro] = useState<string | null>(null);
+  /** Imagem nova escolhida; só é enviada ao aprovar. */
+  const [imagem, setImagem] = useState<File | null>(null);
+  const [previa, setPrevia] = useState<string | null>(null);
+  const [progressoImagem, setProgressoImagem] = useState<number | null>(null);
   const aberto = emAberto(sentido);
   const idVideo = idDoYoutube(rascunho.video);
   const contribuicao = sentido.contribution;
+
+  // Prévia local da imagem escolhida; o endereço é liberado ao trocar ou sair.
+  const escolherImagem = (arquivo: File | null) => {
+    setImagem(arquivo);
+    setPrevia(arquivo ? URL.createObjectURL(arquivo) : null);
+  };
+  useEffect(() => () => {
+    if (previa) URL.revokeObjectURL(previa);
+  }, [previa]);
+  const imagemExibida = previa ?? sentido.imageUrl;
 
   const mudar = (campo: keyof Rascunho, valor: string) =>
     setRascunho((r) => ({ ...r, [campo]: valor }));
@@ -493,7 +515,15 @@ function RevisaoSentido({
     if (rascunho.observacao.trim()) dados.reviewNote = rascunho.observacao.trim();
     void decidir(
       "aprovar",
-      () => aprovar(palavra.wordId, sentido.senseId, dados),
+      async () => {
+        // A imagem vai primeiro ao armazenamento; a API a publica junto com o sentido.
+        if (imagem) {
+          setProgressoImagem(0);
+          dados.imageKey = await enviarImagem(imagem, setProgressoImagem);
+          setProgressoImagem(null);
+        }
+        return aprovar(palavra.wordId, sentido.senseId, dados);
+      },
       `Sentido “${titulo}” aprovado e publicado.`,
     );
   };
@@ -714,15 +744,40 @@ function RevisaoSentido({
             <span className={classeRotuloMidia}>
               <Icone nome="image" /> Imagem de apoio
             </span>
-            <div className="flex min-h-[200px] flex-col items-center justify-center rounded-[10px] border-2 border-dashed border-[#98aec5] bg-white p-4 text-center text-muted">
-              <Icone nome="image" tamanho={26} className="text-blue" />
-              <strong className="mt-2 text-navy">
-                {sentido.imageKey ? "Imagem cadastrada" : "Sem imagem"}
-              </strong>
-              <small className="mt-1 block break-all">
-                {sentido.imageKey ?? "O envio de imagens chega numa próxima versão."}
-              </small>
-            </div>
+            {imagemExibida ? (
+              <Image
+                src={imagemExibida}
+                alt={`Imagem de apoio: ${rascunho.titulo}`}
+                width={1200}
+                height={800}
+                unoptimized
+                className="aspect-video w-full rounded-[12px] border border-[#d8e2ee] bg-white object-cover"
+              />
+            ) : (
+              <div className="flex aspect-video flex-col items-center justify-center rounded-[12px] border-2 border-dashed border-[#98aec5] bg-white p-4 text-center text-muted">
+                <Icone nome="image" tamanho={26} className="text-blue" />
+                <strong className="mt-2 text-navy">Sem imagem</strong>
+                {sentido.imageKey && (
+                  <small className="mt-1 block break-all">{sentido.imageKey}</small>
+                )}
+              </div>
+            )}
+            {aberto && (
+              <div className="mt-3 grid">
+                <ZonaUpload tipo="image" aoSelecionar={escolherImagem} />
+              </div>
+            )}
+            <small className="mt-[5px] block text-muted" aria-live="polite">
+              {!aberto
+                ? sentido.imageUrl
+                  ? "Imagem publicada com o sentido."
+                  : "Sentido sem imagem de apoio."
+                : imagem
+                  ? "Nova imagem: será publicada junto com o sentido."
+                  : sentido.imageUrl
+                    ? "Opcional. Escolha outra imagem para trocar."
+                    : "Opcional. A imagem é publicada junto com o sentido."}
+            </small>
           </div>
         </div>
 
@@ -764,7 +819,11 @@ function RevisaoSentido({
             disabled={ocupado !== null}
             onClick={aprovarSentido}
           >
-            {ocupado === "aprovar" ? "Publicando…" : "Aprovar e publicar"}
+            {ocupado !== "aprovar"
+              ? "Aprovar e publicar"
+              : progressoImagem !== null
+                ? `Enviando imagem… ${Math.round(progressoImagem * 100)}%`
+                : "Publicando…"}
           </Botao>
           <Botao
             variante="danger"
