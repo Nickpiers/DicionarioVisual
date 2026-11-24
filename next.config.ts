@@ -1,5 +1,29 @@
+import { execSync } from "node:child_process";
 import type { NextConfig } from "next";
 import { API_URL } from "./lib/api/endereco";
+import pacote from "./package.json";
+
+/** Saída de um comando git, ou vazio se o git não estiver disponível. */
+function git(comando: string) {
+  try {
+    return execSync(`git ${comando}`, { encoding: "utf8" }).trim();
+  } catch {
+    return "";
+  }
+}
+
+/**
+ * Versão mostrada no cabeçalho, para saber qual build está no ar nos testes:
+ * versão do package.json, commit e data/hora do build. Um `*` depois do commit
+ * indica que o build saiu de uma pasta com alterações não commitadas.
+ */
+const commit = git("rev-parse --short HEAD");
+const alterado = commit && git("status --porcelain") ? "*" : "";
+const dataBuild = new Intl.DateTimeFormat("pt-BR", {
+  timeZone: "America/Sao_Paulo",
+  dateStyle: "short",
+  timeStyle: "short",
+}).format(new Date());
 
 /**
  * O build gera um site estático (pasta `out/`), publicado no S3 atrás do
@@ -17,6 +41,11 @@ const nextConfig: NextConfig = {
   trailingSlash: true,
   // Sem servidor não há otimização de imagens; as imagens são servidas como estão.
   images: { unoptimized: true },
+  env: {
+    NEXT_PUBLIC_VERSAO: pacote.version,
+    NEXT_PUBLIC_COMMIT: commit ? commit + alterado : "local",
+    NEXT_PUBLIC_DATA_BUILD: dataBuild,
+  },
   experimental: {
     agentFeedback: true,
   },

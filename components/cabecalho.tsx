@@ -22,6 +22,26 @@ const classeItemConta =
 const classeBotaoIcone =
   "size-12 place-items-center rounded-[10px] border-0 bg-white/10 text-white";
 
+const versao = process.env.NEXT_PUBLIC_VERSAO;
+const commit = process.env.NEXT_PUBLIC_COMMIT;
+const dataBuild = process.env.NEXT_PUBLIC_DATA_BUILD;
+
+/**
+ * Versão do build no ar (package.json + commit), para conferir nos testes qual
+ * publicação está aberta. A data e a hora do build aparecem ao passar o mouse.
+ */
+function VersaoDoSite() {
+  return (
+    <small
+      className="font-mono text-xs leading-tight whitespace-nowrap text-[#dbeaff]/80 select-all"
+      title={`Versão ${versao}, commit ${commit}, build de ${dataBuild}`}
+    >
+      v{versao}
+      <span className="phone:hidden"> · {commit}</span>
+    </small>
+  );
+}
+
 /** Cabeçalho que destaca o item da rota atual. */
 export function Cabecalho() {
   return <CabecalhoBase rota={usePathname()} />;
@@ -99,6 +119,7 @@ export function CabecalhoBase({ rota }: { rota: string }) {
         </nav>
 
         <div className="flex items-center gap-2">
+          <VersaoDoSite />
           <button
             type="button"
             className={`grid ${classeBotaoIcone}`}
