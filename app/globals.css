@@ -147,3 +147,15 @@
     }
   }
 }
+
+/* Anel que pulsa em volta do vídeo de apresentação (página inicial). */
+@keyframes pulso-video {
+  0% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1.22);
+    opacity: 0;
+  }
+}

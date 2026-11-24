@@ -88,7 +88,7 @@ export function TotalDePalavras() {
   if (carregamento.estado !== "pronto") return null;
   const total = carregamento.dados.length;
   return (
-    <div className="absolute right-0 bottom-[30px] flex flex-col items-center gap-0 rounded-[12px] bg-white px-[18px] py-[14px] font-bold text-ink shadow-card">
+    <div className="absolute right-0 bottom-[86px] flex flex-col items-center gap-0 rounded-[12px] bg-white px-[18px] py-[14px] font-bold text-ink shadow-card">
       <span className="font-display text-[2rem] leading-none font-extrabold text-orange">
         {total.toLocaleString("pt-BR")}
       </span>
