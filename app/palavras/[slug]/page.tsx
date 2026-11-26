@@ -16,7 +16,7 @@ export function generateStaticParams() {
 }
 
 export const metadata: Metadata = {
-  title: "Palavra",
+  title: "Carregando palavra",
 };
 
 export default function PalavraPage() {

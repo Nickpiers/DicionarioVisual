@@ -102,7 +102,7 @@ export function CabecalhoBase({ rota }: { rota: string }) {
         <Marca noCabecalho />
 
         <nav
-          className="flex h-full items-stretch tablet:hidden"
+          className="flex h-full items-stretch menu-compacto:hidden"
           aria-label="Navegação principal"
         >
           {itensNavegacao.map((item) => (
@@ -197,7 +197,7 @@ export function CabecalhoBase({ rota }: { rota: string }) {
           </div>
           <button
             type="button"
-            className={`hidden tablet:grid phone:hidden ${classeBotaoIcone}`}
+            className={`hidden menu-compacto:grid phone:hidden ${classeBotaoIcone}`}
             aria-label="Abrir menu"
             aria-expanded={menuAberto}
             aria-controls="menu-principal"
@@ -212,7 +212,7 @@ export function CabecalhoBase({ rota }: { rota: string }) {
         <nav
           id="menu-principal"
           aria-label="Menu"
-          className="absolute top-full right-5 mt-2 hidden w-60 flex-col rounded-[14px] border border-line bg-white p-2 text-ink shadow-card tablet:flex phone:hidden"
+          className="absolute top-full right-5 mt-2 hidden w-60 flex-col rounded-[14px] border border-line bg-white p-2 text-ink shadow-card menu-compacto:flex phone:hidden"
         >
           {itensNavegacao.map((item) => {
             const ativo = ativoNoTopo(item, rota);

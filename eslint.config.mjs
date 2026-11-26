@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Saídas de testes e scripts temporários de automação (fora do git).
+    "test-results/**",
+    "playwright-report/**",
+    ".playwright-mcp/**",
   ]),
 ]);
 

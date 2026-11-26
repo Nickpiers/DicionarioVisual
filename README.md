@@ -10,6 +10,15 @@ npm install
 npm run dev        # http://localhost:3000
 ```
 
+## Testes
+
+```bash
+npm test           # unitários (Vitest)
+npm run test:e2e   # build + ponta a ponta, acessibilidade e teclado (Playwright)
+npm run test:padroes        # build + validação de HTML/CSS/JS (W3C, html-validate, stylelint, ESLint)
+npm run test:acessibilidade # build + só acessibilidade (axe-core, WCAG 2.1 AA) e teclado
+```
+
 ## Integração com a API
 
 - Contrato: [`docs/openapi.yaml`](docs/openapi.yaml) (v0.6.0).

@@ -1,0 +1,12 @@
+# Falsos positivos do validador do W3C (Nu HTML Checker) no CSS gerado pelo
+# Tailwind 4. Cada linha abaixo é uma expressão regular; o resto dos erros
+# faz o comando falhar. A justificativa de cada um está acima da linha.
+#
+# @property: especificação "CSS Properties and Values API Level 1" do W3C,
+# suportada em todos os navegadores atuais; o validador ainda não a conhece.
+.*Unrecognized at-rule “@property”.*
+# margin-trim aparece só dentro de @supports (not (margin-trim: ...)), que é
+# justamente a pergunta "o navegador suporta isto?".
+.*Property “margin-trim” doesn't exist.*
+# transition-property aceita nomes de propriedades personalizadas (--x).
+.*“--tw-[a-z-]+” is not a “transition-property” value.*

@@ -136,12 +136,3 @@ export const classeLinkTexto =
 export const classeRotuloMidia =
   "mb-2 flex min-h-[34px] items-center gap-[7px] text-[.88rem] font-extrabold text-navy";
 
-/** Moldura do player; a altura mínima fica a cargo de quem usa. */
-export const classePlayer =
-  "relative overflow-hidden rounded-[12px] bg-[#103963] after:absolute after:inset-[65%_0_0] after:bg-[linear-gradient(transparent,rgba(1,18,40,.85))] after:content-['']";
-
-export const classeBotaoPlay =
-  "absolute top-1/2 left-1/2 z-[2] grid size-16 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-2 border-white bg-[rgba(3,43,93,.72)] text-white";
-
-export const classeControlesVideo =
-  "absolute inset-x-3 bottom-3 z-[3] flex h-[38px] items-center gap-[10px] rounded-[8px] bg-[rgba(2,29,62,.88)] px-3 text-[.75rem] text-white";

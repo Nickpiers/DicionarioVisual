@@ -45,70 +45,71 @@ export function VideoApresentacao() {
   };
 
   return (
-    <figure className="relative m-0 flex flex-col items-center gap-4">
-      <div className="relative">
-        {/* Anéis de destaque em volta do vídeo */}
-        <span
-          aria-hidden="true"
-          className="pointer-events-none absolute -inset-7 rounded-full border border-white/15 bg-white/[.035] tablet:-inset-5"
-        />
-        {!tocando && (
+    <>
+      <figure className="relative m-0 flex flex-col items-center gap-4">
+        <div className="relative">
+          {/* Anéis de destaque em volta do vídeo */}
           <span
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0 rounded-full border-2 border-[#ffb08f]/70 motion-safe:animate-[pulso-video_2.6s_ease-out_infinite]"
+            className="pointer-events-none absolute -inset-7 rounded-full border border-white/15 bg-white/[.035] tablet:-inset-5"
           />
-        )}
-
-        <div className="relative isolate size-[290px] overflow-hidden rounded-full border-4 border-white/85 bg-[#0b2f5c] shadow-[0_24px_60px_rgba(0,12,34,.45)] [transform:translateZ(0)] tablet:size-[240px]">
-          {tocando ? (
-            <iframe
-              src={urlPlayer()}
-              title={TITULO}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              referrerPolicy="strict-origin-when-cross-origin"
-              allowFullScreen
-              // O próprio vídeo tem faixas pretas em cima e embaixo: o player
-              // (16:9) fica 134% maior que o círculo para escondê-las, e as
-              // laterais também ficam de fora.
-              className="absolute top-1/2 left-1/2 h-[134%] w-[238.2%] max-w-none -translate-x-1/2 -translate-y-1/2 border-0"
+          {!tocando && (
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 rounded-full border-2 border-[#ffb08f]/70 motion-safe:animate-[pulso-video_2.6s_ease-out_infinite]"
             />
-          ) : (
-            <button
-              type="button"
-              onClick={() => setTocando(true)}
-              aria-label={`Reproduzir vídeo: ${TITULO}`}
-              className="group absolute inset-0 grid size-full cursor-pointer place-items-center rounded-full border-0 bg-transparent p-0 focus-visible:outline-offset-[6px]"
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element -- miniatura externa, sem otimização (site estático) */}
-              <img
-                src={MINIATURA}
-                alt=""
-                loading="eager"
-                className="absolute top-1/2 left-1/2 h-[134%] w-auto max-w-none -translate-x-1/2 -translate-y-1/2 transition-transform duration-500 group-hover:scale-105"
-              />
-              <span className="absolute inset-0 bg-[radial-gradient(circle,transparent_35%,rgba(3,30,66,.55)_100%)]" />
-              <span className="relative grid size-[72px] place-items-center rounded-full bg-orange text-white shadow-[0_8px_24px_rgba(0,0,0,.35)] transition-transform duration-200 group-hover:scale-110">
-                <span className="translate-x-[2px]">
-                  <Icone nome="play" tamanho={30} />
-                </span>
-              </span>
-            </button>
           )}
+
+          <div className="relative isolate size-[290px] overflow-hidden rounded-full border-4 border-white/85 bg-[#0b2f5c] shadow-[0_24px_60px_rgba(0,12,34,.45)] [transform:translateZ(0)] tablet:size-[240px]">
+            {tocando ? (
+              <iframe
+                src={urlPlayer()}
+                title={TITULO}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
+                // O próprio vídeo tem faixas pretas em cima e embaixo: o player
+                // (16:9) fica 134% maior que o círculo para escondê-las, e as
+                // laterais também ficam de fora.
+                className="absolute top-1/2 left-1/2 h-[134%] w-[238.2%] max-w-none -translate-x-1/2 -translate-y-1/2 border-0"
+              />
+            ) : (
+              <button
+                type="button"
+                onClick={() => setTocando(true)}
+                aria-label={`Reproduzir vídeo: ${TITULO}`}
+                className="group absolute inset-0 grid size-full cursor-pointer place-items-center rounded-full border-0 bg-transparent p-0 focus-visible:outline-offset-[6px]"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element -- miniatura externa, sem otimização (site estático) */}
+                <img
+                  src={MINIATURA}
+                  alt=""
+                  loading="eager"
+                  className="absolute top-1/2 left-1/2 h-[134%] w-auto max-w-none -translate-x-1/2 -translate-y-1/2 transition-transform duration-500 group-hover:scale-105"
+                />
+                <span className="absolute inset-0 bg-[radial-gradient(circle,transparent_35%,rgba(3,30,66,.55)_100%)]" />
+                <span className="relative grid size-[72px] place-items-center rounded-full bg-orange text-white shadow-[0_8px_24px_rgba(0,0,0,.35)] transition-transform duration-200 group-hover:scale-110">
+                  <span className="translate-x-[2px]">
+                    <Icone nome="play" tamanho={30} />
+                  </span>
+                </span>
+              </button>
+            )}
+          </div>
         </div>
-      </div>
 
-      <figcaption className="relative mt-3 flex items-center gap-3 text-[.95rem] font-bold text-[#e3effc]">
-        <span>Conheça o dicionário em Libras</span>
-        <button
-          type="button"
-          onClick={ampliar}
-          className="inline-flex items-center gap-[6px] rounded-full border border-white/40 bg-white/10 px-3 py-1 text-[.85rem] font-bold text-white transition-colors hover:bg-white/20"
-        >
-          <Icone nome="expand" tamanho={16} />
-          Ampliar
-        </button>
-      </figcaption>
-
+        <figcaption className="relative mt-3 flex items-center gap-3 text-[.95rem] font-bold text-[#e3effc]">
+          <span>Conheça o dicionário em Libras</span>
+          <button
+            type="button"
+            onClick={ampliar}
+            className="inline-flex items-center gap-[6px] rounded-full border border-white/40 bg-white/10 px-3 py-1 text-[.85rem] font-bold text-white transition-colors hover:bg-white/20"
+          >
+            <Icone nome="expand" tamanho={16} />
+            Ampliar
+          </button>
+        </figcaption>
+      </figure>
       <dialog
         ref={janela}
         onClose={() => setAmpliado(false)}
@@ -143,6 +144,6 @@ export function VideoApresentacao() {
           )}
         </div>
       </dialog>
-    </figure>
+    </>
   );
 }

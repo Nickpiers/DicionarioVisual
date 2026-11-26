@@ -6,7 +6,7 @@ export function Marca({ noCabecalho = false }: { noCabecalho?: boolean }) {
   return (
     <Link
       href="/"
-      aria-label="Ir para o início"
+      aria-label="Dicionário Libras, página inicial"
       className={`inline-flex min-h-12 items-center gap-[10px] border-0 bg-transparent p-0 font-display text-[1rem] font-extrabold ${
         noCabecalho ? "text-inherit phone:text-[.9rem]" : "text-white"
       }`}

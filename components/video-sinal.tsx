@@ -1,17 +1,12 @@
-import Image from "next/image";
-import { IMAGEM_SINALIZANTE } from "@/lib/palavras";
 import { idDoYoutube, urlEmbedYoutube } from "@/lib/video";
 import { Icone } from "./icone";
-import { classeBotaoPlay, classeControlesVideo, classePlayer } from "./ui";
 
 type Props = {
-  /** Link do YouTube do sentido; `null` mostra a imagem estática. */
   video: string | null;
   /** Usado no título do player, para leitores de tela. */
   titulo: string;
 };
 
-/** Vídeo do sinal em Libras: player do YouTube ou imagem estática. */
 export function VideoSinal({ video, titulo }: Props) {
   const id = idDoYoutube(video);
 
@@ -34,28 +29,15 @@ export function VideoSinal({ video, titulo }: Props) {
   }
 
   return (
-    <div className={`${classePlayer} min-h-[320px] phone:min-h-[280px]`}>
-      <Image
-        src={IMAGEM_SINALIZANTE}
-        alt="Intérprete demonstrando o sinal em Libras"
-        fill
-        unoptimized
-        loading="eager"
-        sizes="(max-width: 900px) 100vw, 440px"
-        className="object-cover object-[center_30%]"
-      />
-      <button type="button" className={classeBotaoPlay} aria-label="Reproduzir vídeo">
-        <Icone nome="play" tamanho={28} />
-      </button>
-      <div className={classeControlesVideo}>
-        <Icone nome="play" />
-        <span className="h-1 flex-1 rounded-[99px] bg-white/35">
-          <i className="block h-full w-[35%] rounded-[inherit] bg-white" />
-        </span>
-        <span>0:08</span>
-        <Icone nome="volume" />
-        <Icone nome="expand" />
-      </div>
+    <div className="flex aspect-video flex-col items-center justify-center rounded-[12px] border-2 border-dashed border-[#98aec5] bg-white p-4 text-center text-muted">
+      <Icone nome="video" tamanho={26} className="text-blue" />
+      <strong className="mt-2 text-navy">
+        Vídeo em Libras ainda não disponível
+      </strong>
+      <small className="mt-1 block">
+        Este sentido ainda não tem vídeo. Veja a definição e o exemplo em
+        português.
+      </small>
     </div>
   );
 }

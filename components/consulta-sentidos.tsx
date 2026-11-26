@@ -10,8 +10,13 @@ import {
   type Palavra,
 } from "@/lib/palavras";
 import { Icone } from "./icone";
-import { classeBotao, classeRotuloMidia, Eyebrow } from "./ui";
+import { idDoYoutube } from "@/lib/video";
+import { classeBotao, classeEyebrow, classeRotuloMidia, Eyebrow } from "./ui";
 import { VideoSinal } from "./video-sinal";
+
+const ID_SIGNIFICADO = "significado-do-sentido";
+
+const classeTituloRotulo = "mt-0 [font-family:inherit]";
 
 const classeSeta =
   "flex min-h-[76px] items-center justify-center gap-2 border-0 bg-orange-soft px-[18px] py-[10px] font-extrabold text-navy enabled:hover:bg-orange enabled:hover:text-white disabled:cursor-not-allowed disabled:bg-[#f1f3f6] disabled:text-[#788696] phone:min-h-[68px] phone:p-2";
@@ -54,9 +59,10 @@ export function ConsultaSentidos({ palavra }: { palavra: Palavra }) {
           aria-live="polite"
           aria-atomic="true"
         >
-          <span className="text-[.76rem] font-extrabold tracking-[.06em] text-orange uppercase">
+          <span className="text-[.76rem] font-extrabold tracking-[.06em] text-orange-strong uppercase">
             Sentido {ativo + 1} de {total}
           </span>
+          <span className="sr-only">, </span>
           <strong className="text-[1.08rem] text-navy">{sentido.curto}</strong>
         </div>
         <button
@@ -73,7 +79,7 @@ export function ConsultaSentidos({ palavra }: { palavra: Palavra }) {
 
       <section className="rounded-[14px] border border-[#efc6b6] bg-white p-6 shadow-card phone:p-[14px]">
         <div className="mb-[18px] flex items-center gap-[14px] border-b border-[#f0d8cf] pb-4 phone:flex-col phone:items-start">
-          <span className="rounded-[8px] bg-orange px-3 py-2 font-extrabold text-white">
+          <span className="rounded-[8px] bg-orange-strong px-3 py-2 font-extrabold text-white">
             Sentido {ativo + 1}
           </span>
           <div>
@@ -84,20 +90,35 @@ export function ConsultaSentidos({ palavra }: { palavra: Palavra }) {
 
         <div className="grid grid-cols-2 gap-5 tablet:grid-cols-1">
           <div>
-            <span className={classeRotuloMidia}>
+            <h3 className={`${classeRotuloMidia} ${classeTituloRotulo}`}>
               <Icone nome="video" /> Sinal em Libras
-            </span>
+            </h3>
+            {idDoYoutube(sentido.video) && (
+              <a
+                href={`#${ID_SIGNIFICADO}`}
+                className="sr-only font-extrabold text-blue underline focus:not-sr-only focus:mb-2 focus:inline-block"
+              >
+                Pular vídeo e ir para o significado
+              </a>
+            )}
             <VideoSinal video={sentido.video} titulo={sentido.titulo} />
-            <p className="mt-2 mb-0 flex gap-[7px] text-[.8rem] text-muted">
-              <Icone nome="info" />O vídeo apresenta primeiro a representação do
-              sinal e em seguida o sinal em uma frase.
-            </p>
+            {idDoYoutube(sentido.video) && (
+              <p className="mt-2 mb-0 flex gap-[7px] text-[.8rem] text-muted">
+                <Icone nome="info" />O vídeo apresenta primeiro a representação
+                do sinal e em seguida o sinal em uma frase.
+              </p>
+            )}
           </div>
 
           <div>
-            <span className={classeRotuloMidia}>
+            <h3 className={`${classeRotuloMidia} ${classeTituloRotulo}`}>
               <Icone nome="image" /> Imagem de apoio
-            </span>
+            </h3>
+            {!sentido.imagem && (
+              <p className="sr-only">
+                Este sentido ainda não tem imagem de apoio.
+              </p>
+            )}
             <Image
               src={imagem.src}
               alt={imagem.alt}
@@ -109,11 +130,19 @@ export function ConsultaSentidos({ palavra }: { palavra: Palavra }) {
               className="h-[190px] w-full rounded-[12px] object-cover tablet:h-[300px] phone:h-[190px]"
             />
             <div className="p-[18px]">
-              <Eyebrow>O que significa?</Eyebrow>
+              <h3
+                id={ID_SIGNIFICADO}
+                tabIndex={-1}
+                className={`${classeEyebrow} ${classeTituloRotulo} mb-0 text-blue`}
+              >
+                O que significa?
+              </h3>
               <p className="text-[1.06rem]">{sentido.definicao}</p>
               {sentido.exemplo && (
                 <div className="rounded-[10px] bg-orange-soft p-[14px]">
-                  <strong>Exemplo em português</strong>
+                  <h4 className="m-0 text-[1em] font-bold [font-family:var(--font-manrope),sans-serif]">
+                    Exemplo em português
+                  </h4>
                   <p className="mt-1 mb-0">“{sentido.exemplo}”</p>
                 </div>
               )}

@@ -33,11 +33,7 @@ export const BUSCA_PADRAO = "BANCO";
 
 /** Remove acentos e diferença entre maiúsculas e minúsculas. */
 export function normalizar(texto: string) {
-  return texto
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .toLowerCase()
-    .trim();
+  return texto.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
 }
 
 /** "substantivo" → "Substantivo"; "BANCO DE DADOS" → "Banco de dados" */
@@ -60,7 +56,9 @@ function paraSentido(termo: string, s: SenseApi): Sentido {
     titulo: `${capitalizar(termo)} — ${s.title.toLocaleLowerCase("pt-BR")}`,
     definicao: s.explanation,
     exemplo: s.example?.trim() || null,
-    categoria: s.grammaticalClass?.trim() ? capitalizar(s.grammaticalClass) : "",
+    categoria: s.grammaticalClass?.trim()
+      ? capitalizar(s.grammaticalClass)
+      : "",
     imagem: s.imageUrl || null,
     video: s.youtubeVideoId || null,
     fonte: s.source,
@@ -107,9 +105,9 @@ export function paraPalavra(palavra: WordDetailApi): Palavra {
 
 /** Classes gramaticais distintas, para o filtro de resultados. */
 export function categoriasDe(lista: Palavra[]) {
-  return [
-    ...new Set(lista.map((p) => p.categoria).filter(Boolean)),
-  ].sort((a, b) => a.localeCompare(b, "pt-BR"));
+  return [...new Set(lista.map((p) => p.categoria).filter(Boolean))].sort(
+    (a, b) => a.localeCompare(b, "pt-BR"),
+  );
 }
 
 export function ordenarAZ(lista: Palavra[]) {
@@ -136,13 +134,10 @@ export function filtrarDicionario(lista: Palavra[], filtro: string) {
 
 /* Imagens locais ------------------------------------------------------ */
 
-/** Imagem usada quando o sentido não tem imagem própria. */
 export const IMAGEM_APOIO_PADRAO = {
   src: "/imagens/sinalizante.jpg",
-  alt: "Imagem visual de apoio ao significado",
+  alt: "",
 };
-
-export const IMAGEM_SINALIZANTE = "/imagens/sinalizante.jpg";
 
 /** Texto sobre a origem do conteúdo do sentido. */
 export const textoDaFonte: Record<FonteSentido, string> = {

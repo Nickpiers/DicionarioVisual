@@ -335,7 +335,7 @@ export function FormularioContribuicao({
             >
               <div className="flex justify-between">
                 <div>
-                  <span className="block text-[.8rem] font-extrabold text-orange uppercase">
+                  <span className="block text-[.8rem] font-extrabold text-orange-strong uppercase">
                     Sentido {indice + 1}
                   </span>
                   <strong className="block">Qual é este significado?</strong>

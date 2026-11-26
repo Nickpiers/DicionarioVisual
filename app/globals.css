@@ -1,6 +1,9 @@
 @import "tailwindcss";
 
-/* Breakpoints idênticos ao design (desktop-first, limites inclusivos). */
+/* Breakpoints idênticos ao design (desktop-first, limites inclusivos).
+   menu-compacto: até essa largura o menu do topo vira o botão de menu, porque
+   com zoom de 200% (janela de ~960 px) os itens do topo não cabiam. */
+@custom-variant menu-compacto (@media (max-width: 1200px));
 @custom-variant tablet (@media (max-width: 900px));
 @custom-variant phone (@media (max-width: 600px));
 
@@ -10,13 +13,17 @@
   --blue: #0c58a6;
   --blue-soft: #e9f3ff;
   --orange: #e54b1a;
+
+  /* Laranja para texto pequeno e selos com texto branco: o --orange não
+     alcança o contraste 4,5:1 da WCAG AA (3,92:1 sobre branco). */
+  --orange-strong: #c54016;
   --orange-soft: #fff0ea;
   --green: #087a49;
   --red: #b42318;
   --ink: #11243d;
   --muted: #53657b;
   --line: #cbd8e7;
-  --surface: #ffffff;
+  --surface: #fff;
   --canvas: #f5f8fc;
   --focus: #f6c744;
 }
@@ -30,8 +37,9 @@
   --ink: #000b1d;
   --muted: #26384d;
   --line: #6f8399;
-  --canvas: #ffffff;
+  --canvas: #fff;
   --orange: #c83200;
+  --orange-strong: #c83200;
   --focus: #ffd500;
 }
 
@@ -42,6 +50,7 @@
   --color-blue-soft: var(--blue-soft);
   --color-orange: var(--orange);
   --color-orange-soft: var(--orange-soft);
+  --color-orange-strong: var(--orange-strong);
   --color-green: var(--green);
   --color-red: var(--red);
   --color-ink: var(--ink);
@@ -50,11 +59,9 @@
   --color-surface: var(--surface);
   --color-canvas: var(--canvas);
   --color-focus: var(--focus);
-
   --font-sans: var(--font-atkinson), Arial, sans-serif;
   --font-display: var(--font-manrope), sans-serif;
-
-  --shadow-card: 0 10px 30px rgba(20, 55, 90, 0.09);
+  --shadow-card: 0 10px 30px rgb(20 55 90 / 9%);
 }
 
 @layer base {
@@ -131,7 +138,7 @@
     font-size: 1.05rem;
   }
 
-  @media (max-width: 600px) {
+  @media (width <= 600px) {
     body {
       font-size: 16px;
       padding-bottom: 70px;
@@ -154,6 +161,7 @@
     transform: scale(1);
     opacity: 0.9;
   }
+
   100% {
     transform: scale(1.22);
     opacity: 0;

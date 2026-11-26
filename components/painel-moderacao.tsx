@@ -117,7 +117,7 @@ export function PainelModeracao() {
             </Link>
           </div>
           <div
-            className="flex h-[82px] w-[92px] flex-none flex-col items-center justify-center rounded-[14px] bg-orange text-white phone:h-[58px] phone:w-full phone:flex-row phone:gap-2"
+            className="flex h-[82px] w-[92px] flex-none flex-col items-center justify-center rounded-[14px] bg-orange-strong text-white phone:h-[58px] phone:w-full phone:flex-row phone:gap-2"
             aria-live="polite"
           >
             <strong className="text-[1.8rem] leading-none">
@@ -393,7 +393,7 @@ function PainelRevisao({
               }`}
             >
               <span className="min-w-0">
-                <small className="block text-[.72rem] font-extrabold text-orange uppercase">
+                <small className="block text-[.72rem] font-extrabold text-orange-strong uppercase">
                   Sentido {indice + 1}
                 </small>
                 <strong className="block truncate text-navy">{s.title}</strong>
